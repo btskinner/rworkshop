@@ -1,0 +1,29 @@
+title: Workshop on R
+siteurl: "/rworkshop"
+description: Hosted by Virginia Education Science Training (VEST) Program at UVA
+
+info:
+  month: January 2018
+  date: 15/16 January 2018
+  building: Bavaro Hall
+  room: Holloway Hall (rm 116)
+
+contact:
+  name: Benjamin Skinner
+  github: 
+    name: btskinner
+    url: https://github.com/btskinner
+  url: https://www.btskinner.me
+  uva_url: https://curry.virginia.edu/benjamin-skinner
+  email: btskinner@virginia.edu
+  twitter: https://twitter.com/btskinner
+
+epw:
+  url: https://curry.virginia.edu/faculty-research/centers-labs-projects/edpolicyworks
+  logo: https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png
+
+theme: jekyll-theme-minimal
+
+mapstyle: light-v9
+
+google_analytics: UA-63981025-1
