@@ -6,7 +6,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>{{ site.title }}</h1>
+        <h1>{{ site.title }}<a href="{{ site.repo }}" class="iconlink">
+	      <i class="fab fa-github fa-xs"></i></a></h1>
 	<h2 class="thin">{{ site.info.month }}</h2>
 	<p>{{ site.description }}</p>
 	
@@ -31,7 +32,7 @@
         {% include footer.html %}
       </footer>
     </div>
-    <script src="/assets/js/scale.fix.js"></script>
+    <script src="{{ site.siteurl }}/assets/js/scale.fix.js"></script>
 
     {% if page.mapbox_js %}
     {% for version in page.mapbox_js %}
