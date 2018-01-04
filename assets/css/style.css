@@ -463,6 +463,8 @@ a.iconlink:hover, ul.header li a:hover {
 a.iconlink:active, ul.header li a:active {
   color: #069; }
 
+/* Misc
+-------------------------------------------------- */
 body {
   font: 14px/1.5 Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-weight: 300; }
