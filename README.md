@@ -1,1 +1,1 @@
-Workshop on R: master files
+#Workshop on R: gh-pages files
