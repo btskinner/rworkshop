@@ -43,7 +43,7 @@ be limited time for troubleshooting. Other free software, such as Git,
 TeX, and Markdown, may also be referenced in the workshop, but will
 not be strictly required. 
 
-See the [getting started]({{ site.siteurl
+See the [getting started]({{ site.baseurl
 }}/start) for links to required software and instructions for
 installing packages in R.
 
@@ -52,7 +52,7 @@ installing packages in R.
 
 The course will take place on Monday, January 15, and Tuesday,
 January 16. For a complete schedule and links to modules, see the
-[schedule]({{ site.siteurl }}/schedule).
+[schedule]({{ site.baseurl }}/schedule).
 
 # Location
 

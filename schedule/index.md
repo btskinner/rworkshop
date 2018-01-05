@@ -5,7 +5,7 @@ layout: default
 # Schedule (*tentative*)
 
 Prior to first meeting, please follow the [getting
-started]({{ site.siteurl }}/start) link to download and install
+started]({{ site.baseurl }}/start) link to download and install
 all relevant software and packages.
 
 ## Day 1: Monday, January 15

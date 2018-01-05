@@ -34,13 +34,15 @@ This workshop uses the following packages:
 - [knitr](https://CRAN.R-project.org/package=knitr)
 - [leaflet](https://CRAN.R-project.org/package=leaflet)
 - [rmarkdown](https://CRAN.R-project.org/package=rmarkdown)
+- [plotly](https://CRAN.R-project.org/package=plotly)
+- [shiny](https://CRAN.R-project.org/package=shiny)
 - [xtable](https://CRAN.R-project.org/package=xtable)
 
 Once you've installed R and RStudio, open RStudio (or the base R app)
 and run the following code:
 
 ```r
-pkgs <- c('tidyverse','knitr','leaflet','rmarkdown','xtable')
+pkgs <- c('tidyverse','knitr','leaflet','rmarkdown','plotly','shiny','xtable')
 install.packages(pkgs)
 ```
 
