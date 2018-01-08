@@ -31,10 +31,6 @@ body {
   font-weight:300;
 }
 
-h3 {
-    font-weight:300;
-}
-
 .thin {
     font-weight:300;
 }
@@ -59,6 +55,11 @@ h3 {
     font-size: 1.5rem;
 }
 
+code {
+    padding: 2px 4px;
+    background-color: #f8f8f8;
+}
+
 /* Header list items
 -------------------------------------------------- */
 
@@ -71,3 +72,4 @@ header li {
   width: 4em;
   border-right: none;
 }
+
