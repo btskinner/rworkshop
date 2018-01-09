@@ -8,7 +8,7 @@ links:
   data: 
 output:
   md_document:
-    variant: markdown_github
+    variant: gfm
     preserve_yaml: true
     toc: true
     toc_depth: 2
@@ -168,7 +168,7 @@ numeric operations on them.
 ```
 ```{r}
 ## store a string using quotation marks
-x <- 'The quick brown fox jumped over the lazy dog.'
+x <- 'The quick brown fox jumps over the lazy dog.'
 x
 
 ## store a number with leading zeros

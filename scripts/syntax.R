@@ -64,7 +64,7 @@ is.numeric(y)
 ## ------------
 
 ## store a string using quotation marks
-x <- 'The quick brown fox jumped over the lazy dog.'
+x <- 'The quick brown fox jumps over the lazy dog.'
 x
 
 ## store a number with leading zeros
