@@ -1,51 +1,54 @@
 ---
-layout: post
+layout: module
 title: Syntax
 date: 2018-01-01 00:00:02
-category: module
-links:
-  script: syntax.R
-  data: 
+category: module 
 output:
   md_document:
-    variant: gfm
+    variant: markdown_mmd
     preserve_yaml: true
     toc: true
     toc_depth: 2
+links:
+  scripts: syntax.R
 ---
 
-# R: language + environment
+R: language + environment
+=========================
 
 From CRAN, the Comprehensive R Network:
 
 > R is a language and environment for statistical computing and
 > graphics. It is a [GNU project](https://www.gnu.org) which is similar
 > to the S language and environment which was developed at Bell
-> Laboratories (formerly AT\&T, now Lucent Technologies) by John
-> Chambers and colleagues.
-> 
+> Laboratories (formerly AT&T, now Lucent Technologies) by John Chambers
+> and colleagues.
+>
 > \[…\]
-> 
+>
 > R provides a wide variety of statistical (linear and nonlinear
 > modelling, classical statistical tests, time-series analysis,
 > classification, clustering, …) and graphical techniques, and is highly
-> extensible. \[1\]
+> extensible. [^1]
 
 As a GNU project, R is open source and free ([as in
 freedom](https://en.wikipedia.org/wiki/Gratis_versus_libre)) to use and
 distribute. It can be installed and used on most major operating
 systems.
 
-# Object oriented vs procedural programming
+Object oriented vs procedural programming
+=========================================
 
-# Data types and structures
+Data types and structures
+=========================
 
-## Types
+Types
+-----
 
 There are three primary data types in R that you will regularly use:  
-\- `logical`  
-\- `numeric` (`integer` & `double`)  
-\- `character`
+- `logical`  
+- `numeric` (`integer` & `double`)  
+- `character`
 
 ### Logical
 
@@ -176,24 +179,28 @@ as.numeric(x) + 1
 
     ## [1] 2
 
-## Structures
+Structures
+----------
 
 Building on these data types, R relies on four primary data structures:
 
-  - `vector`
-  - `matrix` (`array`)
-  - `list`
-  - `dataframe`
+-   `vector`
+-   `matrix` (`array`)
+-   `list`
+-   `dataframe`
 
-# Packages
+Packages
+========
 
-# Other useful notes about R
+Other useful notes about R
+==========================
 
-  - 1-indexed (indexes start at 1 instead of 0)
-  - Can be run in batch mode from the terminal/command line
-      - older: `R CMD BATCH`
-      - newer: `Rscript`
+-   1-indexed (indexes start at 1 instead of 0)
+-   Can be run in batch mode from the terminal/command line
+    -   older: `R CMD BATCH`
+    -   newer: `Rscript`
 
-## Footnotes
+Footnotes
+---------
 
-1.  <https://www.r-project.org/about.html>
+[^1]: <https://www.r-project.org/about.html>

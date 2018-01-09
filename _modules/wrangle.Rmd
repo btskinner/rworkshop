@@ -1,0 +1,35 @@
+---
+layout: module
+title: Wrangling data
+date: 2018-01-01 00:00:03
+category: module
+output:
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+    toc: true
+    toc_depth: 2
+<!-- links:  -->
+<!--    script: intro.R -->
+<!--    data: data.R -->
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
+################################################################################
+##
+## <PROJ> R Workshop
+## <FILE> wrangle.R 
+## <INIT> 15 January 2018
+## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
+##
+################################################################################
+
+## clear memory
+rm(list = ls())
+
+```
+
+_in progress_

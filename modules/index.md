@@ -11,6 +11,14 @@ linked at the top of the page. Alternately, all scripts and data may
 be downloaded or cloned in bulk from the workshop's [GitHub
 repository]({{ site.repo }}).
 
+<ul class="posts">
+{% for module in site.modules %}
+	<li>
+		<a href="{{ module.url | prepend: site.baseurl }}">{{ module.title }}</a>
+	</li>
+{% endfor %}
+</ul>
+
 ## Directory structure
 
 All modules assume the following directory structure:
@@ -29,13 +37,3 @@ rworkshop/
 |   |-- module2.R
 |   |...
 ```
-
-## Links to modules
-
-<ul class="posts">
-{% for post in site.categories.module reversed %}
-	<li>
-		<a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-	</li>
-{% endfor %}
-</ul>

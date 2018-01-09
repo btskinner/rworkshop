@@ -1,22 +1,20 @@
 ---
-layout: post
+layout: module
 title: Syntax
 date: 2018-01-01 00:00:02
-category: module
-links:
-  script: syntax.R
-  data: 
+category: module 
 output:
   md_document:
-    variant: gfm
+    variant: markdown_mmd
     preserve_yaml: true
     toc: true
     toc_depth: 2
+links:
+  scripts: syntax.R
 ---
 
 ```{r, include = FALSE, purl = FALSE}
-knitr::opts_chunk$set(fig.path='../figures/', dpi=90, out.width='100%',
-                      error = TRUE)
+source('knit_setup.R')
 ```
 ```{r, include = FALSE, purl = TRUE}
 ################################################################################

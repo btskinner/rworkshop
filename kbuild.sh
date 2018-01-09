@@ -15,18 +15,18 @@ usage()
  $0 <arguments>
  
  ARGUMENTS:
-    [-p]        Directory of *.Rmd files
+    [-i]        Directory of *.Rmd files
     [-s]        Directory where purled scripts files should go
     [-b]        Suffix to go on _config*.yml and _site* directory
     [-v]        Render / build verbosely (optional flag)
     		
  EXAMPLE:
  
- ./knit_build.sh -p _posts -s scripts -b _dev
+ ./knit_build.sh -i _modules -s scripts -b _dev
 
  DEFAULT VALUES:
  
- p = _posts
+ i = _modules
  s = scripts
  b = <empty string>
  v = 0 (knit/build quietly)
@@ -35,7 +35,7 @@ EOF
 }
 
 # defaults
-p="_posts"
+i="_modules"
 s="scripts"
 b=""
 v=0
@@ -43,15 +43,15 @@ v=0
 knit_q="TRUE"
 build_q="--quiet"
 
-while getopts "hp:s:b:v" opt;
+while getopts "hi:s:b:v" opt;
 do
     case $opt in
 	h)
 	    usage
 	    exit 1
 	    ;;
-	p)
-	    p=$OPTARG
+	i)
+	   i=$OPTARG
 	    ;;
 	s)
 	    s=$OPTARG
@@ -84,7 +84,7 @@ printf -- "----------------------------------\n"
 
 printf "\n[ Options ]\n\n"
 
-printf "  *.Rmd input director        = %s\n" "$p"
+printf "  *.Rmd input director        = %s\n" "$i"
 printf "  *.R script output directory = %s\n" "$s"
 printf "  Directory of built site     = _site%s\n" "$b"
 
@@ -95,22 +95,21 @@ printf "  Directory of built site     = _site%s\n" "$b"
 printf "\n[ Knitting and purling... ]\n\n"
 
 # loop through all Rmd files
-for file in ${p}/*.Rmd
+for file in ${i}/*.Rmd
 do
     ## get file name without ending
     f=$(basename "${file%.*}")
     printf "  $f.Rmd ==> \n"
     ## knit
-    Rscript -e "rmarkdown::render('$file', output_dir='$p', quiet = $knit_q)"
-    mv $p/${f}.gfm $p/${f}.md
-    printf "     $p/$f.md\n"
+    Rscript -e "rmarkdown::render('$file', output_dir='$i', quiet = $knit_q)"
+    printf "     $i/$f.md\n"
     ## purl
     Rscript -e "knitr::purl('$file', documentation = 0, quiet = $knit_q)" > /dev/null
     printf "     $s/$f.R\n"
     # get file name without date
     newf=${f##*-}
     ## move R file to scripts directory
-    mv ${f}.R $s/${newf}.R
+    mv ${f}.R $s/${f}.R
 done
 
 # ==============================================================================

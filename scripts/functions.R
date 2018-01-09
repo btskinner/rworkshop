@@ -1,8 +1,8 @@
 ################################################################################
 ##
 ## <PROJ> R Workshop
-## <FILE> intro.R 
-## <INIT> 15 January 2018
+## <FILE> functions.R 
+## <INIT> 16 January 2018
 ## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
 ##
 ################################################################################
