@@ -1,3 +1,21 @@
+---
+layout: module
+title: Spatial
+date: 2018-01-01 00:00:09
+category: module
+links:
+  script: spatial.R
+output:
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+always_allow_html: yes
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
 ################################################################################
 ##
 ## <PROJ> R Workshop
@@ -10,10 +28,19 @@
 ## clear memory
 rm(list = ls())
 
+```
+
+```{r, include = FALSE, purl = TRUE}
 ## libraries
+```
+```{r}
 libs <- c('tidyverse','leaflet','geojsonio','RColorBrewer')
 suppressMessages(lapply(libs, require, character.only = TRUE))
 
+```
+
+
+```{r}
 ## Charlottesville open data url
 url <- 'https://opendata.arcgis.com/datasets/'
 
@@ -27,9 +54,15 @@ sch <- geojson_read(sch_link, what = 'sp')
 cba_link <- '/Users/benski/Downloads/US_Census_Block_Area_2010.geojson'
 cba <- geojson_read(cba_link, what = 'sp')
 
+```
+
+# Elementary attendance zones
+```{r, include = FALSE, purl = TRUE}
 ## ---------------------------------------------------------
 ## Map elementary attendance zones
 ## ---------------------------------------------------------
+```
+```{r}
 ## set up color palette that will align
 factpal <- colorFactor(palette = brewer.pal(n = length(sch$ZONE),
                                             name = 'Accent'),
@@ -42,9 +75,21 @@ map <- leaflet(sch) %>%
                 fillColor = ~factpal(sch$ZONE), label = ~ZONE)
 map
 
+```
+```{r, echo = FALSE, purl = FALSE, warnings = FALSE}
+htmltools::save_html(map, '../maps/map_sch.html', libdir = 'lib_map_sch')
+htmltools::tags$iframe(src = '../../maps/map_sch.html')
+```
+
+The map...
+
+# Census block areas  
+```{r, include = FALSE, purl = TRUE}
 ## ---------------------------------------------------------
 ## Map census block areas
 ## ---------------------------------------------------------
+```  
+```{r}
 ## too many census blocks so will randomly assign colors
 cba$group <- factor(sample.int(11L, nrow(cba), replace = TRUE))
 
@@ -59,3 +104,12 @@ map <- leaflet(cba) %>%
                 fillColor = ~factpal(cba$group), label = ~Block)
 map
 
+```
+```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
+htmltools::save_html(map, '../maps/map_cba.html', libdir = 'lib_map_cba')
+htmltools::tags$iframe(src = '../../maps/map_cba.html')
+```
+
+The map...
+
+# Merging spatial data

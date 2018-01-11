@@ -27,10 +27,18 @@ epw:
   url: https://curry.virginia.edu/faculty-research/centers-labs-projects/edpolicyworks
   logo: https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png
 
-permalink: /:categories/:title/
+# misc opts
+
 theme: jekyll-theme-minimal
 syntax: default
 mapstyle: light-v9
 google_analytics: UA-63981025-1
-exclude:
-- "*.Rmd"
+
+# files / directories to exclude when building
+exclude: ["*.Rmd", _working]
+
+# collection of modules
+collections:
+  modules:
+    output: true
+    permalink: /:collection/:path/

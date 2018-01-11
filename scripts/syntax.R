@@ -13,6 +13,26 @@ rm(list = ls())
 ## ---------------------------------------------------------
 ## Language and environment
 ## ---------------------------------------------------------
+
+## run me first
+print('Hello, World!')
+
+## ---------------------------------------------------------
+## Assignment
+## ---------------------------------------------------------
+
+## assign value to object x using <-
+x <- 1
+
+## show
+x
+
+## assign value to object y using =
+y = 'a'
+
+## show
+y
+
 ## ---------------------------------------------------------
 ## Data types and structures
 ## ---------------------------------------------------------
@@ -24,7 +44,8 @@ rm(list = ls())
 ## ------------
 
 ## assignment
-(x <- TRUE)
+x <- TRUE
+x
 
 ## ! == NOT
 !x
@@ -34,14 +55,6 @@ is.logical(x)
 
 ## evaluate
 1 + 1 == 2
-
-## 1 == TRUE
-x <- 1
-isTRUE(x)
-
-## 0 == FALSE
-y <- 0
-isTRUE(y)
 
 ## ------------
 ## numeric
@@ -71,9 +84,113 @@ x
 x <- '00001'
 x
 
-## cannot add strings...
-x + 1
+## ---------------------------
+## structures
+## ---------------------------
+## ------------
+## vector
+## ------------
 
-## ...must convert back first
-as.numeric(x) + 1
+## create vector
+x <- 1
 
+## check
+is.vector(x)
+
+## add to vector (can do so recursively)
+x <- c(x, 2, 3)
+
+## no dim, but length
+dim(x)
+length(x)
+
+## check class of x
+class(x)
+
+## add character
+x <- c(x, 'a')
+x
+
+## check class
+class(x)
+
+## ------------
+## matrix/array
+## ------------
+
+## create 3 x 3 matrix that is the sequence of numbers between 1 and 9
+x <- matrix(1:9, nrow = 3, ncol = 3)
+x
+
+## ...fill by row this time
+y <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
+y
+
+## has dimension
+dim(x)
+
+## # of rows
+nrow(x)
+
+## # of columns
+ncol(x)
+
+## 2D array == matrix
+z <- array(1:9, dim = c(3,3))
+z
+
+## check if same as x matrix above
+identical(x,z)
+
+## ------------
+## list
+## ------------
+
+## create single-level list
+x <- list(1, 'a', TRUE)
+
+## show
+x
+
+## check
+is.list(x)
+
+## create blank list
+y <- list()
+
+## add to first list, creating nested list
+x <- list(x, y)
+
+## show
+x
+
+## ------------
+## data frame
+## ------------
+
+## create data frame
+df <- data.frame(col_a = c(1,2,3),
+                 col_b = c(4,5,6),
+                 col_c = c(7,8,9))
+
+## show
+df
+
+## check
+is.data.frame(df)
+    
+## get column names
+names(df)
+
+## ---------------------------------------------------------
+## Help
+## ---------------------------------------------------------
+
+## ## get help file for function
+## ?sum
+## ## search for function in CRAN
+## ??sum
+
+## =============================================================================
+## END SCRIPT
+################################################################################

@@ -65,23 +65,3 @@ University of Virginia
 </div>
 <br>
   
-# About me
-
-I am currently a [Research Assistant Professor of
-Education]({{ site.contact.uva_url }}) at the
-University of Virginia with an affiliation in
-[EdPolicyWorks]({{ site.epw.url }}). My
-research interests center on the policies and practices that affect
-students who attend community colleges and open access
-universities. In recent work, I have focused on the relationships
-between online course delivery and student enrollments, course
-outcomes, and degree attainment.
-
-In addition to using the R language extensively in my own work, I am
-also the author and maintainer of a number of software packages,
-including [rscorecard](https://www.btskinner.me/rscorecard/), which
-can be used to download data from the [College
-Scorecard](https://collegescorecard.ed.gov), and
-[crosswalkr](https://www.btskinner.me/crosswalkr/), a port of a [set
-of Stata commands](https://github.com/slhudson/rename-and-encode) that
-help build master data sets from smaller files in a reproducible manner.

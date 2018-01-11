@@ -50,7 +50,7 @@ v=0
 knit_q="TRUE"
 build_q="--quiet"
 
-while getopts "hk:a:i:s:b:v" opt;
+while getopts "hk:ai:s:b:v" opt;
 do
     case $opt in
 	h)

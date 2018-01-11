@@ -37,3 +37,5 @@ rworkshop/
 |   |-- module2.R
 |   |...
 ```
+
+For all scripts, the working directory should be `path/to/scripts`.

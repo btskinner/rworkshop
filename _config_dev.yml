@@ -28,15 +28,14 @@ epw:
   logo: https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png
 
 # misc opts
-# permalink: /:categories/:title/
+
 theme: jekyll-theme-minimal
 syntax: default
 mapstyle: light-v9
 google_analytics: UA-63981025-1
 
-# files to exclude when building
-exclude:
-- "*.Rmd"
+# files / directories to exclude when building
+exclude: ["*.Rmd", _working]
 
 # collection of modules
 collections:

@@ -43,6 +43,10 @@ header, footer {
     width: 240px;
 }
 
+footer {
+    font-size: 12px;
+}
+
 .thin {
     font-weight:300;
 }
@@ -71,8 +75,8 @@ code {
     background-color: #f8f8f8;
 }
 
-date {
-    visibility: hidden;
+code, pre {
+    font-size: 10px;
 }
 
 iframe {
