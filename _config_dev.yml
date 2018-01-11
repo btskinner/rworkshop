@@ -28,7 +28,7 @@ epw:
   logo: https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png
 
 # misc opts
-permalink: /:categories/:title/
+# permalink: /:categories/:title/
 theme: jekyll-theme-minimal
 syntax: default
 mapstyle: light-v9

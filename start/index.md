@@ -42,7 +42,8 @@ Once you've installed R and RStudio, open RStudio (or the base R app)
 and run the following code:
 
 ```r
-pkgs <- c('tidyverse','knitr','leaflet','rmarkdown','plotly','shiny','xtable')
+pkgs <- c('geojsonio','knitr','leaflet','plotly','RColorBrewer',
+          'rmarkdown','shiny','tidyverse','xtable')
 install.packages(pkgs)
 ```
 

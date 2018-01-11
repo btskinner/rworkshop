@@ -11,7 +11,7 @@ linked at the top of the page. Alternately, all scripts and data may
 be downloaded or cloned in bulk from the workshop's [GitHub
 repository]({{ site.repo }}).
 
-<ul class="posts">
+<ul class="modules">
 {% for module in site.modules %}
 	<li>
 		<a href="{{ module.url | prepend: site.baseurl }}">{{ module.title }}</a>

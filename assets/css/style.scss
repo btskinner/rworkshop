@@ -31,6 +31,18 @@ body {
   font-weight:300;
 }
 
+.wrapper {
+    width: 890px;
+}
+
+section {
+    width: 530px;
+}
+
+header, footer {
+    width: 240px;
+}
+
 .thin {
     font-weight:300;
 }
@@ -46,18 +58,30 @@ body {
     height: 100%;
 }
 
-.posts {
+.modules {
     list-style: none;
     padding: 0;
 }
 
-.posts li {
+.modules li {
     font-size: 1.5rem;
 }
 
 code {
-    padding: 2px 4px;
     background-color: #f8f8f8;
+}
+
+date {
+    visibility: hidden;
+}
+
+iframe {
+    margin: 0;
+    padding: 0;
+    border: none;
+    width: 100%;
+    height: 430px;
+    display: block;
 }
 
 /* Header list items
