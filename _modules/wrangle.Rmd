@@ -29,11 +29,56 @@ source('knit_setup.R')
 rm(list = ls())
 
 ```
+Being able to read, manipulate, and save data, that
+is, [wrangle data](https://en.wikipedia.org/wiki/Data_wrangling), is a
+key part of any analysis. In fact (as you're probably already aware),
+building and cleaning data usually takes more time and lines of code
+than the actual analysis.
+
+R has undergone a transformation in the past few years and this may
+change how you choose to approach data wrangling. While the core R
+functions for data manipulation haven't really changed[^f1], a new
+suite of packages, the [tidyverse](https://www.tidyverse.org)
+(formerly known as the "Hadleyverse" after their key
+creater, [Hadley Wickham](http://hadley.nz)), has really changed the
+way many people approach using R.
+
+In this module, I'm going to show you two ways to perform the same set
+of data wrangling procedures, first using base R and then the
+tidyverse way. It's up to you which you prefer. There's much to be
+said for the tidyverse, but I think it's still good to know how to use
+core commands for those edge cases (ever diminishing) where tidyverse
+functions don't quite work the way you want.
+
+Data for this module come from the public release files of
+the
+[NCES Education Longitudinal Study of 2002](https://nces.ed.gov/surveys/els2002/). For
+descriptions of the variables, see the <a href = '{{ site.baseurl
+}}/data/#els_planscsv'>codebook</a>.
+
+# Base R
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------------------------------------
+## Wrangling data using Base R commands
+## -----------------------------------------------------------------------------
+
+```
+
+First things first, let's read in the data. Base R can `load()` its
+own data formats, `.rda` and `.RData`, as well as read flat
+files like `.txt`, `.csv`, and `.tsv` files. (We'll discuss how to
+read in data files from other languages later.) Since the data come in
+a CSV file, we could use the special command `read.csv()`, but
+`read.table()` works just as well as long as we tell R that items in
+each row are `sep`arated by a `,`.
 
 ```{r}
-## reading in data
+## read in the data, making sure that first line is read as column names
 df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
 
+```
+
+```{r}
 ## show the first few rows (or view in RStudio's view)
 head(df)
 
@@ -42,9 +87,36 @@ names(df)
 
 ```
 
-For descriptions of the variables, see the <a href = '{{ site.baseurl }}/data/#els_planscsv'>codebook</a>.
+# Tidyverse
+
+## Magrittr and pipes
+
+<span style="display:block;text-align:center">
+![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)
+</span>
 
 
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------------------------------------
+## Wrangling data using the Tidyverse
+## -----------------------------------------------------------------------------
+
+```
+```{r}
+## library
+library(tidyverse)
+
+```
+
+```{r}
+## read in the data
+df <- read_delim('../data/els_plans.csv', delim = ',')
+
+```
+
+# Notes
+
+[^f1]: Except maybe under the hood in a few cases.
 
 
 ```{r, echo = FALSE, purl = TRUE}

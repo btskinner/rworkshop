@@ -560,6 +560,7 @@ list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
 
 # Other miscellaneous notes about R
 
+- R script files end in `.r` or `.R`
 - 1-indexed (indexes start at 1 instead of 0)
 - Base commands usually written in C/C++ under the hood
 - Can be run in batch mode from the terminal/command line

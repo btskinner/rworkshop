@@ -12,10 +12,50 @@ output:
     preserve_yaml: true
 ---
 
-``` r
-## reading in data
-df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
+Being able to read, manipulate, and save data, that is, [wrangle
+data](https://en.wikipedia.org/wiki/Data_wrangling), is a key part of
+any analysis. In fact (as you’re probably already aware), building and
+cleaning data usually takes more time and lines of code than the actual
+analysis.
 
+R has undergone a transformation in the past few years and this may
+change how you choose to approach data wrangling. While the core R
+functions for data manipulation haven’t really changed[^1], a new suite
+of packages, the [tidyverse](https://www.tidyverse.org) (formerly known
+as the “Hadleyverse” after their key creater, [Hadley
+Wickham](http://hadley.nz)), has really changed the way many people
+approach using R.
+
+In this module, I’m going to show you two ways to perform the same set
+of data wrangling procedures, first using base R and then the tidyverse
+way. It’s up to you which you prefer. There’s much to be said for the
+tidyverse, but I think it’s still good to know how to use core commands
+for those edge cases (ever diminishing) where tidyverse functions don’t
+quite work the way you want.
+
+Data for this module come from the public release files of the [NCES
+Education Longitudinal Study of
+2002](https://nces.ed.gov/surveys/els2002/). For descriptions of the
+variables, see the <a href = '{{ site.baseurl
+}}/data/#els_planscsv'>codebook</a>.
+
+Base R
+======
+
+First things first, let’s read in the data. Base R can `load()` its own
+data formats, `.rda` and `.RData`, as well as read flat files like
+`.txt`, `.csv`, and `.tsv` files. (We’ll discuss how to read in data
+files from other languages later.) Since the data come in a CSV file, we
+could use the special command `read.csv()`, but `read.table()` works
+just as well as long as we tell R that items in each row are `sep`arated
+by a `,`.
+
+``` r
+## read in the data, making sure that first line is read as column names
+df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
+```
+
+``` r
 ## show the first few rows (or view in RStudio's view)
 head(df)
 ```
@@ -88,5 +128,57 @@ names(df)
     ## [19] "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r" "f1qwt"   
     ## [25] "f1pnlwt"  "f1psepln" "f2ps1sec"
 
-For descriptions of the variables, see the
-<a href = '{{ site.baseurl }}/data/#els_planscsv'>codebook</a>.
+Tidyverse
+=========
+
+Magrittr and pipes
+------------------
+
+<span style="display:block;text-align:center">
+![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)
+</span>
+
+``` r
+## library
+library(tidyverse)
+```
+
+    ## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+    ## ✔ tibble  1.4.1     ✔ dplyr   0.7.4
+    ## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
+    ## ✔ readr   1.1.1     ✔ forcats 0.2.0
+
+    ## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+``` r
+## read in the data
+df <- read_delim('../data/els_plans.csv', delim = ',')
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character(),
+    ##   stu_id = col_integer(),
+    ##   sch_id = col_integer(),
+    ##   strat_id = col_integer(),
+    ##   f1sch_id = col_integer(),
+    ##   bystuwt = col_double(),
+    ##   bydob_p = col_integer(),
+    ##   byses1 = col_double(),
+    ##   byses2 = col_double(),
+    ##   bynels2m = col_double(),
+    ##   bynels2r = col_double(),
+    ##   f1qwt = col_double(),
+    ##   f1pnlwt = col_double()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+Notes
+=====
+
+[^1]: Except maybe under the hood in a few cases.
