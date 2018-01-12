@@ -39,8 +39,8 @@ Education Longitudinal Study of
 variables, see the <a href = '{{ site.baseurl
 }}/data/#els_planscsv'>codebook</a>.
 
-Base R
-======
+Data wrangling with base R
+==========================
 
 First things first, let’s read in the data. Base R can `load()` its own
 data formats, `.rda` and `.RData`, as well as read flat files like
@@ -48,12 +48,16 @@ data formats, `.rda` and `.RData`, as well as read flat files like
 files from other languages later.) Since the data come in a CSV file, we
 could use the special command `read.csv()`, but `read.table()` works
 just as well as long as we tell R that items in each row are `sep`arated
-by a `,`.
+by a `,`. Finally, we won’t talk about factors until later, but let’s
+read in the data keeping string values as character vectors.
 
 ``` r
 ## read in the data, making sure that first line is read as column names
-df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
+df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE,
+                 stringsAsFactors = FALSE)
 ```
+
+Let’s look at the first few rows and the variable names.
 
 ``` r
 ## show the first few rows (or view in RStudio's view)
@@ -128,15 +132,381 @@ names(df)
     ## [19] "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r" "f1qwt"   
     ## [25] "f1pnlwt"  "f1psepln" "f2ps1sec"
 
+Access columns
+--------------
+
+Because the data frame lives in an object and not in memory (like it
+does in Stata), you can’t just reference the variable name. Instead you
+need to give R the data frame’s name followed by a `$` and then the
+variable name.
+
+You can also use the `df[['<var name>']]` contruction, which comes in
+handy in loops and functions.
+
+``` r
+## wrong
+summary(bynels2m)
+```
+
+    ## Error in summary(bynels2m): object 'bynels2m' not found
+
+``` r
+summary('bynels2m')
+```
+
+    ##    Length     Class      Mode 
+    ##         1 character character
+
+``` r
+## correct
+summary(df$bynels2m)
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   -8.00   34.34   45.46   44.44   55.76   79.27
+
+``` r
+summary(df[['bynels2m']])
+```
+
+    ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    ##   -8.00   34.34   45.46   44.44   55.76   79.27
+
+Add variables
+-------------
+
+Add a column by giving it a name and assigning what you want. R will
+repeat the values as necessary to fill the number of rows. You can also
+use data from other columns. R will assign values row by row, using the
+right-hand side values that align.
+
+``` r
+## add simply column of ones
+df$ones <- 1
+
+## add average test score (bynels2r + bynels2m / 2)
+df$avg_test <- (df$bynels2r + df$bynels2m) / 2
+
+## check names
+names(df)
+```
+
+    ##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "f1univ1" 
+    ##  [7] "f1univ2a" "f1univ2b" "g10cohrt" "g12cohrt" "bystuwt"  "bysex"   
+    ## [13] "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed" "byincome"
+    ## [19] "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r" "f1qwt"   
+    ## [25] "f1pnlwt"  "f1psepln" "f2ps1sec" "ones"     "avg_test"
+
+Drop variables
+--------------
+
+Drop variables by assigning `NULL` to the column name.
+
+``` r
+## drop follow up one panel weight
+df$f1pnlwt <- NULL
+
+## check names
+names(df)
+```
+
+    ##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "f1univ1" 
+    ##  [7] "f1univ2a" "f1univ2b" "g10cohrt" "g12cohrt" "bystuwt"  "bysex"   
+    ## [13] "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed" "byincome"
+    ## [19] "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r" "f1qwt"   
+    ## [25] "f1psepln" "f2ps1sec" "ones"     "avg_test"
+
+Conditionally change values
+---------------------------
+
+This can be tricky at first. To conditionally change or assign values,
+you need to tell R where the conditions apply. There are a couple of
+ways.
+
+The first way uses brackets, `[]`, after the variable name to set the
+condition where the assignment is true. For version 1 below, the new
+variable `female` is assigned a value of 1 in the rows where it is
+`TRUE` that `bysex == 'female'`. In the rows that’s `FALSE`, R will
+assign `NA` since there’s no information. We can backfill 0s in the
+second line.
+
+The other way is to use the `ifelse(test, yes, no)` function. Going row
+by row, the `test` (`bysex == 'female'`) is performed. If `TRUE`, the
+new variable gets a 1; if `FALSE`, it gets a 0.
+
+``` r
+## make a numeric column that == 1 if bysex is female, 0 otherwise
+## v.1
+df$female_v1[df$bysex == 'female'] <- 1
+df$female_v1[df$bysex != 'female'] <- 0
+
+## v.2
+df$female_v2 <- ifelse(df$bysex == 'female', 1, 0)
+
+## the same?
+identical(df$female_v1, df$female_v2)
+```
+
+    ## [1] TRUE
+
+> #### Quick exercise
+>
+> Create a new column called `ses_gender` that uses `byses1` for women
+> and `byses2` for men. (HINT: if you use a condition, you need to use
+> it on both sides of the arrow.)
+
+You can also use this to drop rows with missing values
+
+``` r
+## assign as NA if < 0
+df$bydob_p[df$bydob_p < 0] <- NA
+nrow(df)
+```
+
+    ## [1] 16160
+
+``` r
+## drop if NA
+df <- df[!is.na(df$bydob_p),]
+nrow(df)
+```
+
+    ## [1] 15183
+
+Order
+-----
+
+Sort the data frame using the `order()` function as a condition.
+
+``` r
+## show first few rows of student and base year math scores
+df[1:10, c('stu_id','bydob_p')]
+```
+
+    ##    stu_id bydob_p
+    ## 1  101101  198512
+    ## 2  101102  198605
+    ## 3  101104  198601
+    ## 4  101105  198607
+    ## 5  101106  198511
+    ## 6  101107  198510
+    ## 7  101108  198607
+    ## 8  101109  198512
+    ## 9  101110  198505
+    ## 10 101111  198507
+
+``` r
+## since a data frame has two dims, notice the comma in the brackets
+df <- df[order(df$bydob_p),]
+
+## show again first few rows of ID and DOB
+df[1:10, c('stu_id','bydob_p')]
+```
+
+    ##       stu_id bydob_p
+    ## 1589  133211  198300
+    ## 4286  195210  198300
+    ## 4288  195213  198300
+    ## 5578  225203  198300
+    ## 7528  268219  198300
+    ## 7532  268225  198300
+    ## 7782  274222  198300
+    ## 8055  280215  198300
+    ## 10046 324119  198300
+    ## 10203 327128  198300
+
+Aggregate
+---------
+
+To collapse the data, generating some summary statistic in the process,
+use the `aggregate(x, by, FUN)`, where `x` is the data frame, `by` is
+the grouping variable in a `list()`, and `FUN` is the function that you
+want to use. These can be base R functions or one you create yourself.
+Let’s get the average math score within each school.
+
+``` r
+## first, make test score values < 0 == NA
+df$bynels2m[df$bynels2m < 0] <- NA
+
+## create new data frame
+df_sch <- aggregate(df$bynels2r, by = list(df$sch_id), FUN = mean, na.rm = T)
+
+## show
+head(df_sch)
+```
+
+    ##   Group.1        x
+    ## 1    1011 26.39290
+    ## 2    1012 30.26733
+    ## 3    1021 19.84647
+    ## 4    1022 26.47903
+    ## 5    1031 27.37318
+    ## 6    1032 27.80214
+
+Merge
+-----
+
+Since you can have multiple data frames in memory (as objects) at the
+same time in R, you may not find yourself merging data sets as often you
+would in another language (like Stata, where you have to). That said, it
+still needs to happen. Use the `merge()` function. Let’s merge the
+aggregated test score data back into the data set.
+
+``` r
+## first fix names from aggregated data set
+names(df_sch) <- c('sch_id', 'sch_bynels2m')
+
+## merge on school ID variable
+df <- merge(df, df_sch, by = 'sch_id')
+
+## show
+head(df)
+```
+
+    ##   sch_id stu_id strat_id   psu f1sch_id  f1univ1              f1univ2a
+    ## 1   1011 101126      101 psu 1     1011 byr f1ra base year participant
+    ## 2   1011 101105      101 psu 1     1011 byr f1ra base year participant
+    ## 3   1011 101106      101 psu 1     1011 byr f1ra base year participant
+    ## 4   1011 101132      101 psu 1       -8 byr f1nr base year participant
+    ## 5   1011 101116      101 psu 1     1011 byr f1ra base year participant
+    ## 6   1011 101131      101 psu 1     1011 byr f1ra base year participant
+    ##                          f1univ2b                g10cohrt
+    ## 1          in school, in grade 12 sophomore cohort member
+    ## 2          in school, in grade 12 sophomore cohort member
+    ## 3          in school, in grade 12 sophomore cohort member
+    ## 4 nonrespondent/f1 status unknown sophomore cohort member
+    ## 5          in school, in grade 12 sophomore cohort member
+    ## 6          in school, in grade 12 sophomore cohort member
+    ##                   g12cohrt  bystuwt  bysex
+    ## 1     senior cohort member  28.2951 female
+    ## 2     senior cohort member 235.7822 female
+    ## 3     senior cohort member 178.9513 female
+    ## 4 not senior cohort member 192.4304   male
+    ## 5     senior cohort member  30.2245   male
+    ## 6     senior cohort member 620.1837   male
+    ##                                     byrace bydob_p
+    ## 1 asian, hawaii/pac. islander,non-hispanic  198410
+    ## 2  black or african american, non-hispanic  198607
+    ## 3              hispanic, no race specified  198511
+    ## 4              hispanic, no race specified  198611
+    ## 5 asian, hawaii/pac. islander,non-hispanic  198612
+    ## 6                      white, non-hispanic  198610
+    ##                                   bypared
+    ## 1              did not finish high school
+    ## 2       graduated from high school or ged
+    ## 3              did not finish high school
+    ## 4       graduated from high school or ged
+    ## 5 completed master^s degree or equivalent
+    ## 6            graduated from 2-year school
+    ##                                  bymothed
+    ## 1              did not finish high school
+    ## 2       graduated from high school or ged
+    ## 3              did not finish high school
+    ## 4       graduated from high school or ged
+    ## 5 completed master^s degree or equivalent
+    ## 6       attended 2-year school, no degree
+    ##                            byfathed          byincome byses1 byses2
+    ## 1        did not finish high school   $25,001-$35,000  -0.64  -0.67
+    ## 2 graduated from high school or ged    $1,000 or less  -0.80  -0.89
+    ## 3        did not finish high school   $15,001-$20,000  -1.41  -1.28
+    ## 4 graduated from high school or ged   $50,001-$75,000  -0.16  -0.24
+    ## 5 attended 2-year school, no degree $100,001-$200,000   0.99   0.88
+    ## 6      graduated from 2-year school   $35,001-$50,000   0.48   0.67
+    ##                                    bystexp bynels2m bynels2r    f1qwt
+    ## 1 obtain phd, md, or other advanced degree    66.73    16.65  25.3577
+    ## 2                    graduate from college    35.33    27.86 199.7193
+    ## 3                    graduate from college    29.97    13.07 152.9769
+    ## 4                    graduate from college    41.28    17.34   0.0000
+    ## 5 obtain phd, md, or other advanced degree    69.08    45.74  26.0130
+    ## 6                    graduate from college    57.19    28.60 736.6029
+    ##                          f1psepln                                f2ps1sec
+    ## 1 four-year college or university                          Public, 2-year
+    ## 2      two-year community college                          Public, 2-year
+    ## 3 four-year college or university                          Public, 2-year
+    ## 4                 {nonrespondent}               {Item legitimate skip/NA}
+    ## 5 four-year college or university Private not-for-profit, 4-year or above
+    ## 6      two-year community college                          Public, 2-year
+    ##   ones avg_test female_v1 female_v2 sch_bynels2m
+    ## 1    1   41.690         1         1      26.3929
+    ## 2    1   31.595         1         1      26.3929
+    ## 3    1   21.520         1         1      26.3929
+    ## 4    1   29.310         0         0      26.3929
+    ## 5    1   57.410         0         0      26.3929
+    ## 6    1   42.895         0         0      26.3929
+
+Write
+-----
+
+Finally we can write our new data set to disk. We can save it as an R
+data file type, but since we may want to share with non-R users, we’ll
+save it as a csv file again.
+
+``` r
+write.csv(df, '../data/els_plans_mod.csv', row.names = FALSE)
+```
+
 Tidyverse
 =========
+
+The tidyverse is a shorthand for a [number of
+packages](https://www.tidyverse.org/packages/) that work well together
+and can be used in place of base R functions. A few of the tidyverse
+packages that you will often use are:
+
+-   [dplyr](http://dplyr.tidyverse.org) for data manipulation  
+-   [tidyr](http://tidyr.tidyverse.org) for making data
+    [tidy](http://vita.had.co.nz/papers/tidy-data.html)  
+-   [readr](http://readr.tidyverse.org) for flat file I/O  
+-   [readxl](http://readxl.tidyverse.org) for Excel file I/O  
+-   [haven](http://haven.tidyverse.org) for other file format I/O  
+-   [ggplot2](http://ggplot2.tidyverse.org) for making graphics
+
+There are many others. A lot of R users find functions from these
+libraries to be more intuitive than base R functions. In some cases,
+tidyverse functions are faster than base R, which is an added benefit
+when working with large data sets.
 
 Magrittr and pipes
 ------------------
 
+The key feature of the tidyverse is its use of pipes, `%>%`, from the
+[magrittr package](http://magrittr.tidyverse.org).
+
 <span style="display:block;text-align:center">
-![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)
+[![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)](https://www.fine-arts-museum.be/uploads/exhibitions/images/magritte_la_trahison_des_images_large@2x.jpg)
 </span>
+
+Pipes take values/output from the left side and pipe it to the input of
+the right side. So `sum(x)` can be rewritten as `x %>% sum`. This is a
+silly example (why would you do that?), but pipes are powerful because
+they can be chained together. Nested layers of functions that would be
+difficult to read from the inside out can be made clearer. Let’s see the
+now canonical example from
+[Hadley](https://twitter.com/_inundata/status/557980236130689024) to
+make it clearer:
+
+``` r
+## foo_foo is an instance of a little bunny
+foo_foo <- little_bunny()
+
+## adventures in base R
+bop_on(
+    scoop_up(
+        hop_through(foo_foo, forest),
+        field_mouse
+    ),
+    head
+)
+
+## adventures w/ pipes
+foo_foo %>%
+    hop_through(forest) %>%
+    scoop_up(field_mouse) %>%
+    bop_on(head)
+```
+
+Data wrangling with tidyverse
+=============================
 
 ``` r
 ## library
@@ -153,6 +523,10 @@ library(tidyverse)
     ## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
+
+Let’s reread the original data. Like `read.table()`, `read_delim()` is
+the generic function that needs you to give it the separating/delimiting
+character. You could also just use `read_csv()`.
 
 ``` r
 ## read in the data
@@ -177,6 +551,149 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
     ## )
 
     ## See spec(...) for full column specifications.
+
+Mutate
+------
+
+Select
+------
+
+Filter
+------
+
+Arrange
+-------
+
+Summarize
+---------
+
+Join
+----
+
+Write
+-----
+
+Reshaping data
+==============
+
+Reshaping data is a common data wrangling task. Whether going from wide
+to long format or the reverse, this can be a painful process. The best
+way I know to reshape data in R is by using the **tidyr** library.
+
+Create toy data
+---------------
+
+For clarity, we’ll use toy data for this example. It will be wide to
+start.
+
+``` r
+df <- data.frame(schid = c('A','B','C','D'),
+                 year = 2013,
+                 var_x = 1:4,
+                 var_y = 5:8,
+                 var_z = 9:12,
+                 stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+## show
+df
+```
+
+    ## # A tibble: 4 x 5
+    ##   schid  year var_x var_y var_z
+    ##   <chr> <dbl> <int> <int> <int>
+    ## 1 A      2013     1     5     9
+    ## 2 B      2013     2     6    10
+    ## 3 C      2013     3     7    11
+    ## 4 D      2013     4     8    12
+
+Wide –\> long
+-------------
+
+To go from wide to long format, use the `gather(key, value)` function,
+where the `key` is the variable that will made long (the stub in Stata)
+and the `value` is the column of associated values that will be created.
+Since we want the **schid** and **year** columns to remain associated
+with their rows, we ignore them (`-c(...)`) so they will be repeated as
+necessary.
+
+The `mutate()` row isn’t strictly necessary, but it does make the output
+a little cleaner since we really don’t need the `var_` stub once the
+data are in long form. The
+`gsub('<old string>', '<new string>', variable)` function simply
+replaces the `'<old string>'` with the `'<new string>'` wherever it
+finds in the `variable`.
+
+Finally we `arrange()` the data by school ID and the variable name.
+
+``` r
+df_long <- df %>%
+    gather(var, value, -c(schid, year)) %>%
+    mutate(var = gsub('var_', '', var)) %>%
+    arrange(schid, var)
+
+## show
+df_long
+```
+
+    ## # A tibble: 12 x 4
+    ##    schid  year var   value
+    ##    <chr> <dbl> <chr> <int>
+    ##  1 A      2013 x         1
+    ##  2 A      2013 y         5
+    ##  3 A      2013 z         9
+    ##  4 B      2013 x         2
+    ##  5 B      2013 y         6
+    ##  6 B      2013 z        10
+    ##  7 C      2013 x         3
+    ##  8 C      2013 y         7
+    ##  9 C      2013 z        11
+    ## 10 D      2013 x         4
+    ## 11 D      2013 y         8
+    ## 12 D      2013 z        12
+
+Long –\> wide
+-------------
+
+To go in the opposite direction, use the `spread(var, value)` function,
+which makes columns for every unique `var` and assigns the `value` that
+was in the `var`s row. Unlike `gather()`, we don’t have explicily say to
+ignore columns that want to ignore.
+
+Because we were clever before and dropped the stub from the variable
+name, the `mutate()` function uses `gsub()` with a [regular
+expression](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html)
+to add the stub back.
+
+``` r
+df_wide <- df_long %>%
+    mutate(var = gsub('(.*)', 'var_\\1', var)) %>%
+    spread(var, value) %>%
+    arrange(schid)
+
+## show
+df_wide
+```
+
+    ## # A tibble: 4 x 5
+    ##   schid  year var_x var_y var_z
+    ##   <chr> <dbl> <int> <int> <int>
+    ## 1 A      2013     1     5     9
+    ## 2 B      2013     2     6    10
+    ## 3 C      2013     3     7    11
+    ## 4 D      2013     4     8    12
+
+In theory, our new `df_wide` data frame should be the same as the one we
+started with. Let’s check:
+
+``` r
+## confirm that df_wide == df
+identical(df, df_wide)
+```
+
+    ## [1] TRUE
+
+Success!
 
 Notes
 =====

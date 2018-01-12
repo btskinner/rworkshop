@@ -56,10 +56,10 @@ the
 descriptions of the variables, see the <a href = '{{ site.baseurl
 }}/data/#els_planscsv'>codebook</a>.
 
-# Base R
+# Data wrangling with base R
 ```{r, echo = FALSE, purl = TRUE}
 ## -----------------------------------------------------------------------------
-## Wrangling data using Base R commands
+## Data wrangling with base R
 ## -----------------------------------------------------------------------------
 
 ```
@@ -70,13 +70,17 @@ files like `.txt`, `.csv`, and `.tsv` files. (We'll discuss how to
 read in data files from other languages later.) Since the data come in
 a CSV file, we could use the special command `read.csv()`, but
 `read.table()` works just as well as long as we tell R that items in
-each row are `sep`arated by a `,`.
+each row are `sep`arated by a `,`. Finally, we won't talk about
+factors until later, but let's read in the data keeping string values
+as character vectors.
 
 ```{r}
 ## read in the data, making sure that first line is read as column names
-df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
+df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE,
+                 stringsAsFactors = FALSE)
 
 ```
+Let's look at the first few rows and the variable names.
 
 ```{r}
 ## show the first few rows (or view in RStudio's view)
@@ -87,18 +91,286 @@ names(df)
 
 ```
 
+## Access columns 
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## access columns
+## ---------------------------
+
+```
+Because the data frame lives in an object and not in memory (like it
+does in Stata), you can't just reference the variable name. Instead you
+need to give R the data frame's name followed by a `$` and then the
+variable name. 
+
+You can also use the `df[['<var name>']]` contruction, which comes in
+handy in loops and functions.
+
+```{r}
+## wrong
+summary(bynels2m)
+summary('bynels2m')
+
+## correct
+summary(df$bynels2m)
+summary(df[['bynels2m']])
+
+```
+
+## Add variables
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## add variables
+## ---------------------------
+
+```
+
+Add a column by giving it a name and assigning what you want. R will
+repeat the values as necessary to fill the number of rows. You can
+also use data from other columns. R will assign values row by row,
+using the right-hand side values that align.
+
+
+```{r}
+## add simply column of ones
+df$ones <- 1
+
+## add average test score (bynels2r + bynels2m / 2)
+df$avg_test <- (df$bynels2r + df$bynels2m) / 2
+
+## check names
+names(df)
+
+```
+
+## Drop variables
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## drop variables
+## ---------------------------
+
+```
+Drop variables by assigning `NULL` to the column name.
+
+```{r}
+## drop follow up one panel weight
+df$f1pnlwt <- NULL
+
+## check names
+names(df)
+
+```
+
+## Conditionally change values
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## conditionally change values
+## ---------------------------
+
+```
+This can be tricky at first. To conditionally change or assign values,
+you need to tell R where the conditions apply. There are a couple of
+ways. 
+
+The first way uses brackets, `[]`, after the variable name to set the
+condition where the assignment is true. For version 1 below, the new
+variable `female` is assigned a value of 1 in the rows where it is
+`TRUE` that `bysex == 'female'`. In the rows that's `FALSE`, R will
+assign `NA` since there's no information. We can backfill 0s in the
+second line.
+
+The other way is to use the `ifelse(test, yes, no)` function. Going
+row by row, the `test` (`bysex == 'female'`) is performed. If `TRUE`,
+the new variable gets a 1; if `FALSE`, it gets a 0.
+
+```{r}
+## make a numeric column that == 1 if bysex is female, 0 otherwise
+## v.1
+df$female_v1[df$bysex == 'female'] <- 1
+df$female_v1[df$bysex != 'female'] <- 0
+
+## v.2
+df$female_v2 <- ifelse(df$bysex == 'female', 1, 0)
+
+## the same?
+identical(df$female_v1, df$female_v2)
+
+```
+
+> #### Quick exercise
+> Create a new column called `ses_gender` that uses `byses1` for women
+> and `byses2` for men. (HINT: if you use a condition, you need to use
+> it on both sides of the arrow.)
+
+You can also use this to drop rows with missing values
+```{r}
+## assign as NA if < 0
+df$bydob_p[df$bydob_p < 0] <- NA
+nrow(df)
+
+## drop if NA
+df <- df[!is.na(df$bydob_p),]
+nrow(df)
+
+```
+
+
+## Order
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## order
+## ---------------------------
+
+```
+Sort the data frame using the `order()` function as a condition.
+```{r}
+## show first few rows of student and base year math scores
+df[1:10, c('stu_id','bydob_p')]
+
+## since a data frame has two dims, notice the comma in the brackets
+df <- df[order(df$bydob_p),]
+
+## show again first few rows of ID and DOB
+df[1:10, c('stu_id','bydob_p')]
+
+```
+
+
+## Aggregate
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## aggregate
+## ---------------------------
+
+```
+
+To collapse the data, generating some summary statistic in the
+process, use the `aggregate(x, by, FUN)`, where `x` is the data frame,
+`by` is the grouping variable in a `list()`, and `FUN` is the function
+that you want to use. These can be base R functions or one you create
+yourself. Let's get the average math score within each school.
+
+```{r}
+## first, make test score values < 0 == NA
+df$bynels2m[df$bynels2m < 0] <- NA
+
+## create new data frame
+df_sch <- aggregate(df$bynels2r, by = list(df$sch_id), FUN = mean, na.rm = T)
+
+## show
+head(df_sch)
+
+```
+
+## Merge
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## merge
+## ---------------------------
+
+```
+
+Since you can have multiple data frames in memory (as objects) at the
+same time in R, you may not find yourself merging data sets as often
+you would in another language (like Stata, where you have to). That
+said, it still needs to happen. Use the `merge()` function. Let's
+merge the aggregated test score data back into the data set.
+
+```{r}
+## first fix names from aggregated data set
+names(df_sch) <- c('sch_id', 'sch_bynels2m')
+
+## merge on school ID variable
+df <- merge(df, df_sch, by = 'sch_id')
+
+## show
+head(df)
+
+```
+
+## Write
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## write
+## ---------------------------
+
+```
+
+Finally we can write our new data set to disk. We can save it as an R
+data file type, but since we may want to share with non-R users, we'll
+save it as a csv file again.
+
+```{r, eval = FALSE, purl = TRUE}
+write.csv(df, '../data/els_plans_mod.csv', row.names = FALSE)
+
+```
+
+
 # Tidyverse
+
+The tidyverse is a shorthand for
+a [number of packages](https://www.tidyverse.org/packages/) that work
+well together and can be used in place of base R functions. A few of
+the tidyverse packages that you will often use are:
+
+* [dplyr](http://dplyr.tidyverse.org) for data manipulation  
+* [tidyr](http://tidyr.tidyverse.org) for making
+  data [tidy](http://vita.had.co.nz/papers/tidy-data.html)  
+* [readr](http://readr.tidyverse.org) for flat file I/O  
+* [readxl](http://readxl.tidyverse.org) for Excel file I/O  
+* [haven](http://haven.tidyverse.org) for other file format I/O  
+* [ggplot2](http://ggplot2.tidyverse.org) for making graphics  
+
+There are many others. A lot of R users find functions from these
+libraries to be more intuitive than base R functions. In some cases,
+tidyverse functions are faster than base R, which is an added benefit
+when working with large data sets.
 
 ## Magrittr and pipes
 
+The key feature of the tidyverse is its use of pipes, `%>%`, from the
+[magrittr package](http://magrittr.tidyverse.org). 
+
 <span style="display:block;text-align:center">
-![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)
+[![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)](https://www.fine-arts-museum.be/uploads/exhibitions/images/magritte_la_trahison_des_images_large@2x.jpg)
 </span>
 
+Pipes take values/output from the left side and pipe it to the input
+of the right side. So `sum(x)` can be rewritten as `x %>% sum`. This
+is a silly example (why would you do that?), but pipes are powerful
+because they can be chained together. Nested layers of functions that
+would be difficult to read from the inside out can be made
+clearer. Let's see the now canonical example
+from
+[Hadley](https://twitter.com/_inundata/status/557980236130689024) to
+make it clearer:
+
+```r
+## foo_foo is an instance of a little bunny
+foo_foo <- little_bunny()
+
+## adventures in base R
+bop_on(
+    scoop_up(
+        hop_through(foo_foo, forest),
+        field_mouse
+    ),
+    head
+)
+
+## adventures w/ pipes
+foo_foo %>%
+    hop_through(forest) %>%
+    scoop_up(field_mouse) %>%
+    bop_on(head)
+
+```
+
+# Data wrangling with tidyverse
 
 ```{r, echo = FALSE, purl = TRUE}
 ## -----------------------------------------------------------------------------
-## Wrangling data using the Tidyverse
+## Data wrangling with tidyverse
 ## -----------------------------------------------------------------------------
 
 ```
@@ -108,11 +380,173 @@ library(tidyverse)
 
 ```
 
+Let's reread the original data. Like `read.table()`, `read_delim()` is
+the generic function that needs you to give it the
+separating/delimiting character. You could also just use `read_csv()`.
+
 ```{r}
 ## read in the data
 df <- read_delim('../data/els_plans.csv', delim = ',')
 
 ```
+
+## Mutate
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## mutate
+## ---------------------------
+
+```
+
+## Select
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## select
+## ---------------------------
+
+```
+
+## Filter
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## select
+## ---------------------------
+
+```
+
+## Arrange
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## arrange
+## ---------------------------
+
+```
+## Summarize
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## summarize
+## ---------------------------
+
+```
+
+## Join
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## join
+## ---------------------------
+
+```
+
+## Write
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## write
+## ---------------------------
+
+```
+
+
+# Reshaping data
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------------------------------------
+## Reshaping data
+## -----------------------------------------------------------------------------
+
+```
+Reshaping data is a common data wrangling task. Whether going from
+wide to long format or the reverse, this can be a painful process. The
+best way I know to reshape data in R is by using the **tidyr**
+library. 
+
+## Create toy data
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## Create toy data
+## ---------------------------
+
+```
+For clarity, we'll use toy data for this example. It will be wide to start.
+```{r}
+df <- data.frame(schid = c('A','B','C','D'),
+                 year = 2013,
+                 var_x = 1:4,
+                 var_y = 5:8,
+                 var_z = 9:12,
+                 stringsAsFactors = FALSE) %>%
+    tbl_df()
+
+## show
+df
+
+```
+## Wide --> long
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## wide --> long
+## ---------------------------
+
+```
+To go from wide to long format, use the `gather(key, value)` function,
+where the `key` is the variable that will made long (the stub in
+Stata) and the `value` is the column of associated values that will be
+created. Since we want the **schid** and **year** columns to remain
+associated with their rows, we ignore them (`-c(...)`) so they will be
+repeated as necessary.
+
+The `mutate()` row isn't strictly necessary, but it does make the
+output a little cleaner since we really don't need the `var_` stub
+once the data are in long form. The `gsub('<old string>', '<new
+string>', variable)` function simply replaces the `'<old string>'` with
+the `'<new string>'` wherever it finds in the `variable`.
+
+Finally we `arrange()` the data by school ID and the variable name.
+
+```{r}
+df_long <- df %>%
+    gather(var, value, -c(schid, year)) %>%
+    mutate(var = gsub('var_', '', var)) %>%
+    arrange(schid, var)
+
+## show
+df_long
+
+```
+## Long --> wide
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## long --> wide
+## ---------------------------
+
+```
+To go in the opposite direction, use the `spread(var, value)`
+function, which makes columns for every unique `var` and assigns the
+`value` that was in the `var`s row. Unlike `gather()`, we don't have
+explicily say to ignore columns that want to ignore.
+
+Because we were clever before and dropped the stub from the variable
+name, the `mutate()` function uses `gsub()` with
+a
+[regular expression](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html) to
+add the stub back.
+
+```{r}
+df_wide <- df_long %>%
+    mutate(var = gsub('(.*)', 'var_\\1', var)) %>%
+    spread(var, value) %>%
+    arrange(schid)
+
+## show
+df_wide
+
+```
+
+In theory, our new `df_wide` data frame should be the same as the one
+we started with. Let's check:
+```{r}
+## confirm that df_wide == df
+identical(df, df_wide)
+```
+Success!
 
 # Notes
 
