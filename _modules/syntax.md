@@ -520,9 +520,9 @@ R great. Most of your scripts will make use of one or more packages.
 Installation
 ------------
 
-As you’ve seen on the [getting
-started](%7B%7B%20site.baseurl%20%7D%7D/start/) page, packages can be
-installed from the official CRAN repository using:
+As you’ve seen on the <a href = '{{ site.baseurl }}/start/'>getting
+started</a> page, packages can be installed from the official CRAN
+repository using:
 
 ``` r
 install.packages(<package name>)

@@ -472,8 +472,8 @@ R great. Most of your scripts will make use of one or more
 packages. 
 
 ## Installation
-As you've seen on the [getting started]({{ site.baseurl
-}}/start/) page, packages can be installed from the official CRAN
+As you've seen on the <a href = '{{ site.baseurl }}/start/'>getting
+started</a> page, packages can be installed from the official CRAN
 repository using:
 
 ```{r, eval = FALSE, purl = FALSE}

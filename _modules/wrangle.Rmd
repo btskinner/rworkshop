@@ -1,0 +1,55 @@
+---
+layout: module
+title: Wrangling data
+date: 2018-01-01 00:00:03
+category: module
+links:
+  script: wrangle.R
+  data: els_plans.csv
+output:
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
+################################################################################
+##
+## <PROJ> R Workshop
+## <FILE> wrangle.R 
+## <INIT> 15 January 2018
+## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
+##
+################################################################################
+
+## clear memory
+rm(list = ls())
+
+```
+
+```{r}
+## reading in data
+df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE)
+
+## show the first few rows (or view in RStudio's view)
+head(df)
+
+## show the column names
+names(df)
+
+```
+
+For descriptions of the variables, see the <a href = '{{ site.baseurl }}/data/#els_planscsv'>codebook</a>.
+
+
+
+
+```{r, echo = FALSE, purl = TRUE}
+
+## =============================================================================
+## END SCRIPT
+################################################################################
+```
