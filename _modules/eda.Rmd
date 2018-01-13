@@ -29,15 +29,27 @@ source('knit_setup.R')
 ## clear memory
 rm(list = ls())
 
-```
-
-```{r}
 ## libraries
 library(tidyverse)
 library(haven)
 library(labelled)
 
 ```
+
+```r
+## libraries
+library(tidyverse)
+library(haven)
+library(labelled)
+
+```
+```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
+suppressMessages(library(tidyverse))
+library(haven)
+library(labelled)
+
+```
+
 ```{r}
 ## read in Stata data file
 df <- read_dta('../data/els_plans.dta')
