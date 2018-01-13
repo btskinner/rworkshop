@@ -290,7 +290,7 @@ x
 Building on these data types, R relies on four primary data structures:
 
 - `vector`
-- `matrix` (`array`)
+- `matrix`[^f6]
 - `list`
 - `dataframe`
 
@@ -316,10 +316,23 @@ is.vector(x)
 
 ## add to vector (can do so recursively)
 x <- c(x, 2, 3)
+x
 
 ## no dim, but length
 dim(x)
 length(x)
+
+```
+
+You can access the elements of a vector using brackets, `[]`, after
+the object name. 
+```{r}
+## get the second element
+x[2]
+
+## change the third element
+x[3] <- 4
+x
 
 ```
 
@@ -340,7 +353,7 @@ class(x)
 
 ```
 
-### Matrix (array)
+### Matrix
 ```{r, include = FALSE, purl = TRUE}
 ## ------------
 ## matrix/array
@@ -371,18 +384,22 @@ ncol(x)
 
 ```
 
-An array is like a matrix, but can have greater than two
-dimensions. Some program output comes in array form so it's good to
-recognize it.
-```{r}
-## 2D array == matrix
-z <- array(1:9, dim = c(3,3))
-z
+Like a vector, you can access parts of a matrix. Since it has two
+dimensions, use a comma in the bracket to separate row indices from
+column indices.
 
-## check if same as x matrix above
-identical(x,z)
+```{r}
+## show the values in the first row
+x[1,]
+
+## show the values in the third column
+x[,3]
 
 ```
+
+> #### Quick exercise
+> Return the middle value of the x matrix.
+
 
 ### List
 ```{r, include = FALSE, purl = TRUE}
@@ -457,13 +474,27 @@ names(df)
 
 ```
 
+To access a column, you need to give R the data frame's name followed
+by a `$` and then the variable name.
+
+
+```{r}
+## get col_a
+df$col_a
+
+```
+
+You can also use the `df[['<var name>']]` contruction, which comes in
+handy in loops and functions.
+
+```{r}
+## get col_a (note the quotation marks this time)
+df[['col_a']]
+
+```
 > #### Quick exercise 
 > Create two or three equal length vectors. Next, combine to create a
 > data frame. 
-
-Clearly, there's much more data frames and the other data types (like,
-*How do I access the elements?*). We'll get more in-depth in the next
-modules as the specific commands are required.
 
 # Packages
 
@@ -498,7 +529,7 @@ install_github('<github handle>/<repo name>')
 ```
 ## Loading package libraries
 
-Package libraries [^f6] can loaded in a number of ways:
+Package libraries[^f7] can loaded in a number of ways:
 
 1. `library('<library name>')`
 1. `require('<library name>')`
@@ -585,7 +616,8 @@ list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
     programming behaviors, so the assigned labels aren't perfect. They
     are mostly right, though.
 [^f5]: Full disclosure: all questions I asked when learning R.
-[^f6]: For clarity, I'll call them packages when talking about what is
+[^f6]: R also supports arrays, which can take on more than two dimensions.
+[^f7]: For clarity, I'll call them packages when talking about what is
     downloaded and libraries when discussing what is loaded into
     memory. Since the names are the same, it's really a semantic
     difference.

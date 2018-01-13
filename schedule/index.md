@@ -15,11 +15,11 @@ all relevant software and packages.
 |8:30a - 9:00a|Registration|  
 |9:00a - 9:15a|Welcome and Introduction|  
 |9:15a - 10:30a|R syntax|  
-|10:30a - 12:00p|Wrangling data|  
+|10:30a - 12:00p|Wrangling data I (base R)|  
 |**12:00p - 1:00p**|**LUNCH**|  
-|1:00p - 2:30p|Exploratory data analysis|  
+|1:00p - 2:30p|Wrangling data II (tidyverse)|  
 |**2:30p - 2:45p**|**BREAK**|  
-|2:45p - 4:15p|Econometric modeling|  
+|2:45p - 4:15p|Exploratory data analysis|  
 |4:15p - 4:30p|Wrap up|  
 
 ## Day 2: Tuesday, January 16
@@ -27,10 +27,10 @@ all relevant software and packages.
 |Time|Section|  
 |:---|:------|  
 |9:00a - 9:15a|Quick review|  
-|9:15a - 10:30a|Graphics I|  
-|10:30a - 12:00p|Graphics II|  
+|9:15a - 10:30a|Graphics|  
+|10:30a - 12:00p|Econometric modeling|  
 |**12:00p - 1:00p**|**LUNCH**|  
-|1:00p - 2:30p|Writing functions|  
+|1:00p - 2:30p|Programming in R|  
 |**2:30p - 2:45p**|**BREAK**|  
 |2:45p - 4:15p|*TBD* based on interest|  
 |4:15p - 4:30p|Wrap up|  

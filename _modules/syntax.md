@@ -271,7 +271,7 @@ Structures
 Building on these data types, R relies on four primary data structures:
 
 -   `vector`
--   `matrix` (`array`)
+-   `matrix`[^6]
 -   `list`
 -   `dataframe`
 
@@ -295,7 +295,12 @@ is.vector(x)
 ``` r
 ## add to vector (can do so recursively)
 x <- c(x, 2, 3)
+x
+```
 
+    ## [1] 1 2 3
+
+``` r
 ## no dim, but length
 dim(x)
 ```
@@ -307,6 +312,24 @@ length(x)
 ```
 
     ## [1] 3
+
+You can access the elements of a vector using brackets, `[]`, after the
+object name.
+
+``` r
+## get the second element
+x[2]
+```
+
+    ## [1] 2
+
+``` r
+## change the third element
+x[3] <- 4
+x
+```
+
+    ## [1] 1 2 4
 
 All values in a vector must be of the same type. If you concatenate
 values of different data types, R will automatically promote all values
@@ -325,7 +348,7 @@ x <- c(x, 'a')
 x
 ```
 
-    ## [1] "1" "2" "3" "a"
+    ## [1] "1" "2" "4" "a"
 
 ``` r
 ## check class
@@ -334,7 +357,7 @@ class(x)
 
     ## [1] "character"
 
-### Matrix (array)
+### Matrix
 
 A matrix is a 2D arrangement of data types. Instead of length, it has
 dimensions. Like vectors, all data elements must be of the same type.
@@ -382,26 +405,27 @@ ncol(x)
 
     ## [1] 3
 
-An array is like a matrix, but can have greater than two dimensions.
-Some program output comes in array form so it’s good to recognize it.
+Like a vector, you can access parts of a matrix. Since it has two
+dimensions, use a comma in the bracket to separate row indices from
+column indices.
 
 ``` r
-## 2D array == matrix
-z <- array(1:9, dim = c(3,3))
-z
+## show the values in the first row
+x[1,]
 ```
 
-    ##      [,1] [,2] [,3]
-    ## [1,]    1    4    7
-    ## [2,]    2    5    8
-    ## [3,]    3    6    9
+    ## [1] 1 4 7
 
 ``` r
-## check if same as x matrix above
-identical(x,z)
+## show the values in the third column
+x[,3]
 ```
 
-    ## [1] TRUE
+    ## [1] 7 8 9
+
+> #### Quick exercise
+>
+> Return the middle value of the x matrix.
 
 ### List
 
@@ -502,14 +526,30 @@ names(df)
 
     ## [1] "col_a" "col_b" "col_c"
 
+To access a column, you need to give R the data frame’s name followed by
+a `$` and then the variable name.
+
+``` r
+## get col_a
+df$col_a
+```
+
+    ## [1] 1 2 3
+
+You can also use the `df[['<var name>']]` contruction, which comes in
+handy in loops and functions.
+
+``` r
+## get col_a (note the quotation marks this time)
+df[['col_a']]
+```
+
+    ## [1] 1 2 3
+
 > #### Quick exercise
 >
 > Create two or three equal length vectors. Next, combine to create a
 > data frame.
-
-Clearly, there’s much more data frames and the other data types (like,
-*How do I access the elements?*). We’ll get more in-depth in the next
-modules as the specific commands are required.
 
 Packages
 ========
@@ -547,7 +587,7 @@ install_github('<github handle>/<repo name>')
 Loading package libraries
 -------------------------
 
-Package libraries [^6] can loaded in a number of ways:
+Package libraries[^7] can loaded in a number of ways:
 
 1.  `library('<library name>')`
 2.  `require('<library name>')`
@@ -640,6 +680,9 @@ Notes
 
 [^5]: Full disclosure: all questions I asked when learning R.
 
-[^6]: For clarity, I’ll call them packages when talking about what is
+[^6]: R also supports arrays, which can take on more than two
+    dimensions.
+
+[^7]: For clarity, I’ll call them packages when talking about what is
     downloaded and libraries when discussing what is loaded into memory.
     Since the names are the same, it’s really a semantic difference.

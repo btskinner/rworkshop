@@ -12,12 +12,6 @@ layout: default
 |sch\_id|school id|  
 |strat\_id|stratum|  
 |psu|primary sampling unit|  
-|f1sch\_id|link to first follow-up school|  
-|f1univ1|sample member status in by and f1 rounds|  
-|f1univ2a|base year status and how sample member entered f1 sample|  
-|f1univ2b|sample member f1 status|  
-|g10cohrt|sophomore cohort member in 2001-2002 school year|  
-|g12cohrt|f1 senior cohort member|  
 |bystuwt|student weight|  
 |bysex|sex-composite|  
 |byrace|student's race/ethnicity-composite|  
