@@ -255,7 +255,11 @@ identical(df$female_v1, df$female_v2)
 > and `byses2` for men. (HINT: if you use a condition, you need to use
 > it on both sides of the arrow.)
 
-You can also use this to drop rows with missing values
+Filter
+------
+
+You can also use brackets to conditionally drop rows, such as those with
+missing values.
 
 ``` r
 ## assign as NA if < 0
@@ -555,23 +559,187 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
 Mutate
 ------
 
+To add variables and change existing ones, use the `mutate()`.
+
+Note that with this (and the following) tidyverse functions, you don’t
+need to use the data frame name with the dollar sign construction and
+you don’t need to put quotation marks around the column names.
+
+``` r
+## assign values inside function using = sign (not <-)
+df <- df %>% mutate(ones = 1,
+                    avg_test = (bynels2r + bynels2m) / 2) # ignore neg vals
+```
+
+To conditionally mutate variables, use the `ifelse()` construction
+inside the `mutate()` function.
+
+``` r
+## (1) make a numeric column that == 1 if bysex is female, 0 otherwise
+## (2) assign DOB an NA if < 0
+df <- df %>%
+    mutate(female = ifelse(bysex == 'female', 1, 0),
+           bydob_p = ifelse(bydob_p < 0, NA, bydob_p))           
+```
+
 Select
 ------
+
+To choose variables, either when making a new data frame or dropping
+them, use `select()`. To drop them, use a negative sign (`-`) in front
+of the variable name.
+
+``` r
+## drop follow up one panel weight
+df <- df %>% select(-f1pnlwt)
+
+## check names
+names(df)
+```
+
+    ##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "f1univ1" 
+    ##  [7] "f1univ2a" "f1univ2b" "g10cohrt" "g12cohrt" "bystuwt"  "bysex"   
+    ## [13] "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed" "byincome"
+    ## [19] "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r" "f1qwt"   
+    ## [25] "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"
 
 Filter
 ------
 
+Like `select()` works on columns, `filter()` can be used to subset based
+on row conditions. Earlier we properly labeled `bydob_p` values less
+than zero as `NA`. Let’s drop those.
+
+``` r
+## show number of rows
+nrow(df)
+```
+
+    ## [1] 16160
+
+``` r
+## keep if not (!) missing
+df <- df %>% filter(!is.na(bydob_p))
+nrow(df)
+```
+
+    ## [1] 15183
+
 Arrange
 -------
+
+Sort values using the `arrange()` function.
+
+``` r
+## show first few rows of student and base year math scores (tidyverse way)
+df %>% select(stu_id, bydob_p) %>% head(10)
+```
+
+    ## # A tibble: 10 x 2
+    ##    stu_id bydob_p
+    ##     <int>   <int>
+    ##  1 101101  198512
+    ##  2 101102  198605
+    ##  3 101104  198601
+    ##  4 101105  198607
+    ##  5 101106  198511
+    ##  6 101107  198510
+    ##  7 101108  198607
+    ##  8 101109  198512
+    ##  9 101110  198505
+    ## 10 101111  198507
+
+``` r
+## arrange
+df <- df %>% arrange(bydob_p)
+
+## show again first few rows of ID and DOB
+df %>% select(stu_id, bydob_p) %>% head(10)
+```
+
+    ## # A tibble: 10 x 2
+    ##    stu_id bydob_p
+    ##     <int>   <int>
+    ##  1 133211  198300
+    ##  2 195210  198300
+    ##  3 195213  198300
+    ##  4 225203  198300
+    ##  5 268219  198300
+    ##  6 268225  198300
+    ##  7 274222  198300
+    ##  8 280215  198300
+    ##  9 324119  198300
+    ## 10 327128  198300
 
 Summarize
 ---------
 
+Aggregate data using the `summarise()` or `summarize()` function
+(they’re the same, just playing nice with by offering both spellings).
+Unlike the `aggregate()` function, you first need to set the grouping
+variable using the `group_by()` function. Since we need to replace
+negative values before we summarize, we’ll chain a few functions
+together into one command.
+
+``` r
+## create new data frame
+df_sch <- df %>%
+    ## first, make test score values < 0 == NA
+    mutate(bynels2m = ifelse(bynels2m < 0, NA, bynels2m)) %>%
+    ## group by school ID
+    group_by(sch_id) %>%
+    ## summarize
+    summarise(sch_bynels2m = mean(bynels2m, na.rm = TRUE))
+
+## show
+df_sch
+```
+
+    ## # A tibble: 751 x 2
+    ##    sch_id sch_bynels2m
+    ##     <int>        <dbl>
+    ##  1   1011         45.3
+    ##  2   1012         43.3
+    ##  3   1021         28.9
+    ##  4   1022         38.6
+    ##  5   1031         40.0
+    ##  6   1032         35.3
+    ##  7   1033         42.2
+    ##  8   1041         44.9
+    ##  9   1042         52.2
+    ## 10   1051         45.9
+    ## # ... with 741 more rows
+
 Join
 ----
 
+Rather than saying “merge,” dplyr uses the SQL language of joins:
+
+-   `left_join(x, y)`: keep all x, drop unmatched y
+-   `right_join(x, y)`: keep all y, drop unmatched x
+-   `inner_join(x, y)`: keep only matching
+-   `outer_join(x, y)`: keep everything
+
+Since we want to join a smaller aggregated data frame to the original
+data frame, we’ll use a `left_join()`. The join functions will try to
+guess the joining variable (and tell you what it picked) if you don’t
+supply one, but we’ll specify one to be clear.
+
+``` r
+## join on school ID variable
+df <- df %>% left_join(df_sch, by = 'sch_id')
+```
+
 Write
 -----
+
+The readr library can also write delimited flat files. Instead of
+`write_delim()`, we’ll use the wrapper function `write_csv()` to save a
+csv file.
+
+``` r
+write_csv(df, '../data/els_plans_mod_tv.csv')
+```
 
 Reshaping data
 ==============

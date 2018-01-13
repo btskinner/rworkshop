@@ -556,8 +556,8 @@ Package libraries [^6] can loaded in a number of ways:
 There’s a slight difference among each option in how the packages are
 loaded in the environment, but all should work for most common tasks.
 
-Call library function using namespace
--------------------------------------
+Call library function using namespace (advanced)
+------------------------------------------------
 
 Finally, you can call library functions without first loading the
 library. To do you this, you need to place the library name followed by
