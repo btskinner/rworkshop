@@ -1,7 +1,7 @@
 ---
 layout: module
 title: Econometric modeling
-date: 2018-01-01 00:00:05
+date: 2018-01-01 00:00:06
 category: module
 output:
   md_document:
@@ -21,8 +21,8 @@ source('knit_setup.R')
 ################################################################################
 ##
 ## <PROJ> R Workshop
-## <FILE> econometric.R 
-## <INIT> 15 January 2018
+## <FILE> modeling.R 
+## <INIT> 16 January 2018
 ## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
 ##
 ################################################################################

@@ -108,10 +108,6 @@ length(x)
 ## get the second element
 x[2]
 
-## change the third element
-x[3] <- 4
-x
-
 ## check class of x
 class(x)
 

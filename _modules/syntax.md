@@ -11,6 +11,15 @@ output:
     preserve_yaml: true
 ---
 
+It’s hard to know where to start when teaching a new programming
+language. This page is meant to give some background about R that
+hopefully  
+1. explains a little about how it is put together, and  
+2. puts it in context with other programming languages you might know.
+
+That said, revisiting this page after after working through the other
+modules might be useful.
+
 R: language + environment
 =========================
 
@@ -27,66 +36,16 @@ environment](https://www.r-project.org/about.html) that was designed
 with statistical computing and data analysis in mind. To that end, its
 structure represents a compromise between a code base optimized for
 mathematical procedures and one with high-level functionality that can
-be used interactively (unlike compiled code). R is probably best known
-for its graphing capabilities, but it has [continued to grow in
-popularity among data
+be used interactively (unlike compiled code). In other words, it’s a
+great tool for working interactively with quantitative data.
+
+R is probably best known for its graphing capabilities, but it has
+[continued to grow in popularity among data
 scientists](http://blog.revolutionanalytics.com/2018/01/tiobe-2017.html),[^1]
 who are increasingly [extending R’s functionality through
 user-contributed
 packages](http://blog.revolutionanalytics.com/2017/01/cran-10000.html).[^2]
-
-Compared to other statistical languages
----------------------------------------
-
-Like all computing languages, R has its own structure and quirks. The
-idiomatic R approach to data analysis can be especially challenging at
-first for those who come to R from other common statistical packages or
-scripting languages, like
-[SPSS](https://www.ibm.com/products/spss-statistics),
-[Python](https://www.python.org), and
-[Stata](https://www.stata.com).[^3]
-
-I have almost zero experience with SPSS, so I can’t speak to the
-particular difficulties that SPSS users have with R other than to guess
-that biggest hurdle for the average SPSS user is the transition from
-point-and-click interaction to writing text-based instructions. Python
-users (I’m one of them), on the other hand, will probably find that R
-can be less syntactically consistent than Python and has fewer pure
-programming niceties. That said, the jump from Python to R should be
-fairly easy.
-
-I came to R after learning Stata first, which is common for many
-researchers trained in econometric methods. For me and others who’ve
-made the same Stata-to-R transition, I think the root of many problems
-is the fundamental difference between how Stata and R operate. Whereas
-Stata is more of a [procedural
-language](https://en.wikipedia.org/wiki/Procedural_programming) in which
-commands **do** things in an environment (your data), R is more
-[object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming)
-in that data and functions are **stored** in variables or objects and
-await instructions that pertain to them.[^4]
-
-As pointed out by my friend and colleague [Richard
-Blissett](https://www.shu.edu/profiles/RichardBlissett.cfm), users can
-see this difference in the command/function names in each language.
-Stata commands tend to be verbs: `summarize`, `tabulate`, and
-`regress`); on the other hand, R functions are often nouns: `summary`,
-`table`, and `lm` (for linear model). And so, common problems in the R
-to Stata switch such as  
-- *I ran a model and didn’t get any output*  
-- *How do I create local/global macros in R*  
-- *Which of these data objects is the actual data?*  
-- *Why isn’t R **doing** anything?*
-
-may be due to misunderstanding this difference.[^5]
-
-Like learning a new spoken language, constantly translating between your
-native tongue and the new language will only get you so far. To that
-end, I encourage native-Stata users to try to approach R without Stata
-procedures in mind (easier said than done, I know). That said, this
-document that shows the same analysis done in [Stata and R
-side-by-side](http://rslblissett.com/wp-content/uploads/2016/09/sidebyside_130826.pdf)
-may be useful in the initial transition.
+We will use a number of packages in this workshop.
 
 Integrated development environment (IDE) for R
 ----------------------------------------------
@@ -94,8 +53,8 @@ Integrated development environment (IDE) for R
 ### RStudio
 
 [RStudio](https://www.rstudio.com) does most everything R-related well
-and with little fuss, so it’s a great all-around IDE for most R users.
-We will use it in this workshop.
+and with little fuss, so it’s a great all-around program for using R. We
+will use it in this workshop.
 
 > #### Quick exercise
 >
@@ -103,25 +62,14 @@ We will use it in this workshop.
 > entering an equation in the console (like `1 + 1`). Next, open the
 > script associated with this module and run the first line.
 
-### Other options
-
-There are many other ways to run R. Below are just a few that, depending
-on your personal preferences and project needs, may be better or worse
-than RStudio.
-
--   R-app (comes with the R installation)
--   Terminal/shell (R executable needs to be in your path)
--   [Emacs + ESS](https://ess.r-project.org)
--   [Atom](https://atom.io) + [r-exec](https://atom.io/packages/r-exec)
--   [Jupyter](http://jupyter.org) +
-    [IRkernel](https://irkernel.github.io)
-
 Assignment
 ==========
 
+R thinks of things as objects. Objects are like boxes in which we can
+put things: data, functions, and even other objects.
+
 Before discussing data types and structures, the first lesson in R is
-how to assign values to objects, that is, how to put stuff into objects
-be it data or methods. In R ([for quirky
+how to assign values to objects. In R ([for quirky
 reasons](http://blog.revolutionanalytics.com/2008/12/use-equals-or-arrow-for-assignment.html)),
 the primary means of assignment is the arrow, `<-`, which is a less than
 symbol, `<`, followed by a hyphen, `-`.
@@ -149,6 +97,11 @@ y
 ```
 
     ## [1] "a"
+
+> #### Quick exercise
+>
+> Assign the output of `1+1` to `x`. Next subtract 1 from `x` and
+> reassign the result to `x`.
 
 Data types and structures
 =========================
@@ -271,7 +224,7 @@ Structures
 Building on these data types, R relies on four primary data structures:
 
 -   `vector`
--   `matrix`[^6]
+-   `matrix`[^3]
 -   `list`
 -   `dataframe`
 
@@ -323,13 +276,11 @@ x[2]
 
     ## [1] 2
 
-``` r
-## change the third element
-x[3] <- 4
-x
-```
-
-    ## [1] 1 2 4
+> #### Quick exercise
+>
+> Since you know how to access a specific element in a vector and how to
+> assign new values, try to change the 3rd element of the `x` vector to
+> 4.
 
 All values in a vector must be of the same type. If you concatenate
 values of different data types, R will automatically promote all values
@@ -348,7 +299,7 @@ x <- c(x, 'a')
 x
 ```
 
-    ## [1] "1" "2" "4" "a"
+    ## [1] "1" "2" "3" "a"
 
 ``` r
 ## check class
@@ -425,7 +376,9 @@ x[,3]
 
 > #### Quick exercise
 >
-> Return the middle value of the x matrix.
+> Return the middle value of the x matrix. Next assign the middle value
+> the character value ‘a’. What happens to the rest of the values in the
+> matrix?
 
 ### List
 
@@ -549,7 +502,8 @@ df[['col_a']]
 > #### Quick exercise
 >
 > Create two or three equal length vectors. Next, combine to create a
-> data frame.
+> data frame. Finally, change one value in the data frame (HINT: think
+> about how you changed vector and matrix values before).
 
 Packages
 ========
@@ -560,18 +514,27 @@ R great. Most of your scripts will make use of one or more packages.
 Installation
 ------------
 
+### CRAN
+
 As you’ve seen on the <a href = '{{ site.baseurl }}/start/'>getting
 started</a> page, packages can be installed from the official CRAN
 repository using:
 
 ``` r
-install.packages(<package name>)
+install.packages('<package name>')
 ```
 
 The default option installs all dependencies (other packages that the
 package you want may rely on to work properly). By default, R will check
-how you built R (did you download a binary file appropriate for your
-operating system or build from source) and download accordingly.
+how you installed R and download the right operating system file type.
+
+> #### Quick exercise
+>
+> Install the
+> [`Hmisc`](http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc) package,
+> which has a lot of useful functions.
+
+### GitHub
 
 Recently, people have begun sharing the source code for their R packages
 on [GitHub](https://github.com). If you want to download a package on
@@ -587,28 +550,20 @@ install_github('<github handle>/<repo name>')
 Loading package libraries
 -------------------------
 
-Package libraries[^7] can loaded in a number of ways:
-
-1.  `library('<library name>')`
-2.  `require('<library name>')`
-3.  `lapply(c('<lib 1>', '<lib 2>'), require, character.only = TRUE)`
-
-There’s a slight difference among each option in how the packages are
-loaded in the environment, but all should work for most common tasks.
-
-Call library function using namespace (advanced)
-------------------------------------------------
-
-Finally, you can call library functions without first loading the
-library. To do you this, you need to place the library name followed by
-two colons (`::`) before the function name:
-`<library name>::<function>`. This technique is useful if you only need
-a single command one time, are writing your own R package, or need to
-use functions with the same name that come from different packages:
+Package libraries[^4] can loaded in a number of ways, but the easiest it
+to write:
 
 ``` r
-devtools::install_github('<github id>/<repo name>')
+library('<library name>')
 ```
+
+where `'<library name>'` is the name of the package/library. You will
+need to load these before you can use their functions in your scripts.
+Typically, they are placed at the top of the script file.
+
+> #### Quick exercise
+>
+> Load the `tidyverse` package, which you should have already installed.
 
 Help
 ====
@@ -640,13 +595,83 @@ Google it!
 
 Google is a coder’s best friend. If you are having a problem, odds are a
 1,000 other people have too and at least one of them has been brave (or
-foolhearty!) enough to ask about it in a forum like
+foolhardy!) enough to ask about it in a forum like
 [StackOverflow](https://stackoverflow.com),
 [CrossValidated](https://stackoverflow.com), or [R-help mailing
 list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
 
-Other miscellaneous notes about R
-=================================
+Other notes about R
+===================
+
+Compared to other statistical languages
+---------------------------------------
+
+Like all computing languages, R has its own structure and quirks. The
+idiomatic R approach to data analysis can be especially challenging at
+first for those who come to R from other common statistical packages or
+scripting languages, like
+[SPSS](https://www.ibm.com/products/spss-statistics),
+[Python](https://www.python.org), and
+[Stata](https://www.stata.com).[^5]
+
+I have almost zero experience with SPSS, so I can’t speak to the
+particular difficulties that SPSS users have with R other than to guess
+that biggest hurdle for the average SPSS user is the transition from
+point-and-click interaction to writing text-based instructions. Python
+users (I’m one of them), on the other hand, will probably find that R
+can be less syntactically consistent than Python and has fewer pure
+programming niceties. That said, the jump from Python to R should be
+fairly easy.
+
+I came to R after learning Stata first, which is common for many
+researchers trained in econometric methods. For me and others who’ve
+made the same Stata-to-R transition, I think the root of many problems
+is the fundamental difference between how Stata and R operate. Whereas
+Stata is more of a [procedural
+language](https://en.wikipedia.org/wiki/Procedural_programming) in which
+commands **do** things in an environment (your data), R is more
+[object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming)
+in that data and functions are **stored** in variables or objects and
+await instructions that pertain to them.[^6]
+
+As pointed out by my friend and colleague [Richard
+Blissett](https://www.shu.edu/profiles/RichardBlissett.cfm), users can
+see this difference in the command/function names in each language.
+Stata commands tend to be verbs: `summarize`, `tabulate`, and
+`regress`); on the other hand, R functions are often nouns: `summary`,
+`table`, and `lm` (for linear model). And so, common problems in the R
+to Stata switch such as  
+- *I ran a model and didn’t get any output*  
+- *How do I create local/global macros in R*  
+- *Which of these data objects is the actual data?*  
+- *Why isn’t R **doing** anything?*
+
+may be due to misunderstanding this difference.[^7]
+
+Like learning a new spoken language, constantly translating between your
+native tongue and the new language will only get you so far. To that
+end, I encourage native-Stata users to try to approach R without Stata
+procedures in mind (easier said than done, I know). That said, this
+document that shows the same analysis done in [Stata and R
+side-by-side](http://rslblissett.com/wp-content/uploads/2016/09/sidebyside_130826.pdf)
+may be useful in the initial transition.
+
+Other options for running R
+---------------------------
+
+There are many other ways besides RStudio to run R. Below are just a few
+that, depending on your personal preferences and project needs, may be
+better or worse than RStudio.
+
+-   R-app (comes with the R installation)
+-   Terminal/shell (R executable needs to be in your path)
+-   [Emacs + ESS](https://ess.r-project.org)
+-   [Atom](https://atom.io) + [r-exec](https://atom.io/packages/r-exec)
+-   [Jupyter](http://jupyter.org) +
+    [IRkernel](https://irkernel.github.io)
+
+Miscellanea
+-----------
 
 -   R script files end in `.r` or `.R`
 -   1-indexed (indexes start at 1 instead of 0)
@@ -666,7 +691,14 @@ Notes
     open source project, see [Fox
     (2009)](https://journal.r-project.org/archive/2009-2/RJournal_2009-2_Fox.pdf)
 
-[^3]: If you come to R knowing C/C++, Fortran, or Java, yes, R is
+[^3]: R also supports arrays, which can take on more than two
+    dimensions.
+
+[^4]: For clarity, I’ll call them packages when talking about what is
+    downloaded and libraries when discussing what is loaded into memory.
+    Since the names are the same, it’s really a semantic difference.
+
+[^5]: If you come to R knowing C/C++, Fortran, or Java, yes, R is
     probably maddeningly slow at times, but it’s so much easier for
     common interactive tasks. Also see [Rcpp](http://www.rcpp.org),
     [rFortran](http://www.rfortran.org),
@@ -674,15 +706,8 @@ Notes
     interactivity. If you come knowing [Julia](https://julialang.org) as
     your first language, who are you?
 
-[^4]: Stata has some object-oriented features and R some procedural
+[^6]: Stata has some object-oriented features and R some procedural
     programming behaviors, so the assigned labels aren’t perfect. They
     are mostly right, though.
 
-[^5]: Full disclosure: all questions I asked when learning R.
-
-[^6]: R also supports arrays, which can take on more than two
-    dimensions.
-
-[^7]: For clarity, I’ll call them packages when talking about what is
-    downloaded and libraries when discussing what is loaded into memory.
-    Since the names are the same, it’s really a semantic difference.
+[^7]: Full disclosure: all questions I asked when learning R.

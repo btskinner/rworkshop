@@ -27,8 +27,8 @@ all relevant software and packages.
 |Time|Section|  
 |:---|:------|  
 |9:00a - 9:15a|Quick review|  
-|9:15a - 10:30a|Graphics|  
-|10:30a - 12:00p|Econometric modeling|  
+|9:15a - 10:30a|Econometric modeling|  
+|10:30a - 12:00p|Graphics II|  
 |**12:00p - 1:00p**|**LUNCH**|  
 |1:00p - 2:30p|Programming in R|  
 |**2:30p - 2:45p**|**BREAK**|  

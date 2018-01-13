@@ -67,9 +67,9 @@ Pipes take values/output from the left side and pipe it to the input of
 the right side. So `sum(x)` can be rewritten as `x %>% sum`. This is a
 silly example (why would you do that?), but pipes are powerful because
 they can be chained together. Nested layers of functions that would be
-difficult to read from the inside out can be made clearer. Let’s see the
-now canonical example from
-[Hadley](https://twitter.com/_inundata/status/557980236130689024) to
+difficult to read from the inside out can be made clearer. Let’s use
+[Hadley’s canonical
+example](https://twitter.com/_inundata/status/557980236130689024) to
 make it clearer:
 
 ``` r

@@ -14,7 +14,7 @@ repository]({{ site.repo }}).
 <ul class="modules">
 {% for module in site.modules %}
 	<li>
-		<a href="{{ module.url | prepend: site.baseurl }}">{{ module.title }}</a>
+		<a href="{{ module.url | prepend: site.baseurl }}.html">{{ module.title }}</a>
 	</li>
 {% endfor %}
 </ul>

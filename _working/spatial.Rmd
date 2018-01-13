@@ -106,7 +106,7 @@ map
 
 ```
 ```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
-htmltools::save_html(map, '../maps/map_cba.html', libdir = 'lib_map_cba')
+htmltools::save_html(map, '../maps/map_cba.html', libdir = '../maps/libs')
 htmltools::tags$iframe(src = '../../maps/map_cba.html')
 ```
 

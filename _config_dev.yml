@@ -41,4 +41,4 @@ exclude: ["*.Rmd", _working]
 collections:
   modules:
     output: true
-    permalink: /:collection/:path/
+    permalink: /:collection/:path
