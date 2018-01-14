@@ -31,19 +31,16 @@ systems.
 This workshop uses the following packages:
 
 - [tidyverse](https://CRAN.R-project.org/package=tidyverse)
-- [knitr](https://CRAN.R-project.org/package=knitr)
-- [leaflet](https://CRAN.R-project.org/package=leaflet)
-- [rmarkdown](https://CRAN.R-project.org/package=rmarkdown)
+- [labelled](https://CRAN.R-project.org/package=labelled)
 - [plotly](https://CRAN.R-project.org/package=plotly)
-- [shiny](https://CRAN.R-project.org/package=shiny)
+- [RColorBrewer](https://CRAN.R-project.org/package=RColorBrewer)
 - [xtable](https://CRAN.R-project.org/package=xtable)
 
 Once you've installed R and RStudio, open RStudio (or the base R app)
 and run the following code:
 
 ```r
-pkgs <- c('geojsonio','knitr','leaflet','plotly','RColorBrewer',
-          'rmarkdown','shiny','tidyverse','xtable')
+pkgs <- c('tidyverse','labelled','plotly','RColorBrewer','xtable')
 install.packages(pkgs)
 ```
 

@@ -95,20 +95,20 @@ df[1:10, c('stu_id','bydob_p')]
 df$bynels2m[df$bynels2m < 0] <- NA
 
 ## create new data frame
-df_sch <- aggregate(df$bynels2r, by = list(df$sch_id), FUN = mean, na.rm = T)
+sch_m <- aggregate(df$bynels2m, by = list(df$sch_id), FUN = mean, na.rm = T)
 
 ## show
-head(df_sch)
+head(sch_m)
 
 ## ---------------------------
 ## merge
 ## ---------------------------
 
 ## first fix names from aggregated data set
-names(df_sch) <- c('sch_id', 'sch_bynels2m')
+names(sch_m) <- c('sch_id', 'sch_bynels2m')
 
 ## merge on school ID variable
-df <- merge(df, df_sch, by = 'sch_id')
+df <- merge(df, sch_m, by = 'sch_id')
 
 ## show
 head(df)

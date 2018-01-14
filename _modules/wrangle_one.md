@@ -222,6 +222,15 @@ nrow(df)
 
     ## [1] 15183
 
+> #### Quick exercise
+>
+> The variable `byrace` also uses negative values to represent missing
+> values. Reassign `NA`s to values that are less than zero. Next drop
+> observations from the data set if they are missing `byrace` values.
+> (HINT 1: Pay attention to your commas each time!) (HINT 2: Before
+> dropping observations, save your data set object, `df` in another
+> object, `df_hold`, just in case things don’t go well the first time…)
+
 Order
 -----
 
@@ -264,6 +273,12 @@ df[1:10, c('stu_id','bydob_p')]
     ## 10046 324119  198300
     ## 10203 327128  198300
 
+> #### Quick exercise
+>
+> Sort by `bydob_p` again, but this time from youngest to oldest, that
+> is, reverse order. Type `?order` to see the help file for the function
+> and the argument you might need to do that.
+
 Aggregate
 ---------
 
@@ -278,19 +293,24 @@ Let’s get the average math score within each school.
 df$bynels2m[df$bynels2m < 0] <- NA
 
 ## create new data frame
-df_sch <- aggregate(df$bynels2r, by = list(df$sch_id), FUN = mean, na.rm = T)
+sch_m <- aggregate(df$bynels2m, by = list(df$sch_id), FUN = mean, na.rm = T)
 
 ## show
-head(df_sch)
+head(sch_m)
 ```
 
     ##   Group.1        x
-    ## 1    1011 26.39290
-    ## 2    1012 30.26733
-    ## 3    1021 19.84647
-    ## 4    1022 26.47903
-    ## 5    1031 27.37318
-    ## 6    1032 27.80214
+    ## 1    1011 45.26387
+    ## 2    1012 43.30400
+    ## 3    1021 28.91529
+    ## 4    1022 38.60290
+    ## 5    1031 40.01636
+    ## 6    1032 35.34429
+
+> #### Quick exercise
+>
+> Get the average reading score for each school and save it to a
+> different object. Don’t forget to account for missing values.
 
 Merge
 -----
@@ -303,10 +323,10 @@ aggregated test score data back into the data set.
 
 ``` r
 ## first fix names from aggregated data set
-names(df_sch) <- c('sch_id', 'sch_bynels2m')
+names(sch_m) <- c('sch_id', 'sch_bynels2m')
 
 ## merge on school ID variable
-df <- merge(df, df_sch, by = 'sch_id')
+df <- merge(df, sch_m, by = 'sch_id')
 
 ## show
 head(df)
@@ -362,12 +382,17 @@ head(df)
     ## 5 four-year college or university Private not-for-profit, 4-year or above
     ## 6      two-year community college                          Public, 2-year
     ##   ones sum_test female_v1 female_v2 sch_bynels2m
-    ## 1    1    83.38         1         1      26.3929
-    ## 2    1    63.19         1         1      26.3929
-    ## 3    1    43.04         1         1      26.3929
-    ## 4    1    58.62         0         0      26.3929
-    ## 5    1   114.82         0         0      26.3929
-    ## 6    1    85.79         0         0      26.3929
+    ## 1    1    83.38         1         1     45.26387
+    ## 2    1    63.19         1         1     45.26387
+    ## 3    1    43.04         1         1     45.26387
+    ## 4    1    58.62         0         0     45.26387
+    ## 5    1   114.82         0         0     45.26387
+    ## 6    1    85.79         0         0     45.26387
+
+> #### Quick exercise
+>
+> Merge the average school level reading score data set you created to
+> the full data set.
 
 Write
 -----
@@ -379,8 +404,3 @@ save it as a csv file again.
 ``` r
 write.csv(df, '../data/els_plans_mod.csv', row.names = FALSE)
 ```
-
-> #### Quick exercise
->
-> Find the average reading score by parental education level and merge
-> it to the full data set.

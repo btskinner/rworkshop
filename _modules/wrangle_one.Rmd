@@ -192,6 +192,15 @@ nrow(df)
 
 ```
 
+> #### Quick exercise
+> The variable `byrace` also uses negative values to represent missing
+> values. Reassign `NA`s to values that are less than zero. Next drop
+> observations from the data set if they are missing `byrace`
+> values. (HINT 1: Pay attention to your commas each time!) (HINT 2:
+> Before dropping observations, save your data set object, `df` in
+> another object, `df_hold`, just in case things don't go well the
+> first time...)
+
 ## Order
 ```{r, echo = FALSE, purl = TRUE}
 ## ---------------------------
@@ -212,6 +221,10 @@ df[1:10, c('stu_id','bydob_p')]
 
 ```
 
+> #### Quick exercise
+> Sort by `bydob_p` again, but this time from youngest to oldest, that
+> is, reverse order. Type `?order` to see the help file for the
+> function and the argument you might need to do that.
 
 ## Aggregate
 ```{r, echo = FALSE, purl = TRUE}
@@ -232,12 +245,16 @@ yourself. Let's get the average math score within each school.
 df$bynels2m[df$bynels2m < 0] <- NA
 
 ## create new data frame
-df_sch <- aggregate(df$bynels2r, by = list(df$sch_id), FUN = mean, na.rm = T)
+sch_m <- aggregate(df$bynels2m, by = list(df$sch_id), FUN = mean, na.rm = T)
 
 ## show
-head(df_sch)
+head(sch_m)
 
 ```
+
+> #### Quick exercise
+> Get the average reading score for each school and save it to a
+> different object. Don't forget to account for missing values.
 
 ## Merge
 ```{r, echo = FALSE, purl = TRUE}
@@ -255,15 +272,20 @@ merge the aggregated test score data back into the data set.
 
 ```{r}
 ## first fix names from aggregated data set
-names(df_sch) <- c('sch_id', 'sch_bynels2m')
+names(sch_m) <- c('sch_id', 'sch_bynels2m')
 
 ## merge on school ID variable
-df <- merge(df, df_sch, by = 'sch_id')
+df <- merge(df, sch_m, by = 'sch_id')
 
 ## show
 head(df)
 
 ```
+
+> #### Quick exercise 
+> Merge the average school level reading score data set you created to
+> the full data set.
+
 
 ## Write
 ```{r, echo = FALSE, purl = TRUE}
@@ -280,11 +302,6 @@ save it as a csv file again.
 ```{r, eval = FALSE, purl = TRUE}
 write.csv(df, '../data/els_plans_mod.csv', row.names = FALSE)
 ```
-
-> #### Quick exercise 
-> Find the average reading score by parental education level and merge
-> it to the full data set. 
-
 
 ```{r, echo = FALSE, purl = TRUE}
 

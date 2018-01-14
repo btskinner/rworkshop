@@ -1,0 +1,454 @@
+---
+layout: module
+title: Exploratory data analysis I
+date: 2018-01-01 00:00:05
+category: module
+links: 
+  script: eda_one.R
+  data: els_plans.dta
+output:
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+always_allow_html: yes
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
+################################################################################
+##
+## <PROJ> R Workshop
+## <FILE> eda_one.R 
+## <INIT> 15 January 2018
+## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
+##
+################################################################################
+
+## clear memory
+rm(list = ls())
+
+## libraries: tidyverse + haven and labelled
+library(tidyverse)
+library(haven)
+library(labelled)
+
+```
+
+This module takes the first steps in more formally exploring a data
+set. Because building and cleaning a data set is often an iterative
+process, especially in the early stages of a project, some of the
+techniques below could still be considered part of data wrangling.
+
+# Using data from another program
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Read in data from another program
+## ---------------------------------------------------------
+
+```
+
+Doing data analysis often means working in teams, which, in turn, can
+mean working with a variety of programs and file types. When you need
+to use data that aren't flat files (those ending in `*.txt`, `*.csv`, or
+`*.tsv`, for example) or in an R format, you can use one of the
+following libraries:
+
+* [readxl](http://readxl.tidyverse.org) 
+  * Excel: `read_excel()`
+* [haven](http://haven.tidyverse.org/reference/index.html)
+  * Stata: `read_dta()`, `write_dta()`
+  * SAS: `read_sas()`, `write_sas()`
+  * SPSS: `read_sav()`, `write_sav()`
+
+For practice, we'll use the same ELS plans data set as before, but
+this time stored in a Stata `*.dta` file.
+
+One benefit of Stata and other stats programs like SAS is that you can
+label variable and values. Base R data frames don't support labels,
+but tibbles (`tbl_df()`) in the tidyverse do. By default, the
+`read_dta()` function we'll use puts the data in tibble. So that we
+can access the variable and value labels that were saved in the `*dta`
+file, we'll also load the `labelled` library.
+
+```r
+## libraries: tidyverse + haven and labelled
+library(tidyverse)
+library(haven)
+library(labelled)
+
+```
+
+```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
+suppressMessages(library(tidyverse))
+library(haven)
+library(labelled)
+
+```
+
+```{r}
+## read in Stata dta file
+df <- read_dta('../data/els_plans.dta')
+
+```
+
+## Labels
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Viewing data and labels
+## ---------------------------------------------------------
+
+```
+
+First, let's take a quick bird's eye view of our data. In RStudio, you
+can use the `View()` command or just click on the data object in the
+**Environment** window. You can see the variable labels under the
+variable names in the view.
+
+You can also use the `glimpse()` function to see a nicely formatted
+glimpse of the data
+
+```{r}
+## use glipse
+glimpse(df)
+
+```
+
+The `glimpse()` function doesn't show the labels, but it does let you
+know that columns like `bysex` have them with the `<dbl+lbl>` tag.
+
+To see the variable labels, use the `var_label()` function from the
+**labelled** library.
+
+```{r}
+## show the labels for just a few variables
+df %>%
+    select(stu_id, bysex, bypared, bynels2m) %>%
+    var_label()
+
+```
+
+Unfortunately, the label for the `bysex` column doesn't really tell us
+anything that we probably didn't already guess. The problem with the
+name and label is that it is ambiguous. So are the values:
+
+```{r}
+## who first few rows of bysex
+df %>% select(bysex)
+
+```
+
+What does having a value of 1 or 2 mean? Use the `val_labels()`
+function to see.
+
+```{r}
+## see value labels for bysex
+df %>% select(bysex) %>% val_labels()
+
+```
+
+Ok. In this data set, male students are coded as 1 and female students
+are coded as 2.
+
+> #### Quick exercise
+> Use the `var_label()` and `val_labels()` functions to inspect
+> another variable with labels. 
+
+It turns out that the `head()` function (which works
+with regular data frames and vectors) will also give the value labels
+if it's given a tibble.
+
+```{r}
+## show more information about bysex variable
+head(df$bysex)
+
+```
+
+Moving forward, it probably will be clearer if we generate a new
+indicator variable. For example, we could create the variable `female`
+that equals one if `bysex` is 2 and 0 otherwise.
+
+```{r}
+## create an indicator variable for female
+df <- df %>%
+    mutate(female = ifelse(bysex == 2, 1, 0))
+
+```
+
+> #### Quick exercise 
+> Whoops! Our new indicator variable isn't quite
+> right because it doesn't account for missing values. Redo the last
+> command so that `female == 1` when `bysex == 2`, `female == 0` when
+> `bysex == 1` and `female == NA` when `bysex` is missing. (HINT: in
+> R, use `is.na(<x>)` to check whether a value is missing.)
+
+
+# Summary statistics
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Summary statistics
+## ---------------------------------------------------------
+```
+## Continuous values
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## continuous values
+## ---------------------------
+
+```
+We can get the mean and standard deviation of continuous variables
+using the `mean()` and `sd()` functions...
+
+```{r}
+## get mean and sd
+mean(df$bynels2m)
+sd(df$bynels2m)
+
+```
+...except that `bynels2m` has missing values and R doesn't
+automatically drop those when calculating those statistics. It can be
+a little annoying at first, but really it's a nice feature because it
+lets you know that your data aren't complete.
+
+To ignore `NA`s, set the `na.rm` to `TRUE`.
+
+```{r}
+## need to tell R to remove NAs
+mean(df$bynels2m, na.rm = TRUE)
+sd(df$bynels2m, na.rm = TRUE)
+
+```
+
+> #### Quick exercise
+> Find the mean and standard deviation of reading scores.
+
+You can also compute summary statistics using dplyr and the
+`summarise_all()`, `summarise_at()`, and `summarise_if()`
+functions. Since we want to focus on one variable, we'll use the
+`summarise_at()` function. (More information about the other commands
+can be found
+[here](http://dplyr.tidyverse.org/reference/summarise_all.html).)
+
+```{r}
+## mean and sd using dplyr
+df %>%
+    summarise_at(.vars = vars(bynels2m),
+                 .funs = funs(mean, sd, .args = list(na.rm = TRUE)))
+
+```
+
+> #### Quick exercise
+> Modify the above code to summarize reading scores at the same time.
+
+## Discrete values
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## discrete values
+## ---------------------------
+```
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## one-way 
+## ------------
+
+```
+
+Use the `table()` function for discrete variables. Because we know or
+maybe suspect that there are missing values, we add the `useNA`
+argument with the argument `'ifany'`.
+
+```{r}
+## table of parental education levels
+table(df$bypared, useNA='ifany')
+
+```
+
+Unfortunately, these numbers don't mean much without reference to a
+codebook. However, because are data are labelled, we can use the
+`as_factor()` function to see the labels.
+
+```{r}
+## use as_factor() to get the value labels
+table(as_factor(df$bypared), useNA='ifany')
+
+```
+
+Now we can see what the numbers represent. Why aren't there any counts
+for the three missing labels, the ones with braces, while there are a
+number of `NA` values? Checking how the labels are assigned using the
+`val_labels()` function...
+```{r}
+## check how bypared labels are assigned
+val_labels(df$bypared)
+
+```
+
+...confirms that when the original data values indicating missingness
+were changed from negative numbers to `.` in Stata, the labels no
+longer applied. At the moment, we don't care why the values are
+missing, but if we did, would have to find the original Stata data set
+that retained the negative values.
+
+> #### Quick exercise
+> Get counts for base year income levels.
+
+To generate counts using dplyr, use the `count()` function. By
+chaining `as_factor()` to the end of the call, we can get the counts
+with associated labels.
+
+```{r}
+## using dplyr to make a table
+df %>%
+    count(bypared) %>%
+    as_factor()
+
+```
+
+> #### Quick exercise
+> Get counts for base year income levels again, this time using the
+> dplyr method. What do you see if you drop `as_factor()` from the end?
+
+## Two-way table
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## two-way 
+## ------------
+
+```
+
+Cross tabulations are also useful. With the `table()` function,
+instead of doing just `table(x)`, do `table(x, y)`.
+
+```{r}
+## table of parental education levels
+table(as_factor(df$bypared), as_factor(df$bysex))
+
+```
+
+> #### Quick exercise
+> What happens when you switch the order of the variables in the
+> `table()` function (*i.e.*, `table(y, x)` instead of `table(x, y)`?
+
+
+To make a cross table with dplyr, use `group_by()` before `count()` to
+generate counts within groups. 
+
+```{r}
+## use the group_by() and count() functions to make two-way table
+df %>%
+    group_by(bysex) %>%
+    count(bypared) %>%
+    as_factor()
+
+```
+
+To make the dplyr table look more like the table made with base R, use
+the `spread()` function from tidyr.
+
+```{r}
+## spread to look like other table
+df %>%
+    group_by(bysex) %>%
+    count(bypared) %>%
+    as_factor() %>%
+    spread(bysex, n)
+
+```
+
+> #### Quick exercise
+> The last table has an ugly ``<NA>`` column as well as an `NA` row
+> in the `bypared` column. Can you modify the last function chain to
+> remove those? 
+
+# Conditional mean
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## conditional means
+## ---------------------------
+
+```
+Aside from crosstabs, finding averages of continuous variables within
+groups or conditional means is a common task. We've already done this
+in the last couple of modules. With base R, use the `aggregate()`
+function to compute summary statistics of continuous values by group.
+
+```{r}
+## get average math score by parental education 
+aggregate(df$bynels2m, by = list(df$bypared), mean, na.rm = TRUE)
+
+```
+
+> #### Quick exercise
+> Is there a way to modify the code above to use the parental
+> education levels instead of just the number in the above tables?
+
+Adding a secondary group is not difficult. Just add another variable
+to the `by` list:
+
+```{r}
+df <- df %>%
+    mutate(lowinc = ifelse(byincome <= 7, 1, 0))
+
+## get average math score by low income status and parental education levels
+aggregate(df$bynels2m, by = list(df$lowinc, df$bypared), mean, na.rm = TRUE)
+
+```
+
+The dplyr way of computing a conditional mean is clearer in some ways
+and a little more confusing in others. On one hand, using the
+`group_by()` function makes it very clear which is the grouping
+variable. On the other hand, the `summarise_at()` function is a bit
+more involved. The main thing to remember is that (like with the base
+R `aggregate()` function above), you need to pass the `na.rm = TRUE`
+argument to the `mean` function. Otherwise, R won't know what to do
+with the missing values and will return `NA`.
+
+```{r}
+## using dplyr to get average math score by parental education level
+df %>%
+    group_by(bypared) %>%
+    summarise_at(.vars = vars(bynels2m),
+                 .funs = funs(mean, .args = list(na.rm = TRUE))) %>%
+    as_factor()
+
+```
+
+Once you've got the format, finding the conditional mean within a
+cross tabulation (group 1 X group 2) is straightforward: just add the
+variable to the `group_by()` function.
+
+```{r}
+## using dplyr to get average math score by income and parental education level
+df %>%
+    group_by(bypared, lowinc) %>%
+    summarise_at(vars(bynels2m),
+                 funs(mean, .args = list(na.rm = TRUE))) %>%
+    as_factor()
+```
+
+> #### Quick exercise
+> Modify the above example slightly so that the average reading scores
+> by parental education level are also included. Next, compute the
+> standard deviation in addition to the mean. Finally, see if you can
+> gather the resulting table to make it look more like a published
+> table (mean above standard deviation).
+
+```{r, include = FALSE, purl = FALSE}
+
+df %>%
+    group_by(bypared, lowinc) %>%
+    summarise_at(vars(bynels2m, bynels2r),
+                 funs(mean, sd, .args = list(na.rm = TRUE))) %>%
+    as_factor() %>%
+    gather(stat, value, -c(bypared, lowinc)) %>%
+    arrange(bypared, lowinc, stat)
+
+```
+
+```{r, echo = FALSE, purl = TRUE}
+
+## =============================================================================
+## END SCRIPT
+################################################################################
+```

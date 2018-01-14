@@ -614,15 +614,6 @@ scripting languages, like
 [Python](https://www.python.org), and
 [Stata](https://www.stata.com).[^5]
 
-I have almost zero experience with SPSS, so I can’t speak to the
-particular difficulties that SPSS users have with R other than to guess
-that biggest hurdle for the average SPSS user is the transition from
-point-and-click interaction to writing text-based instructions. Python
-users (I’m one of them), on the other hand, will probably find that R
-can be less syntactically consistent than Python and has fewer pure
-programming niceties. That said, the jump from Python to R should be
-fairly easy.
-
 I came to R after learning Stata first, which is common for many
 researchers trained in econometric methods. For me and others who’ve
 made the same Stata-to-R transition, I think the root of many problems
@@ -637,10 +628,10 @@ await instructions that pertain to them.[^6]
 As pointed out by my friend and colleague [Richard
 Blissett](https://www.shu.edu/profiles/RichardBlissett.cfm), users can
 see this difference in the command/function names in each language.
-Stata commands tend to be verbs: `summarize`, `tabulate`, and
-`regress`); on the other hand, R functions are often nouns: `summary`,
-`table`, and `lm` (for linear model). And so, common problems in the R
-to Stata switch such as  
+Stata commands tend to be verbs: `summarize`, `tabulate`, and `regress`;
+on the other hand, R functions are often nouns: `summary`, `table`, and
+`lm` (for linear model). And so, common problems in the R to Stata
+switch such as  
 - *I ran a model and didn’t get any output*  
 - *How do I create local/global macros in R*  
 - *Which of these data objects is the actual data?*  
@@ -698,13 +689,10 @@ Notes
     downloaded and libraries when discussing what is loaded into memory.
     Since the names are the same, it’s really a semantic difference.
 
-[^5]: If you come to R knowing C/C++, Fortran, or Java, yes, R is
-    probably maddeningly slow at times, but it’s so much easier for
-    common interactive tasks. Also see [Rcpp](http://www.rcpp.org),
-    [rFortran](http://www.rfortran.org),
+[^5]: If you come to R knowing C/C++, Fortran, or Java, see
+    [Rcpp](http://www.rcpp.org), [rFortran](http://www.rfortran.org),
     [rJava](https://www.rforge.net/rJava/index.html) for some cool
-    interactivity. If you come knowing [Julia](https://julialang.org) as
-    your first language, who are you?
+    interactivity.
 
 [^6]: Stata has some object-oriented features and R some procedural
     programming behaviors, so the assigned labels aren’t perfect. They

@@ -74,7 +74,7 @@ df %>% select(stu_id, bydob_p) %>% head(10)
 ## ---------------------------
 
 ## create new data frame
-df_sch <- df %>%
+sch_m <- df %>%
     ## first, make test score values < 0 == NA
     mutate(bynels2m = ifelse(bynels2m < 0, NA, bynels2m)) %>%
     ## group by school ID
@@ -83,14 +83,14 @@ df_sch <- df %>%
     summarise(sch_bynels2m = mean(bynels2m, na.rm = TRUE))
 
 ## show
-df_sch
+sch_m
 
 ## ---------------------------
 ## join
 ## ---------------------------
 
 ## join on school ID variable
-df <- df %>% left_join(df_sch, by = 'sch_id')
+df <- df %>% left_join(sch_m, by = 'sch_id')
 
 ## ---------------------------
 ## write
@@ -123,7 +123,6 @@ df
 
 df_long <- df %>%
     gather(var, value, -c(schid, year)) %>%
-    mutate(var = gsub('var_', '', var)) %>%
     arrange(schid, var)
 
 ## show
@@ -134,7 +133,6 @@ df_long
 ## ---------------------------
 
 df_wide <- df_long %>%
-    mutate(var = gsub('(.*)', 'var_\\1', var)) %>%
     spread(var, value) %>%
     arrange(schid)
 

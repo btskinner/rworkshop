@@ -1,3 +1,23 @@
+---
+layout: module
+title: Modeling
+date: 2018-01-01 00:00:07
+category: module
+links:
+  script: modeling.R
+  data: els_plans.dta
+output:
+  md_document:
+    variant: markdown_mmd
+    preserve_yaml: true
+    toc: true
+    toc_depth: 2
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
 ################################################################################
 ##
 ## <PROJ> R Workshop
@@ -14,6 +34,20 @@ rm(list = ls())
 library(tidyverse)
 library(haven)
 
+```
+```r
+## libraries
+library(tidyverse)
+library(haven)
+```
+
+```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
+suppressMessages(library(tidyverse))
+library(haven)
+
+```
+
+```{r}
 ## read in data
 df <- read_dta('../data/els_plans.dta')
 
@@ -29,6 +63,9 @@ df <- df %>%
            inc_f = as_factor(byincome),
            plan_col_grad = ifelse(bystexp >= 5, 1, 0))
 
+```
+# linear model
+```{r}
 ## linear model
 fit <- lm(bynels2m ~ bynels2r + byses1 + female + moth_ba + fath_ba,
           data = df)
@@ -57,6 +94,10 @@ summary(fit)
 fit <- lm(bynels2m ~ bynels2r + I(bynels2r^2) + I(bynels2r^3), data = df)
 summary(fit)
 
+```
+
+# generalized linear model
+```{r}
 ## logit
 fit <- glm(plan_col_grad ~ bynels2m + pared_f,
            data = df,
@@ -69,11 +110,21 @@ fit <- glm(plan_col_grad ~ bynels2m + pared_f,
            family = binomial(link = 'probit'))
 summary(fit)
 
+```
+
+# predictions
+
+```{r, echo = FALSE, purl = TRUE}
 ## -----------------------------------------------------------------------------
 ## 
 ## -----------------------------------------------------------------------------
 
+```
+
+
+```{r, echo = FALSE, purl = TRUE}
 
 ## =============================================================================
 ## END SCRIPT
 ################################################################################
+```
