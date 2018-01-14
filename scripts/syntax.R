@@ -99,10 +99,14 @@ is.vector(x)
 
 ## add to vector (can do so recursively)
 x <- c(x, 2, 3)
+x
 
 ## no dim, but length
 dim(x)
 length(x)
+
+## get the second element
+x[2]
 
 ## check class of x
 class(x)
@@ -135,12 +139,11 @@ nrow(x)
 ## # of columns
 ncol(x)
 
-## 2D array == matrix
-z <- array(1:9, dim = c(3,3))
-z
+## show the values in the first row
+x[1,]
 
-## check if same as x matrix above
-identical(x,z)
+## show the values in the third column
+x[,3]
 
 ## ------------
 ## list
@@ -181,6 +184,12 @@ is.data.frame(df)
     
 ## get column names
 names(df)
+
+## get col_a
+df$col_a
+
+## get col_a (note the quotation marks this time)
+df[['col_a']]
 
 ## ---------------------------------------------------------
 ## Help

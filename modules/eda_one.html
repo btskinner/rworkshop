@@ -1,0 +1,744 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="/rworkshop/assets/css/style.css">
+<link rel="stylesheet" href="/rworkshop/assets/css/syntax_default.css">
+<link rel="stylesheet" href="/rworkshop/assets/leaflet/leaflet.css" />
+<script defer src="/rworkshop/assets/js/fontawesome-all.js"></script>
+<!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
+	      <i class="fab fa-github fa-xs"></i></a></h1>
+	<h2 class="thin">January 2018</h2>
+	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
+	
+        <p>
+	  <a href="https://curry.virginia.edu/faculty-research/centers-labs-projects/edpolicyworks">
+	    <img src="https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png" style="width:100%;">
+	  </a>
+	</p>
+	<h2 class="thin">
+	  <a href="/rworkshop/">Overview</a></br>
+	  <a href="/rworkshop/schedule/">Schedule</a></br>
+	  <a href="/rworkshop/start/">Getting started</a></br>
+	  <a href="/rworkshop/modules/">Modules</a></br>
+	  <a href="/rworkshop/data/">Data</a></br>
+	</h2>
+      </header>
+
+      <section>
+
+      <h1>Exploratory data analysis I</h1>
+
+
+<p>
+  <a href="/rworkshop/scripts/eda_one.R"
+     class="iconlink" download title="Get script">
+    <i class="fas fa-code fa-2x"></i>
+  </a>
+  &nbsp;&nbsp;
+  
+  <a href="/rworkshop/data/els_plans.dta"
+     class="iconlink" download title="Get data">
+    <i class="fas fa-database fa-2x"></i>
+  </a>
+  
+</p>
+
+
+<p>This module takes the first steps in more formally exploring a data set.
+Because building and cleaning a data set is often an iterative process,
+especially in the early stages of a project, some of the techniques
+below could still be considered part of data wrangling.</p>
+
+<h1 id="using-data-from-another-program">Using data from another program</h1>
+
+<p>Doing data analysis often means working in teams, which, in turn, can
+mean working with a variety of programs and file types. When you need to
+use data that aren’t flat files (those ending in <code class="highlighter-rouge">*.txt</code>, <code class="highlighter-rouge">*.csv</code>, or
+<code class="highlighter-rouge">*.tsv</code>, for example) or in an R format, you can use one of the
+following libraries:</p>
+
+<ul>
+  <li><a href="http://readxl.tidyverse.org">readxl</a>
+    <ul>
+      <li>Excel: <code class="highlighter-rouge">read_excel()</code></li>
+    </ul>
+  </li>
+  <li><a href="http://haven.tidyverse.org/reference/index.html">haven</a>
+    <ul>
+      <li>Stata: <code class="highlighter-rouge">read_dta()</code>, <code class="highlighter-rouge">write_dta()</code></li>
+      <li>SAS: <code class="highlighter-rouge">read_sas()</code>, <code class="highlighter-rouge">write_sas()</code></li>
+      <li>SPSS: <code class="highlighter-rouge">read_sav()</code>, <code class="highlighter-rouge">write_sav()</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>For practice, we’ll use the same ELS plans data set as before, but this
+time stored in a Stata <code class="highlighter-rouge">*.dta</code> file.</p>
+
+<p>One benefit of Stata and other stats programs like SAS is that you can
+label variable and values. Base R data frames don’t support labels, but
+tibbles (<code class="highlighter-rouge">tbl_df()</code>) in the tidyverse do. By default, the <code class="highlighter-rouge">read_dta()</code>
+function we’ll use puts the data in tibble. So that we can access the
+variable and value labels that were saved in the <code class="highlighter-rouge">*dta</code> file, we’ll also
+load the <code class="highlighter-rouge">labelled</code> library.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## libraries: tidyverse + haven and labelled</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">haven</span><span class="p">)</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">labelled</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## read in Stata dta file</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_dta</span><span class="p">(</span><span class="s1">'../data/els_plans.dta'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<h2 id="labels">Labels</h2>
+
+<p>First, let’s take a quick bird’s eye view of our data. In RStudio, you
+can use the <code class="highlighter-rouge">View()</code> command or just click on the data object in the
+<strong>Environment</strong> window. You can see the variable labels under the
+variable names in the view.</p>
+
+<p>You can also use the <code class="highlighter-rouge">glimpse()</code> function to see a nicely formatted
+glimpse of the data</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## use glipse</span><span class="w">
+</span><span class="n">glimpse</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Observations: 16,160
+## Variables: 22
+## $ stu_id   &lt;dbl&gt; 101101, 101102, 101104, 101105, 101106, 101107, 10110...
+## $ sch_id   &lt;dbl&gt; 1011, 1011, 1011, 1011, 1011, 1011, 1011, 1011, 1011,...
+## $ strat_id &lt;dbl&gt; 101, 101, 101, 101, 101, 101, 101, 101, 101, 101, 101...
+## $ psu      &lt;dbl+lbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1...
+## $ f1sch_id &lt;dbl&gt; 1011, 1011, 1011, 1011, 1011, 1011, 1011, NA, NA, 101...
+## $ bystuwt  &lt;dbl&gt; 178.9513, 28.2951, 589.7248, 235.7822, 178.9513, 256....
+## $ bysex    &lt;dbl+lbl&gt; 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 1, 1, 1, 2...
+## $ byrace   &lt;dbl+lbl&gt; 5, 2, 7, 3, 4, 4, 4, 7, 4, 3, 3, 4, 3, 2, 2, 3, 3...
+## $ bydob_p  &lt;dbl&gt; 198512, 198605, 198601, 198607, 198511, 198510, 19860...
+## $ bypared  &lt;dbl+lbl&gt; 5, 5, 2, 2, 1, 2, 6, 2, 2, 1, 6, 4, 4, 2, 7, 2, 7...
+## $ bymothed &lt;dbl+lbl&gt; 1, 5, 2, 2, 1, 2, 6, 2, 2, 1, 6, 4, 3, 2, 7, 2, 2...
+## $ byfathed &lt;dbl+lbl&gt; 5, 5, 2, 2, 1, 1, 3, 2, 1, 1, 4, 2, 4, 2, 3, 2, 7...
+## $ byincome &lt;dbl+lbl&gt; 10, 11, 10, 2, 6, 9, 10, 10, 8, 3, 8, 8, 5, 8, 12...
+## $ byses1   &lt;dbl&gt; -0.25, 0.58, -0.85, -0.80, -1.41, -1.07, 0.27, -0.16,...
+## $ byses2   &lt;dbl&gt; -0.23, 0.69, -0.68, -0.89, -1.28, -0.93, 0.36, -0.24,...
+## $ bystexp  &lt;dbl+lbl&gt; 3, 7, -1, 5, 5, 4, -1, 6, 7, 6, -1, 6, 6, -1, 7, ...
+## $ bynels2m &lt;dbl&gt; 47.84, 55.30, 66.24, 35.33, 29.97, 24.28, 45.16, 66.0...
+## $ bynels2r &lt;dbl&gt; 39.04, 36.35, 42.68, 27.86, 13.07, 11.70, 19.66, 45.3...
+## $ f1qwt    &lt;dbl&gt; 152.9769, 25.3577, 709.4246, 199.7193, 152.9769, 205....
+## $ f1pnlwt  &lt;dbl&gt; 155.6312, 25.4906, 725.6926, 205.1919, 155.6312, 211....
+## $ f1psepln &lt;dbl+lbl&gt; 2, 5, 5, 4, 5, 4, 4, NA, NA, 5, 5, 5, 4, 5, 5, 4,...
+## $ f2ps1sec &lt;dbl+lbl&gt; NA, 1, 1, 4, 4, NA, 4, 2, NA, 4, 1, NA, NA, 4, 2,...
+</code></pre></div></div>
+
+<p>The <code class="highlighter-rouge">glimpse()</code> function doesn’t show the labels, but it does let you
+know that columns like <code class="highlighter-rouge">bysex</code> have them with the <code class="highlighter-rouge">&lt;dbl+lbl&gt;</code> tag.</p>
+
+<p>To see the variable labels, use the <code class="highlighter-rouge">var_label()</code> function from the
+<strong>labelled</strong> library.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the labels for just a few variables</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">select</span><span class="p">(</span><span class="n">stu_id</span><span class="p">,</span><span class="w"> </span><span class="n">bysex</span><span class="p">,</span><span class="w"> </span><span class="n">bypared</span><span class="p">,</span><span class="w"> </span><span class="n">bynels2m</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">var_label</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## $stu_id
+## [1] "student id"
+## 
+## $bysex
+## [1] "sex-composite"
+## 
+## $bypared
+## [1] "parents^ highest level of education"
+## 
+## $bynels2m
+## [1] "els-nels 1992 scale equated sophomore math score"
+</code></pre></div></div>
+
+<p>Unfortunately, the label for the <code class="highlighter-rouge">bysex</code> column doesn’t really tell us
+anything that we probably didn’t already guess. The problem with the
+name and label is that it is ambiguous. So are the values:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## who first few rows of bysex</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">bysex</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 16,160 x 1
+##    bysex    
+##    &lt;dbl+lbl&gt;
+##  1 2        
+##  2 2        
+##  3 2        
+##  4 2        
+##  5 2        
+##  6 1        
+##  7 1        
+##  8 1        
+##  9 1        
+## 10 1        
+## # ... with 16,150 more rows
+</code></pre></div></div>
+
+<p>What does having a value of 1 or 2 mean? Use the <code class="highlighter-rouge">val_labels()</code> function
+to see.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## see value labels for bysex</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">bysex</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">val_labels</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## $bysex
+## {survey component legitimate skip/na} 
+##                                    -8 
+##                       {nonrespondent} 
+##                                    -4 
+##                                  male 
+##                                     1 
+##                                female 
+##                                     2
+</code></pre></div></div>
+
+<p>Ok. In this data set, male students are coded as 1 and female students
+are coded as 2.</p>
+
+<blockquote>
+  <h4 id="quick-exercise">Quick exercise</h4>
+
+  <p>Use the <code class="highlighter-rouge">var_label()</code> and <code class="highlighter-rouge">val_labels()</code> functions to inspect another
+variable with labels.</p>
+</blockquote>
+
+<p>It turns out that the <code class="highlighter-rouge">head()</code> function (which works with regular data
+frames and vectors) will also give the value labels if it’s given a
+tibble.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show more information about bysex variable</span><span class="w">
+</span><span class="n">head</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## &lt;Labelled double&gt;
+## [1] 2 2 2 2 2 1
+## 
+## Labels:
+##  value                                 label
+##     -8 {survey component legitimate skip/na}
+##     -4                       {nonrespondent}
+##      1                                  male
+##      2                                female
+</code></pre></div></div>
+
+<p>Moving forward, it probably will be clearer if we generate a new
+indicator variable. For example, we could create the variable <code class="highlighter-rouge">female</code>
+that equals one if <code class="highlighter-rouge">bysex</code> is 2 and 0 otherwise.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create an indicator variable for female</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">mutate</span><span class="p">(</span><span class="n">female</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">bysex</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-1">Quick exercise</h4>
+
+  <p>Whoops! Our new indicator variable isn’t quite right because it
+doesn’t account for missing values. Redo the last command so that
+<code class="highlighter-rouge">female == 1</code> when <code class="highlighter-rouge">bysex == 2</code>, <code class="highlighter-rouge">female == 0</code> when <code class="highlighter-rouge">bysex == 1</code> and
+<code class="highlighter-rouge">female == NA</code> when <code class="highlighter-rouge">bysex</code> is missing. (HINT: in R, use <code class="highlighter-rouge">is.na(&lt;x&gt;)</code>
+to check whether a value is missing.)</p>
+</blockquote>
+
+<h1 id="summary-statistics">Summary statistics</h1>
+
+<h2 id="continuous-values">Continuous values</h2>
+
+<p>We can get the mean and standard deviation of continuous variables using
+the <code class="highlighter-rouge">mean()</code> and <code class="highlighter-rouge">sd()</code> functions…</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## get mean and sd</span><span class="w">
+</span><span class="n">mean</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] NA
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sd</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] NA
+</code></pre></div></div>
+
+<p>…except that <code class="highlighter-rouge">bynels2m</code> has missing values and R doesn’t automatically
+drop those when calculating those statistics. It can be a little
+annoying at first, but really it’s a nice feature because it lets you
+know that your data aren’t complete.</p>
+
+<p>To ignore <code class="highlighter-rouge">NA</code>s, set the <code class="highlighter-rouge">na.rm</code> to <code class="highlighter-rouge">TRUE</code>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## need to tell R to remove NAs</span><span class="w">
+</span><span class="n">mean</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 45.35452
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sd</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 13.53664
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-2">Quick exercise</h4>
+
+  <p>Find the mean and standard deviation of reading scores.</p>
+</blockquote>
+
+<p>You can also compute summary statistics using dplyr and the
+<code class="highlighter-rouge">summarise_all()</code>, <code class="highlighter-rouge">summarise_at()</code>, and <code class="highlighter-rouge">summarise_if()</code> functions.
+Since we want to focus on one variable, we’ll use the <code class="highlighter-rouge">summarise_at()</code>
+function. (More information about the other commands can be found
+<a href="http://dplyr.tidyverse.org/reference/summarise_all.html">here</a>.)</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## mean and sd using dplyr</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">summarise_at</span><span class="p">(</span><span class="n">.vars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vars</span><span class="p">(</span><span class="n">bynels2m</span><span class="p">),</span><span class="w">
+                 </span><span class="n">.funs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funs</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">sd</span><span class="p">,</span><span class="w"> </span><span class="n">.args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)))</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 1 x 2
+##    mean    sd
+##   &lt;dbl&gt; &lt;dbl&gt;
+## 1  45.4  13.5
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-3">Quick exercise</h4>
+
+  <p>Modify the above code to summarize reading scores at the same time.</p>
+</blockquote>
+
+<h2 id="discrete-values">Discrete values</h2>
+
+<p>Use the <code class="highlighter-rouge">table()</code> function for discrete variables. Because we know or
+maybe suspect that there are missing values, we add the <code class="highlighter-rouge">useNA</code> argument
+with the argument <code class="highlighter-rouge">'ifany'</code>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## table of parental education levels</span><span class="w">
+</span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="o">=</span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
+##    1    2    3    4    5    6    7    8 &lt;NA&gt; 
+##  942 3044 1663 1597 1758 3466 1785 1049  856
+</code></pre></div></div>
+
+<p>Unfortunately, these numbers don’t mean much without reference to a
+codebook. However, because are data are labelled, we can use the
+<code class="highlighter-rouge">as_factor()</code> function to see the labels.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## use as_factor() to get the value labels</span><span class="w">
+</span><span class="n">table</span><span class="p">(</span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">useNA</span><span class="o">=</span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
+##                                {missing} 
+##                                        0 
+##    {survey component legitimate skip/na} 
+##                                        0 
+##                          {nonrespondent} 
+##                                        0 
+##               did not finish high school 
+##                                      942 
+##        graduated from high school or ged 
+##                                     3044 
+##        attended 2-year school, no degree 
+##                                     1663 
+##             graduated from 2-year school 
+##                                     1597 
+##       attended college, no 4-year degree 
+##                                     1758 
+##                   graduated from college 
+##                                     3466 
+##  completed master^s degree or equivalent 
+##                                     1785 
+## completed phd, md, other advanced degree 
+##                                     1049 
+##                                     &lt;NA&gt; 
+##                                      856
+</code></pre></div></div>
+
+<p>Now we can see what the numbers represent. Why aren’t there any counts
+for the three missing labels, the ones with braces, while there are a
+number of <code class="highlighter-rouge">NA</code> values? Checking how the labels are assigned using the
+<code class="highlighter-rouge">val_labels()</code> function…</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check how bypared labels are assigned</span><span class="w">
+</span><span class="n">val_labels</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##                                {missing} 
+##                                       -9 
+##    {survey component legitimate skip/na} 
+##                                       -8 
+##                          {nonrespondent} 
+##                                       -4 
+##               did not finish high school 
+##                                        1 
+##        graduated from high school or ged 
+##                                        2 
+##        attended 2-year school, no degree 
+##                                        3 
+##             graduated from 2-year school 
+##                                        4 
+##       attended college, no 4-year degree 
+##                                        5 
+##                   graduated from college 
+##                                        6 
+##  completed master^s degree or equivalent 
+##                                        7 
+## completed phd, md, other advanced degree 
+##                                        8
+</code></pre></div></div>
+
+<p>…confirms that when the original data values indicating missingness were
+changed from negative numbers to <code class="highlighter-rouge">.</code> in Stata, the labels no longer
+applied. At the moment, we don’t care why the values are missing, but if
+we did, would have to find the original Stata data set that retained the
+negative values.</p>
+
+<blockquote>
+  <h4 id="quick-exercise-4">Quick exercise</h4>
+
+  <p>Get counts for base year income levels.</p>
+</blockquote>
+
+<p>To generate counts using dplyr, use the <code class="highlighter-rouge">count()</code> function. By chaining
+<code class="highlighter-rouge">as_factor()</code> to the end of the call, we can get the counts with
+associated labels.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## using dplyr to make a table</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">count</span><span class="p">(</span><span class="n">bypared</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">as_factor</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 9 x 2
+##   bypared                                      n
+##   &lt;fctr&gt;                                   &lt;int&gt;
+## 1 did not finish high school                 942
+## 2 graduated from high school or ged         3044
+## 3 attended 2-year school, no degree         1663
+## 4 graduated from 2-year school              1597
+## 5 attended college, no 4-year degree        1758
+## 6 graduated from college                    3466
+## 7 completed master^s degree or equivalent   1785
+## 8 completed phd, md, other advanced degree  1049
+## 9 &lt;NA&gt;                                       856
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-5">Quick exercise</h4>
+
+  <p>Get counts for base year income levels again, this time using the
+dplyr method. What do you see if you drop <code class="highlighter-rouge">as_factor()</code> from the end?</p>
+</blockquote>
+
+<h2 id="two-way-table">Two-way table</h2>
+
+<p>Cross tabulations are also useful. With the <code class="highlighter-rouge">table()</code> function, instead
+of doing just <code class="highlighter-rouge">table(x)</code>, do <code class="highlighter-rouge">table(x, y)</code>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## table of parental education levels</span><span class="w">
+</span><span class="n">table</span><span class="p">(</span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="p">))</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##                                           
+##                                            {survey component legitimate skip/na}
+##   {missing}                                                                    0
+##   {survey component legitimate skip/na}                                        0
+##   {nonrespondent}                                                              0
+##   did not finish high school                                                   0
+##   graduated from high school or ged                                            0
+##   attended 2-year school, no degree                                            0
+##   graduated from 2-year school                                                 0
+##   attended college, no 4-year degree                                           0
+##   graduated from college                                                       0
+##   completed master^s degree or equivalent                                      0
+##   completed phd, md, other advanced degree                                     0
+##                                           
+##                                            {nonrespondent} male female
+##   {missing}                                              0    0      0
+##   {survey component legitimate skip/na}                  0    0      0
+##   {nonrespondent}                                        0    0      0
+##   did not finish high school                             0  440    502
+##   graduated from high school or ged                      0 1496   1548
+##   attended 2-year school, no degree                      0  823    840
+##   graduated from 2-year school                           0  849    748
+##   attended college, no 4-year degree                     0  859    899
+##   graduated from college                                 0 1737   1729
+##   completed master^s degree or equivalent                0  911    874
+##   completed phd, md, other advanced degree               0  503    546
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-6">Quick exercise</h4>
+
+  <p>What happens when you switch the order of the variables in the
+<code class="highlighter-rouge">table()</code> function (<em>i.e.</em>, <code class="highlighter-rouge">table(y, x)</code> instead of <code class="highlighter-rouge">table(x, y)</code>?</p>
+</blockquote>
+
+<p>To make a cross table with dplyr, use <code class="highlighter-rouge">group_by()</code> before <code class="highlighter-rouge">count()</code> to
+generate counts within groups.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## use the group_by() and count() functions to make two-way table</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">group_by</span><span class="p">(</span><span class="n">bysex</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">count</span><span class="p">(</span><span class="n">bypared</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">as_factor</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 19 x 3
+## # Groups: bysex [3]
+##    bysex  bypared                                      n
+##    &lt;fctr&gt; &lt;fctr&gt;                                   &lt;int&gt;
+##  1 male   did not finish high school                 440
+##  2 male   graduated from high school or ged         1496
+##  3 male   attended 2-year school, no degree          823
+##  4 male   graduated from 2-year school               849
+##  5 male   attended college, no 4-year degree         859
+##  6 male   graduated from college                    1737
+##  7 male   completed master^s degree or equivalent    911
+##  8 male   completed phd, md, other advanced degree   503
+##  9 male   &lt;NA&gt;                                        21
+## 10 female did not finish high school                 502
+## 11 female graduated from high school or ged         1548
+## 12 female attended 2-year school, no degree          840
+## 13 female graduated from 2-year school               748
+## 14 female attended college, no 4-year degree         899
+## 15 female graduated from college                    1729
+## 16 female completed master^s degree or equivalent    874
+## 17 female completed phd, md, other advanced degree   546
+## 18 female &lt;NA&gt;                                        16
+## 19 &lt;NA&gt;   &lt;NA&gt;                                       819
+</code></pre></div></div>
+
+<p>To make the dplyr table look more like the table made with base R, use
+the <code class="highlighter-rouge">spread()</code> function from tidyr.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## spread to look like other table</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">group_by</span><span class="p">(</span><span class="n">bysex</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">count</span><span class="p">(</span><span class="n">bypared</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">as_factor</span><span class="p">()</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">spread</span><span class="p">(</span><span class="n">bysex</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 9 x 4
+##   bypared                                   male female `&lt;NA&gt;`
+## * &lt;fctr&gt;                                   &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+## 1 did not finish high school                 440    502     NA
+## 2 graduated from high school or ged         1496   1548     NA
+## 3 attended 2-year school, no degree          823    840     NA
+## 4 graduated from 2-year school               849    748     NA
+## 5 attended college, no 4-year degree         859    899     NA
+## 6 graduated from college                    1737   1729     NA
+## 7 completed master^s degree or equivalent    911    874     NA
+## 8 completed phd, md, other advanced degree   503    546     NA
+## 9 &lt;NA&gt;                                        21     16    819
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-7">Quick exercise</h4>
+
+  <p>The last table has an ugly <code class="highlighter-rouge">&lt;NA&gt;</code> column as well as an <code class="highlighter-rouge">NA</code> row in the
+<code class="highlighter-rouge">bypared</code> column. Can you modify the last function chain to remove
+those?</p>
+</blockquote>
+
+<h1 id="conditional-mean">Conditional mean</h1>
+
+<p>Aside from crosstabs, finding averages of continuous variables within
+groups or conditional means is a common task. We’ve already done this in
+the last couple of modules. With base R, use the <code class="highlighter-rouge">aggregate()</code> function
+to compute summary statistics of continuous values by group.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## get average math score by parental education </span><span class="w">
+</span><span class="n">aggregate</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##   Group.1        x
+## 1       1 36.29864
+## 2       2 40.52292
+## 3       3 42.57740
+## 4       4 44.45236
+## 5       5 44.65419
+## 6       6 48.50667
+## 7       7 51.99566
+## 8       8 52.88417
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-8">Quick exercise</h4>
+
+  <p>Is there a way to modify the code above to use the parental education
+levels instead of just the number in the above tables?</p>
+</blockquote>
+
+<p>Adding a secondary group is not difficult. Just add another variable to
+the <code class="highlighter-rouge">by</code> list:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">mutate</span><span class="p">(</span><span class="n">lowinc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">byincome</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="m">7</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">))</span><span class="w">
+
+</span><span class="c1">## get average math score by low income status and parental education levels</span><span class="w">
+</span><span class="n">aggregate</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">lowinc</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##    Group.1 Group.2        x
+## 1        0       1 36.74020
+## 2        1       1 35.88120
+## 3        0       2 42.09193
+## 4        1       2 37.64148
+## 5        0       3 44.01492
+## 6        1       3 38.03843
+## 7        0       4 45.79327
+## 8        1       4 39.06331
+## 9        0       5 46.01975
+## 10       1       5 38.93340
+## 11       0       6 49.33081
+## 12       1       6 41.50602
+## 13       0       7 52.82858
+## 14       1       7 41.42392
+## 15       0       8 54.15734
+## 16       1       8 38.45988
+</code></pre></div></div>
+
+<p>The dplyr way of computing a conditional mean is clearer in some ways
+and a little more confusing in others. On one hand, using the
+<code class="highlighter-rouge">group_by()</code> function makes it very clear which is the grouping
+variable. On the other hand, the <code class="highlighter-rouge">summarise_at()</code> function is a bit more
+involved. The main thing to remember is that (like with the base R
+<code class="highlighter-rouge">aggregate()</code> function above), you need to pass the <code class="highlighter-rouge">na.rm = TRUE</code>
+argument to the <code class="highlighter-rouge">mean</code> function. Otherwise, R won’t know what to do with
+the missing values and will return <code class="highlighter-rouge">NA</code>.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## using dplyr to get average math score by parental education level</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">group_by</span><span class="p">(</span><span class="n">bypared</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">summarise_at</span><span class="p">(</span><span class="n">.vars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vars</span><span class="p">(</span><span class="n">bynels2m</span><span class="p">),</span><span class="w">
+                 </span><span class="n">.funs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">funs</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">.args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">as_factor</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 9 x 2
+##   bypared                                  bynels2m
+##   &lt;fctr&gt;                                      &lt;dbl&gt;
+## 1 did not finish high school                   36.3
+## 2 graduated from high school or ged            40.5
+## 3 attended 2-year school, no degree            42.6
+## 4 graduated from 2-year school                 44.5
+## 5 attended college, no 4-year degree           44.7
+## 6 graduated from college                       48.5
+## 7 completed master^s degree or equivalent      52.0
+## 8 completed phd, md, other advanced degree     52.9
+## 9 &lt;NA&gt;                                         44.8
+</code></pre></div></div>
+
+<p>Once you’ve got the format, finding the conditional mean within a cross
+tabulation (group 1 X group 2) is straightforward: just add the variable
+to the <code class="highlighter-rouge">group_by()</code> function.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## using dplyr to get average math score by income and parental education level</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">group_by</span><span class="p">(</span><span class="n">bypared</span><span class="p">,</span><span class="w"> </span><span class="n">lowinc</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">summarise_at</span><span class="p">(</span><span class="n">vars</span><span class="p">(</span><span class="n">bynels2m</span><span class="p">),</span><span class="w">
+                 </span><span class="n">funs</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">.args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">as_factor</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 18 x 3
+## # Groups: bypared [?]
+##    bypared                                  lowinc bynels2m
+##    &lt;fctr&gt;                                    &lt;dbl&gt;    &lt;dbl&gt;
+##  1 did not finish high school                 0        36.7
+##  2 did not finish high school                 1.00     35.9
+##  3 graduated from high school or ged          0        42.1
+##  4 graduated from high school or ged          1.00     37.6
+##  5 attended 2-year school, no degree          0        44.0
+##  6 attended 2-year school, no degree          1.00     38.0
+##  7 graduated from 2-year school               0        45.8
+##  8 graduated from 2-year school               1.00     39.1
+##  9 attended college, no 4-year degree         0        46.0
+## 10 attended college, no 4-year degree         1.00     38.9
+## 11 graduated from college                     0        49.3
+## 12 graduated from college                     1.00     41.5
+## 13 completed master^s degree or equivalent    0        52.8
+## 14 completed master^s degree or equivalent    1.00     41.4
+## 15 completed phd, md, other advanced degree   0        54.2
+## 16 completed phd, md, other advanced degree   1.00     38.5
+## 17 &lt;NA&gt;                                       0        46.2
+## 18 &lt;NA&gt;                                       1.00     39.3
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-9">Quick exercise</h4>
+
+  <p>Modify the above example slightly so that the average reading scores
+by parental education level are also included. Next, compute the
+standard deviation in addition to the mean. Finally, see if you can
+gather the resulting table to make it look more like a published table
+(mean above standard deviation).</p>
+</blockquote>
+
+
+
+      </section>
+      <footer>
+        <p>
+  Benjamin Skinner</br>  
+  Research Assistant Professor of Education</br>  
+  University of Virginia</br>  
+  <a href="https://www.btskinner.me" class="iconlink">
+    <i class="fas fa-home fa-lg"></i></a> | 
+  <a href="https://github.com/btskinner" class="iconlink">
+    <i class="fab fa-github fa-lg"></i></a> | 
+  <a href="mailto:btskinner@virginia.edu" class="iconlink">
+    <i class="far fa-envelope fa-lg"></i></a> | 
+  <a href="https://twitter.com/btskinner" class="iconlink">
+    <i class="fab fa-twitter fa-lg"></i></a>
+</p>
+<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      </footer>
+    </div>
+    <script src="/rworkshop/assets/js/scale.fix.js"></script>
+
+    
+    
+    
+    
+
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-63981025-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>
