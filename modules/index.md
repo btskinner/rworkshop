@@ -8,7 +8,10 @@ Workshop modules are listed in order of the schedule. The R script
 (<span><i class="fas fa-code"></i></span>) and data (<span><i
 class="fas fa-database"></i></span>) used to create each module will be
 linked at the top of the page. Alternately, all scripts and data may
-be downloaded or cloned in bulk from the workshop's [GitHub
+be 
+
+* Downloaded as a [zip file]({{ site.zip }})
+* Cloned in bulk from the workshop's [GitHub
 repository]({{ site.repo }}).
 
 <ul class="modules">

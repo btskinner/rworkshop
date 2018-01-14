@@ -2,7 +2,7 @@ title: Workshop on R
 baseurl: "/rworkshop"
 description: Hosted by Virginia Education Science Training (VEST) Program at UVA
 repo: https://github.com/btskinner/rworkshop
-zip: https://github.com/btskinner/rworkshop/zipball/master
+zip: https://github.com/btskinner/rworkshop/zipball/rworkshop
 
 scripts: scripts
 data: data
