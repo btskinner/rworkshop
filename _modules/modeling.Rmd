@@ -10,8 +10,6 @@ output:
   md_document:
     variant: markdown_mmd
     preserve_yaml: true
-    toc: true
-    toc_depth: 2
 ---
 
 ```{r, include = FALSE, purl = FALSE}
@@ -39,6 +37,7 @@ library(haven)
 ## libraries
 library(tidyverse)
 library(haven)
+
 ```
 
 ```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
@@ -49,77 +48,105 @@ library(haven)
 
 ```{r}
 ## read in data
-df <- read_dta('../data/els_plans.dta')
-
-## create some 
-df <- df %>%
-    mutate(female = ifelse(bysex == 2, 0, bysex),
-           moth_ba = ifelse(bymothed >= 6, 1, 0),
-           fath_ba = ifelse(byfathed >= 6, 1, 0),
-           par_ba = ifelse(bypared >= 6, 1, 0),
-           lowinc = ifelse(byincome <= 7, 1, 0),
-           pared_f = as_factor(bypared),
-           race_f = as_factor(byrace),
-           inc_f = as_factor(byincome),
-           plan_col_grad = ifelse(bystexp >= 5, 1, 0))
+df <- read_dta('../data/els_plans_2.dta')
 
 ```
-# linear model
+
+# Linear model
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## linear model
+## ---------------------------
+
+```
+
 ```{r}
 ## linear model
-fit <- lm(bynels2m ~ bynels2r + byses1 + female + moth_ba + fath_ba,
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
           data = df)
 fit
 
 ## get more information
 summary(fit)
 
+```
+
+```{r}
 ## add factors
-fit <- lm(bynels2m ~ bynels2r + byses1 + female + moth_ba + fath_ba + lowinc
-          + factor(byrace),
-          data = df)
-summary(fit)
-
-## add factors created earlier
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
-          + race_f ,
+          + as_factor(byrace),
           data = df)
 summary(fit)
 
+```
+
+```{r}
 ## add interactions
-fit <- lm(bynels2m ~ byses1*lowinc + pared_f*lowinc, data = df)
+fit <- lm(bynels2m ~ byses1*lowinc + as_factor(bypared)*lowinc, data = df)
 summary(fit)
 
+```
+
+```{r}
 ## add polynomials
 fit <- lm(bynels2m ~ bynels2r + I(bynels2r^2) + I(bynels2r^3), data = df)
 summary(fit)
 
 ```
 
-# generalized linear model
+## Predictions
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## predictions
+## ------------
+
+``
+
+```{r}
+## predict from first model
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+
+## old data
+fit_pred <- predict(fit)
+
+## new data
+new_df <- data.frame(byses1 = c(rep(mean(df$byses1, na.rm = TRUE),2)),
+                     female = c(0,1),
+                     moth_ba = c(rep(mean(df$moth_ba, na.rm = TRUE),2)),
+                     fath_ba = c(rep(mean(df$fath_ba, na.rm = TRUE),2)),
+                     lowinc = c(rep(mean(df$lowinc, na.rm = TRUE),2)))
+
+new_df
+
+predict(fit, newdata = new_df, se.fit = TRUE)
+
+```
+
+
+# Generalized linear model
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## generalized linear model
+## ---------------------------
+
+```
+
 ```{r}
 ## logit
-fit <- glm(plan_col_grad ~ bynels2m + pared_f,
+fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
            data = df,
            family = binomial(link = 'logit'))
 summary(fit)
 
 ## probit
-fit <- glm(plan_col_grad ~ bynels2m + pared_f,
+fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
            data = df,
            family = binomial(link = 'probit'))
 summary(fit)
 
 ```
 
-# predictions
-
-```{r, echo = FALSE, purl = TRUE}
-## -----------------------------------------------------------------------------
-## 
-## -----------------------------------------------------------------------------
-
-```
 
 
 ```{r, echo = FALSE, purl = TRUE}
