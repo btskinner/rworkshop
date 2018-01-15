@@ -22,7 +22,7 @@ df <- read_dta('../data/els_plans_2.dta')
 ## ---------------------------
 
 ## linear model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba,
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
           data = df)
 fit
 
@@ -43,6 +43,30 @@ summary(fit)
 fit <- lm(bynels2m ~ bynels2r + I(bynels2r^2) + I(bynels2r^3), data = df)
 summary(fit)
 
+## ------------
+## predictions
+## ------------
+
+``
+
+## predict from first model
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+
+## old data
+fit_pred <- predict(fit)
+
+## new data
+new_df <- data.frame(byses1 = c(rep(mean(df$byses1, na.rm = TRUE),2)),
+                     female = c(0,1),
+                     moth_ba = c(rep(mean(df$moth_ba, na.rm = TRUE),2)),
+                     fath_ba = c(rep(mean(df$fath_ba, na.rm = TRUE),2)),
+                     lowinc = c(rep(mean(df$lowinc, na.rm = TRUE),2)))
+
+new_df
+
+predict(fit, newdata = new_df, se.fit = TRUE)
+
 ## ---------------------------
 ## generalized linear model
 ## ---------------------------
@@ -60,8 +84,21 @@ fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
 summary(fit)
 
 ## ---------------------------
-## predictions
+## survey weights
 ## ---------------------------
+
+library(survey)
+
+## set svy design data
+svy_df <- svydesign(ids = ~psu,
+                    strata = ~strat_id,
+                    weight = ~bystuwt,
+                    data = df,
+                    nest = TRUE)
+
+svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+                 design = svy_df)
+summary(svyfit)
 
 
 ## =============================================================================

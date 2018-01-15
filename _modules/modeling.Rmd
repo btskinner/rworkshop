@@ -147,7 +147,32 @@ summary(fit)
 
 ```
 
+# Using survey weights
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## survey weights
+## ---------------------------
 
+```
+
+```{r, message = F, warning = F}
+library(survey)
+
+```
+
+```{r}
+## set svy design data
+svy_df <- svydesign(ids = ~psu,
+                    strata = ~strat_id,
+                    weight = ~bystuwt,
+                    data = df,
+                    nest = TRUE)
+
+svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+                 design = svy_df)
+summary(svyfit)
+
+```
 
 ```{r, echo = FALSE, purl = TRUE}
 

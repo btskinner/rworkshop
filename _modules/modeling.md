@@ -28,19 +28,21 @@ Linear model
 
 ``` r
 ## linear model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba,
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
           data = df)
 fit
 ```
 
     ## 
     ## Call:
-    ## lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba, 
-    ##     data = df)
+    ## lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
+    ##     lowinc, data = df)
     ## 
     ## Coefficients:
     ## (Intercept)       byses1       female      moth_ba      fath_ba  
-    ##     45.4508       7.6994      -1.1498       0.2217       0.3761
+    ##     45.7155       6.8058      -1.1483       0.4961       0.8242  
+    ##      lowinc  
+    ##     -2.1425
 
 ``` r
 ## get more information
@@ -49,27 +51,28 @@ summary(fit)
 
     ## 
     ## Call:
-    ## lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba, 
-    ##     data = df)
+    ## lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
+    ##     lowinc, data = df)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -39.756  -8.814   0.448   9.116  39.617 
+    ## -39.456  -8.775   0.432   9.110  40.921 
     ## 
     ## Coefficients:
     ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  45.4508     0.1777 255.754  < 2e-16 ***
-    ## byses1        7.6994     0.2050  37.560  < 2e-16 ***
-    ## female       -1.1498     0.1988  -5.782 7.52e-09 ***
-    ## moth_ba       0.2217     0.2873   0.772    0.440    
-    ## fath_ba       0.3761     0.2841   1.324    0.186    
+    ## (Intercept)  45.7155     0.1811 252.420  < 2e-16 ***
+    ## byses1        6.8058     0.2387  28.511  < 2e-16 ***
+    ## female       -1.1483     0.1985  -5.784 7.42e-09 ***
+    ## moth_ba       0.4961     0.2892   1.715  0.08631 .  
+    ## fath_ba       0.8242     0.2903   2.840  0.00452 ** 
+    ## lowinc       -2.1425     0.2947  -7.271 3.75e-13 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 12.26 on 15231 degrees of freedom
+    ## Residual standard error: 12.24 on 15230 degrees of freedom
     ##   (924 observations deleted due to missingness)
-    ## Multiple R-squared:  0.1901, Adjusted R-squared:  0.1899 
-    ## F-statistic: 893.8 on 4 and 15231 DF,  p-value: < 2.2e-16
+    ## Multiple R-squared:  0.1929, Adjusted R-squared:  0.1926 
+    ## F-statistic: 728.1 on 5 and 15230 DF,  p-value: < 2.2e-16
 
 ``` r
 ## add factors
@@ -182,6 +185,51 @@ summary(fit)
     ## Multiple R-squared:  0.5661, Adjusted R-squared:  0.566 
     ## F-statistic:  6905 on 3 and 15880 DF,  p-value: < 2.2e-16
 
+Predictions
+-----------
+
+    ## Error: attempt to use zero-length variable name
+
+``` r
+## predict from first model
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+
+## old data
+fit_pred <- predict(fit)
+
+## new data
+new_df <- data.frame(byses1 = c(rep(mean(df$byses1, na.rm = TRUE),2)),
+                     female = c(0,1),
+                     moth_ba = c(rep(mean(df$moth_ba, na.rm = TRUE),2)),
+                     fath_ba = c(rep(mean(df$fath_ba, na.rm = TRUE),2)),
+                     lowinc = c(rep(mean(df$lowinc, na.rm = TRUE),2)))
+
+new_df
+```
+
+    ##       byses1 female   moth_ba  fath_ba    lowinc
+    ## 1 0.04210423      0 0.2739037 0.319419 0.2095916
+    ## 2 0.04210423      1 0.2739037 0.319419 0.2095916
+
+``` r
+predict(fit, newdata = new_df, se.fit = TRUE)
+```
+
+    ## $fit
+    ##        1        2 
+    ## 45.95221 44.80394 
+    ## 
+    ## $se.fit
+    ##         1         2 
+    ## 0.1407063 0.1399319 
+    ## 
+    ## $df
+    ## [1] 15230
+    ## 
+    ## $residual.scale
+    ## [1] 12.24278
+
 Generalized linear model
 ========================
 
@@ -265,5 +313,46 @@ summary(fit)
     ## 
     ## Number of Fisher Scoring iterations: 4
 
-Predictions
-===========
+Using survey weights
+====================
+
+``` r
+library(survey)
+```
+
+``` r
+## set svy design data
+svy_df <- svydesign(ids = ~psu,
+                    strata = ~strat_id,
+                    weight = ~bystuwt,
+                    data = df,
+                    nest = TRUE)
+
+svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+                 design = svy_df)
+summary(svyfit)
+```
+
+    ## 
+    ## Call:
+    ## svyglm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
+    ##     lowinc, design = svy_df)
+    ## 
+    ## Survey design:
+    ## svydesign(ids = ~psu, strata = ~strat_id, weight = ~bystuwt, 
+    ##     data = df, nest = TRUE)
+    ## 
+    ## Coefficients:
+    ##             Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)  45.2221     0.2710 166.867  < 2e-16 ***
+    ## byses1        6.9470     0.2913  23.849  < 2e-16 ***
+    ## female       -1.0715     0.2441  -4.389 1.47e-05 ***
+    ## moth_ba       0.6633     0.3668   1.809   0.0713 .  
+    ## fath_ba       0.5670     0.3798   1.493   0.1363    
+    ## lowinc       -2.4860     0.3644  -6.822 3.49e-11 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## (Dispersion parameter for gaussian family taken to be 159.713)
+    ## 
+    ## Number of Fisher Scoring iterations: 2
