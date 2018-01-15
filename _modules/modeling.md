@@ -188,8 +188,6 @@ summary(fit)
 Predictions
 -----------
 
-    ## Error: attempt to use zero-length variable name
-
 ``` r
 ## predict from first model
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,

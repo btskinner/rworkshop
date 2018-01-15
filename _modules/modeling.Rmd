@@ -100,7 +100,7 @@ summary(fit)
 ## predictions
 ## ------------
 
-``
+```
 
 ```{r}
 ## predict from first model

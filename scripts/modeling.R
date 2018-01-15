@@ -47,8 +47,6 @@ summary(fit)
 ## predictions
 ## ------------
 
-``
-
 ## predict from first model
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
           data = df)
