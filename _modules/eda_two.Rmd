@@ -36,13 +36,6 @@ library(labelled)
 
 ```
 
-```r
-## libraries
-library(tidyverse)
-library(haven)
-library(labelled)
-
-```
 ```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
 suppressMessages(library(tidyverse))
 library(haven)
@@ -69,6 +62,13 @@ integrates well with the tidyverse.
 We'll use the same ELS plans data we've been using, again in Stata
 format since it has variable and value labels. 
 
+```r
+## libraries
+library(tidyverse)
+library(haven)
+library(labelled)
+
+```
 
 ```{r}
 ## read in Stata data file
@@ -194,10 +194,9 @@ The first few times I tried to use ggplot2, I didn't quite get
 it. But once I did (and it doesn't take too long!), I really started
 to like it and it's now my go to system for making plots.
 
-The ggplot2 system is too involved to fully cover, but that's thats
-kind of the point of the grammar of graphics: once you see how it's
-put together, you can anticipate the commands you need to build your
-plot. 
+The ggplot2 system is too involved to fully cover, but that's kind of
+the point of the grammar of graphics: once you see how it's put
+together, you can anticipate the commands you need to build your plot.
 
 We'll start by covering the same plots as above.
 
@@ -267,7 +266,10 @@ Success!
 
 Unlike the base R graphics system, ggplot2 does have a density
 plotting command, `geom_density()`. We'll go ahead and chain it to the
-first command and print.
+first command and print. Notice how the function chain is the mostly
+the same as above, but (1) written in a single linked chain and (2)
+using a different `geom_*()` command at the end to indicate that we
+want something different.
 
 ```{r eda_plot_density, warning = F, message = F}
 ## density
@@ -279,7 +281,7 @@ p
 > #### Quick exercise
 > Make a density plot of reading scores.
 
-If we want to superimpose the denisty plot over the histogram, we only
+If we want to superimpose the density plot over the histogram, we only
 need chain the two commands together with a slight modification in how
 the histogram is made. This way, the histogram and the density will be
 on the same scale.
@@ -297,10 +299,12 @@ p
 ```
 
 It worked, but it's not the greatest visual since the colors are the
-same and the density plot is thin with no fill. Added to what came
-before, the `geom_histogram()` and `geom_density()` both take on new
-arguments that change the defaults. Now the resulting plot should look
-nicer and be easier to read.
+same and the density plot is thin with no fill. 
+
+Adding to what came before, the `geom_histogram()` and
+`geom_density()` both take on new arguments that change the
+defaults. Now the resulting plot should look nicer and be easier to
+read.
 
 ```{r eda_plot_histdens_2, warning = F, message = F}
 ## histogram with density plot overlapping (add color to see better)
@@ -338,10 +342,10 @@ Since we're using data that was labelled in Stata, we'll first use
 val_labels(df$bypared)
 
 ```
-The way this variable is structured prevents use from using a `>=`
-test like we have been. We want to count parents with two-year degree
+The way this variable is structured prevents us from using a `>=`
+test like we have been. We want to count parents with a two-year degree
 (`4`) in addition to those having a Bachelor's degree or higher (`6`,
-`7, and `8`), but we don't want to count those who attended, but
+`7`, and `8`), but we don't want to count those who attended, but
 didn't earn a degree (`5`).
 
 To do this, we'll use the special operator `%in%` which does exactly
@@ -382,6 +386,7 @@ p <- ggplot(data = plot_df,
             aes(x = bynels2m, fill = factor(pared_coll))) +
     geom_histogram(alpha = 0.5, stat = 'density', position = 'identity')
 p
+
 ```
 
 > #### Quick exercise
@@ -402,7 +407,7 @@ figures are put together. To make a box plot, we need to add a `y`
 mapping to the `aes()` in addition to the `x` mapping. We don't have
 to, but we've also added the same variable to `fill` as we did to `x`
 so that in addition to having different box and whisker plots along
-the x-axis, each plot is given it's own color.
+the x-axis, each plot is given its own color.
 
 ```{r eda_plot_box, warning = F, message = F}
 ## box plot using both factor() and as_factor()
@@ -441,15 +446,43 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
 p
 
 ```
-```{r eda_plot_scatter_2, warning = F, message = F}
+
+Now that we have our scatter plot, let's say that we want to add a
+third dimension. Specifically, we want to change the point color based
+on whether a student plans to earn a Bachelor's degree or
+higher. That means we need a new dummy variable that is 1 for those
+with BA/BS plans and 0 for others.
+
+We can look at the student base year expectations with `table()`
+
+```{r}
 ## see student base year plans
-table(as_factor(df$bystexp))
+table(df$bystexp)
+
+```
+But those numbers don't tell us much. Since we read in a Stata data
+file with labelled values, though, we can use the `val_labels()`
+function to see our options.
+
+```{r}
+## see how the labels map
 val_labels(df$bystexp)
 
+```
+Now we see that `bystexp >= 5` mean a student plans to earn a
+Bachelor's degree or higher. Let's create that.
+
+```{r}
 ## create variable for students who plan to graduate from college
 df_10 <- df_10 %>%
-    mutate(plan_col_grad = ifelse(bystexp >= 5, 'yes', 'no'))
+    mutate(plan_col_grad = ifelse(bystexp >= 5, 1, 0))
 
+```
+Now that we have our new variable `plan_col_grad`, we can add it the
+`color` aesthetic, `aes()` in `geom_point()`. Don't forget to use
+`factor()` so that ggplot knows to treat it like a group!
+
+```{r eda_plot_scatter_2, warning = F, message = F}
 ## scatter
 p <- ggplot(data = df_10,
             mapping = aes(x = bynels2m, y = bynels2r)) +
@@ -457,6 +490,27 @@ p <- ggplot(data = df_10,
 p
 
 ```
+
+> #### Quick exercise
+> Change how you make `plan_col_grad` so that instead of 1 and 0, you
+> use 'yes' and 'no'. Make your figure again. What changes?
+
+## Fitted lines
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## fitted lines
+## ------------
+
+```
+
+It's often helpful to plot fitted lines against a scatter plot to help
+see the underlying trend. There are a number of ways to do this with
+the `geom_smooth()` function.
+
+### Linear fit
+
+Setting `method = lm` in `geom_smooth()` will fit a simple straight line.
+
 ```{r eda_plot_scatter_3, warning = F, message = F}
 ## add fitted line with linear fit
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
@@ -466,6 +520,15 @@ p
 
 ```
 
+### Linear fit with polynomials
+
+In addition to the `method`, we can add a `formula` to allow the
+fitted line to take a non-linear shape. Using the `aes()` values of
+`x` and `y`, the argument below uses an R formula, `y ~ x`, but with
+the addition of the `poly()` function. Setting the second argument in
+`poly()` to 2 gives the line an extra quadratic term, which allows it
+to take a more curved shape.
+
 ```{r eda_plot_scatter_4, warning = F, message = F}
 ## add fitted line with polynomial linear fit
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
@@ -474,6 +537,15 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
 p
 
 ```
+
+> #### Quick exercise
+> Change the value in `poly()` to higher numbers. How does the line
+> change? 
+
+### Loess
+
+Finally, we can skip trying to adjust a linear line and just fit a
+[loess](https://en.wikipedia.org/wiki/Local_regression). 
 
 ```{r eda_plot_scatter_5, warning = F, message = F}
 ## add fitted line with lowess
@@ -485,8 +557,16 @@ p
 ```
 
 # Plotly
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Interactive plot with plotly
+## ---------------------------------------------------------
+
+```
 ```{r}
+## load plotly library
 library(plotly)
+
 ```
 
 As a final example, we'll turn our last plot into an interactive
@@ -504,12 +584,10 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad),
                              text = paste0('stu_id: ', stu_id)), alpha = 0.5) +
     geom_smooth(method = loess)
-p
 
 ## create an interactive plot with the last figure
 p <- ggplotly(p)
 p
-
 ```
 
 Other than the neat! factor, the plotly figure is great for
@@ -517,14 +595,14 @@ pinpointing outliers. Looking at the figure, hover over markers that
 seem outside the expected value. Clearly, this can be a great tool for
 inspecting your data.
 
-> #### Quick exercise
-> Use the plotly figure to inspect your data, particularly outliers. 
-
 ```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
 ## note to self: had to do this b/c no other good way to save
 htmltools::save_html(p, './plotly/ptly_one.html', libdir = './plotly/lib')
 htmltools::tags$iframe(src = './plotly/plotly/ptly_one.html')
 ```
+
+> #### Quick exercise
+> Use the plotly figure to inspect your data, particularly outliers. 
 
 ```{r, echo = FALSE, purl = TRUE}
 

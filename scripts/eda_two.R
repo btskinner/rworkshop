@@ -109,6 +109,7 @@ p <- ggplot(data = plot_df,
             aes(x = bynels2m, fill = factor(pared_coll))) +
     geom_histogram(alpha = 0.5, stat = 'density', position = 'identity')
 p
+
 ## ---------------------------
 ## box plot
 ## ---------------------------
@@ -134,18 +135,24 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
 p
 
 ## see student base year plans
-table(as_factor(df$bystexp))
+table(df$bystexp)
+
+## see how the labels map
 val_labels(df$bystexp)
 
 ## create variable for students who plan to graduate from college
 df_10 <- df_10 %>%
-    mutate(plan_col_grad = ifelse(bystexp >= 5, 'yes', 'no'))
+    mutate(plan_col_grad = ifelse(bystexp >= 5, 1, 0))
 
 ## scatter
 p <- ggplot(data = df_10,
             mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad)), alpha = 0.5)
 p
+
+## ------------
+## fitted lines
+## ------------
 
 ## add fitted line with linear fit
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
@@ -165,18 +172,22 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_smooth(method = loess)
 p
 
+## ---------------------------------------------------------
+## Interactive plot with plotly
+## ---------------------------------------------------------
+
+## load plotly library
 library(plotly)
+
 ## redo last figure with addition of text in aes()
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad),
                              text = paste0('stu_id: ', stu_id)), alpha = 0.5) +
     geom_smooth(method = loess)
-p
 
 ## create an interactive plot with the last figure
 p <- ggplotly(p)
 p
-
 
 ## =============================================================================
 ## END SCRIPT
