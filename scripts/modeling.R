@@ -71,6 +71,12 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
           data = df)
 summary(fit)
 
+## same model, but use as_factor() instead of factor() to use labels
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
+          + as_factor(byrace),
+          data = df)
+summary(fit)
+
 ## see what R did under the hood to convert categorical to dummies
 head(model.matrix(fit))
 
@@ -136,13 +142,18 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
 ## old data
 fit_pred <- predict(fit, se.fit = TRUE)
 
+## show options
+name(fit_pred)
+head(fit_pred$fit)
+head(fit_pred$se.fit)
+
 ## create new data that has two rows, with averages and one marginal change
 
 ## (1) save model matrix
 mm <- model.matrix(fit)
 head(mm)
 
-## (2) drop intercept column of ones
+## (2) drop intercept column of ones (predict() doesn't need them)
 mm <- mm[,-1]
 head(mm)
 

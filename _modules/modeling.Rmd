@@ -72,13 +72,14 @@ df <- read_dta('../data/els_plans_2.dta')
 
 ```
 
-One simple common statistical test is a t-test for a difference in
-means across groups (there are, of course, [others and R can compute
+One common statistical test is a t-test for a difference in means
+across groups (there are, of course, [others and R can compute
 them](https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/t.test)). This
-can be computed using the R formula syntax: `y ~ x`, meaning, in this
-case "base-year math scores against mother's college education
-level". Notice that since we have the `data = df` argument after the
-comma, we don't need to include `df$` before the two variables.
+version of the test can be computed using the R formula syntax: `y ~
+x`. In our example, we'll compute base-year math scores against
+mother's college education level. Notice that since we have the `data
+= df` argument after the comma, we don't need to include `df$` before
+the two variables.
 
 ```{r}
 ## t-test of difference in math scores across mother education (BA/BA or not)
@@ -94,7 +95,7 @@ ttest <- t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
 
 > #### Quick exercise
 > Run a t-test of reading scores against whether the father has a
-> Bachelor's degree (`fath_ba`)
+> Bachelor's degree (`fath_ba`).
 
 # Linear model
 ```{r, echo = FALSE, purl = TRUE}
@@ -109,10 +110,10 @@ ttest <- t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
 ## ------------
 
 ```
-Linear models are the bread and butter of many data analysts. In R,
-the `lm()` command is used to compute an OLS regression. Unlike above,
-where we just let the `t.test()` output print to the console, we can
-and will store the output in an object.
+Linear models are the go-to method of making inferences for many data
+analysts. In R, the `lm()` command is used to compute an OLS
+regression. Unlike above, where we just let the `t.test()` output
+print to the console, we can and will store the output in an object.
 
 First, let's compute the same t-test but in a regression framework.
 
@@ -147,8 +148,8 @@ the same value: ```r ttest$statistic```. Success!
 ```
 
 To fit a multiple regression, use the same formula framework that
-we've use before except add all the terms you want to add to the
-right-hand side separated by plus `+` signs.
+we've use before with the addition of all the terms you want on
+right-hand side of the equation separated by plus `+` signs.
 
 ```{r}
 ## linear model with more than one covariate on the RHS
@@ -181,8 +182,8 @@ nobs(fit)
 
 ```
 
-The `fit` object also holds a lot of other information that can be
-useful to pull out sometimes.
+The `fit` object also holds a lot of other information that is useful
+sometimes.
 
 ```{r}
 ## see what fit object holds
@@ -203,7 +204,7 @@ head(fit$residuals)
 
 > #### Quick exercise
 > Add the fitted values to the residuals and store in an object
-> (`x`). Compare these values the math scores in the data frame.
+> (`x`). Compare these values to the math scores in the data frame.
 
 As a final note, the model matrix used fit the regression can be
 retrieved using `model.matrix()`. Since we have a lot of observations,
@@ -241,6 +242,20 @@ variable `byrace` in this model.
 ## add factors
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
           + factor(byrace),
+          data = df)
+summary(fit)
+
+```
+
+If you're using labelled data like we, you can use the `as_factor()`
+function from the [haven
+library](https://www.rdocumentation.org/packages/haven/versions/1.1.0/topics/as_factor)
+in place of the base `factor()` function.
+
+```{r}
+## same model, but use as_factor() instead of factor() to use labels
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
+          + as_factor(byrace),
           data = df)
 summary(fit)
 
@@ -288,11 +303,11 @@ summary(fit)
 ```
 
 To add quadratic and other polynomial terms to the model, use the
-`I()` function, which let's you raise the term to the power you want
+`I()` function, which lets you raise the term to the power you want
 in the regression using the caret (`^`) operator. 
 
 In the model below, we add both quadractic and cubic versions of the
-reading score term.
+reading score to the right-hand side.
 
 ```{r}
 ## add polynomials
@@ -315,8 +330,9 @@ summary(fit)
 
 To fit a model with binary outcomes, switch to the `glm()`
 function. It is set up just like `lm()`, but it has an extra argument,
-`family`. Set the argument to `binomial()` for a binary output. By
-default, the `link` function is a [logit](https://en.wikipedia.org/wiki/Logit).
+`family`. Set the argument to `binomial()` when your dependent
+variable is binary. By default, the `link` function is a
+[logit](https://en.wikipedia.org/wiki/Logit).
 
 ```{r}
 ## logit
@@ -421,17 +437,23 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
 ## old data
 fit_pred <- predict(fit, se.fit = TRUE)
 
+## show options
+name(fit_pred)
+head(fit_pred$fit)
+head(fit_pred$se.fit)
+
 ```
 
 Ideally, we would have a new data with which to make new
-predictions. We can create one, however. Though these data aren't
-real, we can use them to return marginal predictions. 
+predictions. If we don't have new data, however, we can create a nonce
+data set that is useful for making predictions on the margin.
 
 For example, we might want make a prediction of the marginal "effect"
 of having a low income holding all else constant. We therefore make a
 new data set with only two rows. For `lowinc`, each row takes a
-different value, 0 and 1. All other columns take the average value of
-the values in the model matrix.
+different value, 0 and 1. All other columns in both rows take the
+average of the values in the model matrix. The code below goes
+step-by-step to make this new data frame.
 
 ```{r}
 ## create new data that has two rows, with averages and one marginal change
@@ -440,7 +462,7 @@ the values in the model matrix.
 mm <- model.matrix(fit)
 head(mm)
 
-## (2) drop intercept column of ones
+## (2) drop intercept column of ones (predict() doesn't need them)
 mm <- mm[,-1]
 head(mm)
 

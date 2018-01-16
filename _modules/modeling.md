@@ -37,13 +37,14 @@ df <- read_dta('../data/els_plans_2.dta')
 t-test
 ======
 
-One simple common statistical test is a t-test for a difference in means
-across groups (there are, of course, [others and R can compute
+One common statistical test is a t-test for a difference in means across
+groups (there are, of course, [others and R can compute
 them](https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/t.test)).
-This can be computed using the R formula syntax: `y ~ x`, meaning, in
-this case “base-year math scores against mother’s college education
-level”. Notice that since we have the `data = df` argument after the
-comma, we don’t need to include `df$` before the two variables.
+This version of the test can be computed using the R formula syntax:
+`y ~ x`. In our example, we’ll compute base-year math scores against
+mother’s college education level. Notice that since we have the
+`data = df` argument after the comma, we don’t need to include `df$`
+before the two variables.
 
 ``` r
 ## t-test of difference in math scores across mother education (BA/BA or not)
@@ -65,15 +66,15 @@ t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
 > #### Quick exercise
 >
 > Run a t-test of reading scores against whether the father has a
-> Bachelor’s degree (`fath_ba`)
+> Bachelor’s degree (`fath_ba`).
 
 Linear model
 ============
 
-Linear models are the bread and butter of many data analysts. In R, the
-`lm()` command is used to compute an OLS regression. Unlike above, where
-we just let the `t.test()` output print to the console, we can and will
-store the output in an object.
+Linear models are the go-to method of making inferences for many data
+analysts. In R, the `lm()` command is used to compute an OLS regression.
+Unlike above, where we just let the `t.test()` output print to the
+console, we can and will store the output in an object.
 
 First, let’s compute the same t-test but in a regression framework.
 
@@ -128,8 +129,8 @@ Multiple regression
 -------------------
 
 To fit a multiple regression, use the same formula framework that we’ve
-use before except add all the terms you want to add to the right-hand
-side separated by plus `+` signs.
+use before with the addition of all the terms you want on right-hand
+side of the equation separated by plus `+` signs.
 
 ``` r
 ## linear model with more than one covariate on the RHS
@@ -187,8 +188,8 @@ nobs(fit)
 
     ## [1] 15236
 
-The `fit` object also holds a lot of other information that can be
-useful to pull out sometimes.
+The `fit` object also holds a lot of other information that is useful
+sometimes.
 
 ``` r
 ## see what fit object holds
@@ -222,7 +223,7 @@ head(fit$residuals)
 > #### Quick exercise
 >
 > Add the fitted values to the residuals and store in an object (`x`).
-> Compare these values the math scores in the data frame.
+> Compare these values to the math scores in the data frame.
 
 As a final note, the model matrix used fit the regression can be
 retrieved using `model.matrix()`. Since we have a lot of observations,
@@ -297,6 +298,50 @@ summary(fit)
     ## Multiple R-squared:  0.2613, Adjusted R-squared:  0.2608 
     ## F-statistic: 489.6 on 11 and 15224 DF,  p-value: < 2.2e-16
 
+If you’re using labelled data like we, you can use the `as_factor()`
+function from the [haven
+library](https://www.rdocumentation.org/packages/haven/versions/1.1.0/topics/as_factor)
+in place of the base `factor()` function.
+
+``` r
+## same model, but use as_factor() instead of factor() to use labels
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
+          + as_factor(byrace),
+          data = df)
+summary(fit)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
+    ##     lowinc + as_factor(byrace), data = df)
+    ## 
+    ## Residuals:
+    ##     Min      1Q  Median      3Q     Max 
+    ## -39.154  -8.387   0.424   8.639  39.873 
+    ## 
+    ## Coefficients:
+    ##                            Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                 40.6995     1.0386  39.189  < 2e-16 ***
+    ## byses1                       5.7360     0.2345  24.456  < 2e-16 ***
+    ## female                      -1.1955     0.1900  -6.293 3.21e-10 ***
+    ## moth_ba                      0.6500     0.2780   2.338 0.019407 *  
+    ## fath_ba                      0.8482     0.2796   3.033 0.002423 ** 
+    ## lowinc                      -1.2536     0.2839  -4.416 1.01e-05 ***
+    ## as_factor(byrace)asian_pi    9.1538     1.0740   8.523  < 2e-16 ***
+    ## as_factor(byrace)black_aa   -2.2185     1.0603  -2.092 0.036419 *  
+    ## as_factor(byrace)hisp_nr     1.2778     1.0937   1.168 0.242696    
+    ## as_factor(byrace)hisp_rs     0.2387     1.0814   0.221 0.825295    
+    ## as_factor(byrace)mult_race   4.2457     1.1158   3.805 0.000142 ***
+    ## as_factor(byrace)white       6.9514     1.0379   6.698 2.19e-11 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 11.71 on 15224 degrees of freedom
+    ##   (924 observations deleted due to missingness)
+    ## Multiple R-squared:  0.2613, Adjusted R-squared:  0.2608 
+    ## F-statistic: 489.6 on 11 and 15224 DF,  p-value: < 2.2e-16
+
 If you look at the model matrix, you can see how R created the dummy
 variables from `byrace`.
 
@@ -305,27 +350,34 @@ variables from `byrace`.
 head(model.matrix(fit))
 ```
 
-    ##   (Intercept) byses1 female moth_ba fath_ba lowinc factor(byrace)2
-    ## 1           1  -0.25      1       0       0      0               0
-    ## 2           1   0.58      1       0       0      0               1
-    ## 3           1  -0.85      1       0       0      0               0
-    ## 4           1  -0.80      1       0       0      1               0
-    ## 5           1  -1.41      1       0       0      1               0
-    ## 6           1  -1.07      0       0       0      0               0
-    ##   factor(byrace)3 factor(byrace)4 factor(byrace)5 factor(byrace)6
-    ## 1               0               0               1               0
-    ## 2               0               0               0               0
-    ## 3               0               0               0               0
-    ## 4               1               0               0               0
-    ## 5               0               1               0               0
-    ## 6               0               1               0               0
-    ##   factor(byrace)7
-    ## 1               0
-    ## 2               0
-    ## 3               1
-    ## 4               0
-    ## 5               0
-    ## 6               0
+    ##   (Intercept) byses1 female moth_ba fath_ba lowinc
+    ## 1           1  -0.25      1       0       0      0
+    ## 2           1   0.58      1       0       0      0
+    ## 3           1  -0.85      1       0       0      0
+    ## 4           1  -0.80      1       0       0      1
+    ## 5           1  -1.41      1       0       0      1
+    ## 6           1  -1.07      0       0       0      0
+    ##   as_factor(byrace)asian_pi as_factor(byrace)black_aa
+    ## 1                         0                         0
+    ## 2                         1                         0
+    ## 3                         0                         0
+    ## 4                         0                         1
+    ## 5                         0                         0
+    ## 6                         0                         0
+    ##   as_factor(byrace)hisp_nr as_factor(byrace)hisp_rs
+    ## 1                        0                        1
+    ## 2                        0                        0
+    ## 3                        0                        0
+    ## 4                        0                        0
+    ## 5                        1                        0
+    ## 6                        1                        0
+    ##   as_factor(byrace)mult_race as_factor(byrace)white
+    ## 1                          0                      0
+    ## 2                          0                      0
+    ## 3                          0                      1
+    ## 4                          0                      0
+    ## 5                          0                      0
+    ## 6                          0                      0
 
 > #### Quick exercise
 >
@@ -386,11 +438,11 @@ Polynomials
 -----------
 
 To add quadratic and other polynomial terms to the model, use the `I()`
-function, which let’s you raise the term to the power you want in the
+function, which lets you raise the term to the power you want in the
 regression using the caret (`^`) operator.
 
 In the model below, we add both quadractic and cubic versions of the
-reading score term.
+reading score to the right-hand side.
 
 ``` r
 ## add polynomials
@@ -431,8 +483,9 @@ Generalized linear model
 
 To fit a model with binary outcomes, switch to the `glm()` function. It
 is set up just like `lm()`, but it has an extra argument, `family`. Set
-the argument to `binomial()` for a binary output. By default, the `link`
-function is a [logit](https://en.wikipedia.org/wiki/Logit).
+the argument to `binomial()` when your dependent variable is binary. By
+default, the `link` function is a
+[logit](https://en.wikipedia.org/wiki/Logit).
 
 ``` r
 ## logit
@@ -609,17 +662,36 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
 
 ## old data
 fit_pred <- predict(fit, se.fit = TRUE)
+
+## show options
+name(fit_pred)
 ```
 
-Ideally, we would have a new data with which to make new predictions. We
-can create one, however. Though these data aren’t real, we can use them
-to return marginal predictions.
+    ## Error in name(fit_pred): could not find function "name"
+
+``` r
+head(fit_pred$fit)
+```
+
+    ##        1        2        3        4        5        6 
+    ## 42.86583 48.51465 38.78234 36.98010 32.82855 38.43332
+
+``` r
+head(fit_pred$se.fit)
+```
+
+    ## [1] 0.1755431 0.2587681 0.2314676 0.2396327 0.2737971 0.2721818
+
+Ideally, we would have a new data with which to make new predictions. If
+we don’t have new data, however, we can create a nonce data set that is
+useful for making predictions on the margin.
 
 For example, we might want make a prediction of the marginal “effect” of
 having a low income holding all else constant. We therefore make a new
 data set with only two rows. For `lowinc`, each row takes a different
-value, 0 and 1. All other columns take the average value of the values
-in the model matrix.
+value, 0 and 1. All other columns in both rows take the average of the
+values in the model matrix. The code below goes step-by-step to make
+this new data frame.
 
 ``` r
 ## create new data that has two rows, with averages and one marginal change
@@ -638,7 +710,7 @@ head(mm)
     ## 6           1  -1.07      0       0       0      0
 
 ``` r
-## (2) drop intercept column of ones
+## (2) drop intercept column of ones (predict() doesn't need them)
 mm <- mm[,-1]
 head(mm)
 ```

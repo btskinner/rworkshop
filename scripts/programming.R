@@ -60,25 +60,17 @@ while(i < 11) {
 
 ## only print if number is not 5
 for (i in num_sequence) {
-
     if (i != 5) {
-
         print(i)
-
     }
 }
 
 ## if/else loop
 for (i in num_sequence) {
-
     if (i != 5) {
-
         print(i)
-
     } else {
-
         print('five')
-        
     }
 }
 

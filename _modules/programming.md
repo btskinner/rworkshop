@@ -16,8 +16,6 @@ output:
 library(tidyverse)
 ```
 
-\`\`\`
-
 This short module is meant to introduce you to some of R programming
 features. In the first section, we’ll go through some common control
 flow functions. In the second section, we’ll go over building our own R
@@ -28,12 +26,12 @@ Control flow
 
 By control flow, I just mean the functions that help you change how your
 script is read. Scripts in R are read from top to bottom unless specific
-commands tell R to, say, skip some lines if some condition is false or
-repeat a set of commands while some condition is true.
+commands tell R to skip some lines if some condition is false or repeat
+a set of commands while some condition is true.
 
 Repeating commands often involves a loop. Loops have a bad reputation in
 R, mostly for being slow, but they aren’t *that* slow and they are easy
-to write and understand.\[\^f1\]
+to write and understand.[^1]
 
 for
 ---
@@ -179,11 +177,8 @@ sometimes.
 ``` r
 ## only print if number is not 5
 for (i in num_sequence) {
-
     if (i != 5) {
-
         print(i)
-
     }
 }
 ```
@@ -198,6 +193,8 @@ for (i in num_sequence) {
     ## [1] 9
     ## [1] 10
 
+Notice how `5` wasn’t printed to the console. It worked!
+
 > #### Quick exercise
 >
 > Change the condition to print only numbers below 3 and above 7.
@@ -208,15 +205,10 @@ example, option **B** to happen if option **A** does not.
 ``` r
 ## if/else loop
 for (i in num_sequence) {
-
     if (i != 5) {
-
         print(i)
-
     } else {
-
         print('five')
-        
     }
 }
 ```
@@ -236,8 +228,8 @@ Writing functions
 =================
 
 You can write your own functions in R and should! They don’t need to be
-complex like the ones we’ve been using. In fact, they tend to be best
-when kept simple. Mostly, you want a function to one thing really well.
+complex. In fact, they tend to be best when kept simple. Mostly, you
+want a function to do one thing really well.
 
 To make a function, you use the `function()` function. Put the code that
 you want your function to run in the braces `{}`. Any arguments that you
@@ -262,9 +254,15 @@ my_function()
 
     ## [1] "Hi!"
 
-Let’s make another one with an argument. This time, we want it to print
-out a sequence of numbers, but we want to be able to change the number
-each time we call it.
+Let’s make another one with an argument so that it’s more flexible. This
+time, we want it to print out a sequence of numbers, but we want to be
+able to change the number each time we call it.
+
+Notice how the variable `num_vector` is repeated in both the main
+function argument and inside the `for` parentheses. The `for()` function
+sees `num_vector` and looks for it in the main function. It finds it
+because the `num_vector` you give the main function, `print_nums()`, is
+passed through to the code inside. Now `for()` can see it and use it!
 
 ``` r
 ## new function to print sequence of numbers
@@ -300,6 +298,10 @@ Moving to a more realistic example, we could make a function that filled
 in missing values, a common task we’ve had. First, we’ll generate some
 fake data with missing values.
 
+Note that since we’re using R’s `sample()` function, your data will look
+a little different from mine due to randomness in the sample, but
+everything will work the same.
+
 ``` r
 ## create tbl_df with around 10% missing values (-97,-98,-99) in three columns
 df <- data.frame('id' = 1:100,
@@ -325,16 +327,16 @@ df
     ## # A tibble: 100 x 4
     ##       id   age sibage parage
     ##    <int> <dbl>  <dbl>  <dbl>
-    ##  1     1  15.0  11.0    46.0
-    ##  2     2  17.0   8.00   46.0
-    ##  3     3  15.0 -98.0    49.0
-    ##  4     4  20.0   6.00   48.0
-    ##  5     5  20.0  10.0    50.0
-    ##  6     6  19.0   9.00   52.0
-    ##  7     7  15.0   8.00  -99.0
-    ##  8     8  11.0 -98.0    52.0
-    ##  9     9 -97.0   9.00   46.0
-    ## 10    10  18.0  10.0    50.0
+    ##  1     1  11.0 -98.0    48.0
+    ##  2     2  17.0  10.0    45.0
+    ##  3     3  19.0   6.00   50.0
+    ##  4     4  11.0   6.00   50.0
+    ##  5     5  17.0   6.00   52.0
+    ##  6     6  19.0   7.00   53.0
+    ##  7     7  20.0  12.0    48.0
+    ##  8     8  20.0   7.00   50.0
+    ##  9     9  11.0   9.00   45.0
+    ## 10    10  19.0   6.00   55.0
     ## # ... with 90 more rows
 
 We could fix these manually like we have been, but it would be nice have
@@ -368,7 +370,7 @@ table(df$age, useNA = 'ifany')
 
     ## 
     ## -97  11  12  13  14  15  16  17  18  19  20 
-    ##  10  12  13   9   6  11   8  11   4   9   7
+    ##   9   4   6  12   9   8   8  10  10  10  14
 
 ``` r
 ## missing values in age are coded as -97
@@ -380,7 +382,7 @@ table(df$age, useNA = 'ifany')
 
     ## 
     ##   11   12   13   14   15   16   17   18   19   20 <NA> 
-    ##   12   13    9    6   11    8   11    4    9    7   10
+    ##    4    6   12    9    8    8   10   10   10   14    9
 
 > #### Quick exercise
 >
@@ -391,7 +393,8 @@ table(df$age, useNA = 'ifany')
 Notes
 =====
 
-[apply](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/)
-functions. If want to go really fast, check out
-[Rcpp](http://www.rcpp.org) which incorporates C/C++ libraries and
-coding with R.
+[^1]: If you want to use more idimatic R, check out the
+    [apply](https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/)
+    functions. If want to go really fast, check out
+    [Rcpp](http://www.rcpp.org) which incorporates C/C++ libraries and
+    coding with R.
