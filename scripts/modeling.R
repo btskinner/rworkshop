@@ -18,52 +18,77 @@ library(haven)
 df <- read_dta('../data/els_plans_2.dta')
 
 ## ---------------------------
+## t-test
+## ---------------------------
+
+## t-test of difference in math scores across mother education (BA/BA or not)
+t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
+
+## ---------------------------
 ## linear model
 ## ---------------------------
 
-## linear model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
-          data = df)
+## ------------
+## ttest
+## ------------
+
+## compute same test as above, but in a linear model
+fit <- lm(bynels2m ~ moth_ba, data = df)
 fit
 
-## get more information
+## use summary to see more information about regression
 summary(fit)
+
+## ------------
+## lm w/terms
+## ------------
+
+## linear model with more than one covariate on the RHS
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+summary(fit)
+
+## check number of observations
+nobs(fit)
+
+## see what fit object holds
+names(fit)
+
+## see first few fitted values and residuals
+head(fit$fitted.values)
+head(fit$residuals)
+
+## see the design matrix
+head(model.matrix(fit))
+
+## ------------
+## factors
+## ------------
 
 ## add factors
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
-          + as_factor(byrace),
+          + factor(byrace),
           data = df)
 summary(fit)
 
+## see what R did under the hood to convert categorical to dummies
+head(model.matrix(fit))
+
+## ------------
+## interactions
+## ------------
+
 ## add interactions
-fit <- lm(bynels2m ~ byses1*lowinc + as_factor(bypared)*lowinc, data = df)
+fit <- lm(bynels2m ~ byses1*lowinc + factor(bypared)*lowinc, data = df)
 summary(fit)
+
+## ------------
+## polynomials
+## ------------
 
 ## add polynomials
 fit <- lm(bynels2m ~ bynels2r + I(bynels2r^2) + I(bynels2r^3), data = df)
 summary(fit)
-
-## ------------
-## predictions
-## ------------
-
-## predict from first model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
-          data = df)
-
-## old data
-fit_pred <- predict(fit)
-
-## new data
-new_df <- data.frame(byses1 = c(rep(mean(df$byses1, na.rm = TRUE),2)),
-                     female = c(0,1),
-                     moth_ba = c(rep(mean(df$moth_ba, na.rm = TRUE),2)),
-                     fath_ba = c(rep(mean(df$fath_ba, na.rm = TRUE),2)),
-                     lowinc = c(rep(mean(df$lowinc, na.rm = TRUE),2)))
-
-new_df
-
-predict(fit, newdata = new_df, se.fit = TRUE)
 
 ## ---------------------------
 ## generalized linear model
@@ -72,7 +97,7 @@ predict(fit, newdata = new_df, se.fit = TRUE)
 ## logit
 fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
            data = df,
-           family = binomial(link = 'logit'))
+           family = binomial())
 summary(fit)
 
 ## probit
@@ -85,6 +110,7 @@ summary(fit)
 ## survey weights
 ## ---------------------------
 
+## survey library
 library(survey)
 
 ## set svy design data
@@ -94,9 +120,47 @@ svy_df <- svydesign(ids = ~psu,
                     data = df,
                     nest = TRUE)
 
+## fit the svyglm regression and show output
 svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
                  design = svy_df)
 summary(svyfit)
+
+## ------------
+## predictions
+## ------------
+
+## predict from first model
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+
+## old data
+fit_pred <- predict(fit, se.fit = TRUE)
+
+## create new data that has two rows, with averages and one marginal change
+
+## (1) save model matrix
+mm <- model.matrix(fit)
+head(mm)
+
+## (2) drop intercept column of ones
+mm <- mm[,-1]
+head(mm)
+
+## (3) convert to data frame
+mm <- as.data.frame(mm)
+
+## (4) new data frame of means where only lowinc changes
+new_df <- data.frame(byses1 = mean(mm$byses1),
+                     female = mean(mm$female),
+                     moth_ba = mean(mm$moth_ba),
+                     fath_ba = mean(mm$fath_ba),
+                     lowinc = c(0,1))
+
+## see new data
+new_df
+
+## predit margins
+predict(fit, newdata = new_df, se.fit = TRUE)
 
 
 ## =============================================================================

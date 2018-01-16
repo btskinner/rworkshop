@@ -46,11 +46,55 @@ library(haven)
 
 ```
 
+After your data have been wrangled from raw values to an analysis data
+set and you've explored it with summary statistics and graphics, you
+are ready to model it and make inferences. As one should expect from a
+statistical language, R has a powerful system for fitting statistical
+and econometric models.
+
+In this module we'll still use the ELS plans data set, but we'll use
+one that has been tidied up a bit. Since the point of this
+module is to show the structure of running, say, an OLS regression in
+R, little weight should be given to the results. With that caveat,
+we'll load the data!
+
 ```{r}
 ## read in data
 df <- read_dta('../data/els_plans_2.dta')
 
 ```
+
+# t-test
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## t-test
+## ---------------------------
+
+```
+
+One simple common statistical test is a t-test for a difference in
+means across groups (there are, of course, [others and R can compute
+them](https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/t.test)). This
+can be computed using the R formula syntax: `y ~ x`, meaning, in this
+case "base-year math scores against mother's college education
+level". Notice that since we have the `data = df` argument after the
+comma, we don't need to include `df$` before the two variables.
+
+```{r}
+## t-test of difference in math scores across mother education (BA/BA or not)
+t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
+
+```
+
+```{r, include = FALSE, purl = FALSE}
+## t-test of difference in math scores across mother education (BA/BA or not)
+ttest <- t.test(bynels2m ~ moth_ba, data = df, var.equal = TRUE)
+
+```
+
+> #### Quick exercise
+> Run a t-test of reading scores against whether the father has a
+> Bachelor's degree (`fath_ba`)
 
 # Linear model
 ```{r, echo = FALSE, purl = TRUE}
@@ -59,33 +103,196 @@ df <- read_dta('../data/els_plans_2.dta')
 ## ---------------------------
 
 ```
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## ttest
+## ------------
+
+```
+Linear models are the bread and butter of many data analysts. In R,
+the `lm()` command is used to compute an OLS regression. Unlike above,
+where we just let the `t.test()` output print to the console, we can
+and will store the output in an object.
+
+First, let's compute the same t-test but in a regression framework.
 
 ```{r}
-## linear model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
-          data = df)
+## compute same test as above, but in a linear model
+fit <- lm(bynels2m ~ moth_ba, data = df)
 fit
 
-## get more information
+```
+
+The output is a little thin: just the coefficients. To see the full
+range of information you want from regression output, use the
+`summary()` function.
+
+```{r}
+## use summary to see more information about regression
 summary(fit)
 
 ```
+
+Looks like the coefficient on `moth_ed`, ```r fit$coefficients[[2]]```,
+is the same as the difference between the groups in the ttest, ```r 
+ttest$estimate[[2]] - ttest$estimate[[1]]```, and the test statistics are
+the same value: ```r ttest$statistic```. Success!
+
+## Multiple regression
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## lm w/terms
+## ------------
+
+```
+
+To fit a multiple regression, use the same formula framework that
+we've use before except add all the terms you want to add to the
+right-hand side separated by plus `+` signs.
+
+```{r}
+## linear model with more than one covariate on the RHS
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+summary(fit)
+
+```
+
+The full output tells you:
+
+* the model that you fit, under `Call:`
+* a table of coefficients with
+  * the main estimate (`Estimate`)
+  * the estimate error (`Std. Error`)
+  * the test statistic (`t value` with this model)
+  * the p value (`Pr(>|t|`)
+* significance stars (`.` and `*`) along with legend
+* the R-squared values (`Multiple R-squared` and `Adjusted
+    R-squared`)
+* the model F-statistic (`F-statistic`)	
+* number of observations dropped if any
+
+If observations were dropped, you can recover the number of
+observations used with the `nobs()` function.
+
+```{r}
+## check number of observations
+nobs(fit)
+
+```
+
+The `fit` object also holds a lot of other information that can be
+useful to pull out sometimes.
+
+```{r}
+## see what fit object holds
+names(fit)
+
+```
+
+For example, both `fitted.values` and `residuals` are stored in the
+object. You can access these "hidden" attributes by treating the `fit`
+object like a data frame and using the `$` notation.
+
+```{r}
+## see first few fitted values and residuals
+head(fit$fitted.values)
+head(fit$residuals)
+
+```
+
+> #### Quick exercise
+> Add the fitted values to the residuals and store in an object
+> (`x`). Compare these values the math scores in the data frame.
+
+As a final note, the model matrix used fit the regression can be
+retrieved using `model.matrix()`. Since we have a lot of observations,
+we'll just look at the first few rows.
+
+```{r}
+## see the design matrix
+head(model.matrix(fit))
+
+```
+
+What this shows is that the fit object actually stores a copy of the
+data used to run it. That's really convenient if you want to save the
+object to disk (with the `save()` function) so you can review the
+regression results later. But keep in mind that if you share that
+file, you are sharing the part of the data used to estimate it.
+
+## Using categorical variables or factors
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## factors
+## ------------
+
+```
+
+It's not necessary to preconstruct dummy variables if you want to use
+a categorical variable in your model. Insead you can use the
+categorical variable wrapped in the `factor()` function. This tells R
+that the underlying variable shouldn't be treated as a continuous
+value, but should be discrete groups. R will make the dummy variables
+on the fly when fitting the model. We'll include the categorical
+variable `byrace` in this model.
 
 ```{r}
 ## add factors
 fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc
-          + as_factor(byrace),
+          + factor(byrace),
           data = df)
 summary(fit)
 
 ```
 
+If you look at the model matrix, you can see how R created the dummy
+variables from `byrace`.
+
+```{r}
+## see what R did under the hood to convert categorical to dummies
+head(model.matrix(fit))
+
+```
+
+> #### Quick exercise
+> Add the categorical variable `byincome` to the model above. Next use
+> `model.matrix()` to check the RHS matrix.
+
+## Interactions
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## interactions
+## ------------
+
+```
+
+Add interactions to a regression using an asterisks, `*`, between the
+terms you want to interact. This will add both the main terms and the
+interaction to the model.
+
+
 ```{r}
 ## add interactions
-fit <- lm(bynels2m ~ byses1*lowinc + as_factor(bypared)*lowinc, data = df)
+fit <- lm(bynels2m ~ byses1*lowinc + factor(bypared)*lowinc, data = df)
 summary(fit)
 
 ```
+
+## Polynomials
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## polynomials
+## ------------
+
+```
+
+To add quadratic and other polynomial terms to the model, use the
+`I()` function, which let's you raise the term to the power you want
+in the regression using the caret (`^`) operator. 
+
+In the model below, we add both quadractic and cubic versions of the
+reading score term.
 
 ```{r}
 ## add polynomials
@@ -94,35 +301,9 @@ summary(fit)
 
 ```
 
-## Predictions
-```{r, echo = FALSE, purl = TRUE}
-## ------------
-## predictions
-## ------------
-
-```
-
-```{r}
-## predict from first model
-fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
-          data = df)
-
-## old data
-fit_pred <- predict(fit)
-
-## new data
-new_df <- data.frame(byses1 = c(rep(mean(df$byses1, na.rm = TRUE),2)),
-                     female = c(0,1),
-                     moth_ba = c(rep(mean(df$moth_ba, na.rm = TRUE),2)),
-                     fath_ba = c(rep(mean(df$fath_ba, na.rm = TRUE),2)),
-                     lowinc = c(rep(mean(df$lowinc, na.rm = TRUE),2)))
-
-new_df
-
-predict(fit, newdata = new_df, se.fit = TRUE)
-
-```
-
+> #### Quick exercise
+> Fit a linear model with both interations and a polynomial term. Then
+> look at the model matrix to see what R did under the hood.
 
 # Generalized linear model
 ```{r, echo = FALSE, purl = TRUE}
@@ -132,13 +313,24 @@ predict(fit, newdata = new_df, se.fit = TRUE)
 
 ```
 
+To fit a model with binary outcomes, switch to the `glm()`
+function. It is set up just like `lm()`, but it has an extra argument,
+`family`. Set the argument to `binomial()` for a binary output. By
+default, the `link` function is a [logit](https://en.wikipedia.org/wiki/Logit).
+
 ```{r}
 ## logit
 fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
            data = df,
-           family = binomial(link = 'logit'))
+           family = binomial())
 summary(fit)
 
+```
+
+If you want a [probit](https://en.wikipedia.org/wiki/Probit_model)
+model, just change the link to `probit`. 
+
+```{r}
 ## probit
 fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
            data = df,
@@ -146,6 +338,9 @@ fit <- glm(plan_col_grad ~ bynels2m + as_factor(bypared),
 summary(fit)
 
 ```
+
+> #### Quick exercise
+> Fit a logit or probit model to another binary outcome.
 
 # Using survey weights
 ```{r, echo = FALSE, purl = TRUE}
@@ -155,10 +350,26 @@ summary(fit)
 
 ```
 
+So far we haven't used survey weights, but they are very important
+when using survey data. To use survey weights load (and install if you
+haven't already) the
+[survey](http://r-survey.r-forge.r-project.org/survey/) package.
+
 ```{r, message = F, warning = F}
+## survey library
 library(survey)
 
 ```
+
+To use survey weights, you need to set the survey design using the
+`svydesign()` function. You could do this in the `svyglm()` function
+we'll use to actually estimate the equation, but it's easier and
+clearer to do it first, store it in an object, and then use that
+object in the `syvglm()`.
+
+ELS has a complex sampling design that we won't get into, but the
+appropriate columns from `df`, our data frame, are set to the proper
+arguments in `svydesign()`. Notice the `~` before each column name.
 
 ```{r}
 ## set svy design data
@@ -168,9 +379,86 @@ svy_df <- svydesign(ids = ~psu,
                     data = df,
                     nest = TRUE)
 
+```
+
+Now that we've set the survey design, we'll use the object `svy_df` in
+the `design` argument below (where your data would go in a normal
+`lm()` function).
+
+```{r}
+## fit the svyglm regression and show output
 svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
                  design = svy_df)
 summary(svyfit)
+
+```
+
+The survey library has a ton of features and is worth diving into if
+you regularly work with survey data.
+
+## Predictions
+```{r, echo = FALSE, purl = TRUE}
+## ------------
+## predictions
+## ------------
+
+```
+
+Being able to generate predictions from new data can be a powerful
+tool. Above, we were able to return the predicted values from the fit
+object. We can also use the `predict()` function, however, to both
+return the standard error of the prediction and to make predictions
+for new values.
+
+First, we'll get predicted values using the original data along with
+their standard error.
+
+```{r}
+## predict from first model
+fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
+          data = df)
+
+## old data
+fit_pred <- predict(fit, se.fit = TRUE)
+
+```
+
+Ideally, we would have a new data with which to make new
+predictions. We can create one, however. Though these data aren't
+real, we can use them to return marginal predictions. 
+
+For example, we might want make a prediction of the marginal "effect"
+of having a low income holding all else constant. We therefore make a
+new data set with only two rows. For `lowinc`, each row takes a
+different value, 0 and 1. All other columns take the average value of
+the values in the model matrix.
+
+```{r}
+## create new data that has two rows, with averages and one marginal change
+
+## (1) save model matrix
+mm <- model.matrix(fit)
+head(mm)
+
+## (2) drop intercept column of ones
+mm <- mm[,-1]
+head(mm)
+
+## (3) convert to data frame
+mm <- as.data.frame(mm)
+
+## (4) new data frame of means where only lowinc changes
+new_df <- data.frame(byses1 = mean(mm$byses1),
+                     female = mean(mm$female),
+                     moth_ba = mean(mm$moth_ba),
+                     fath_ba = mean(mm$fath_ba),
+                     lowinc = c(0,1))
+
+## see new data
+new_df
+
+## predit margins
+predict(fit, newdata = new_df, se.fit = TRUE)
 
 ```
 
