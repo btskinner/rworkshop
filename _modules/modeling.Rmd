@@ -5,7 +5,7 @@ date: 2018-01-01 00:00:07
 category: module
 links:
   script: modeling.R
-  data: els_plans.dta
+  data: els_plans_2.dta
 output:
   md_document:
     variant: markdown_mmd
