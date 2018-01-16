@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="/rworkshop/assets/css/style.css">
+<link rel="stylesheet" href="/rworkshop/assets/css/syntax_default.css">
+<link rel="stylesheet" href="/rworkshop/assets/leaflet/leaflet.css" />
+<script defer src="/rworkshop/assets/js/fontawesome-all.js"></script>
+<!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
+	      <i class="fab fa-github fa-xs"></i></a></h1>
+	<h2 class="thin">January 2018</h2>
+	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
+	
+        <p>
+	  <a href="https://curry.virginia.edu/faculty-research/centers-labs-projects/edpolicyworks">
+	    <img src="https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png" style="width:100%;">
+	  </a>
+	</p>
+	<h2 class="thin">
+	  <a href="/rworkshop/">Overview</a></br>
+	  <a href="/rworkshop/schedule/">Schedule</a></br>
+	  <a href="/rworkshop/start/">Getting started</a></br>
+	  <a href="/rworkshop/modules/">Modules</a></br>
+	  <a href="/rworkshop/data/">Data</a></br>
+	</h2>
+      </header>
+
+      <section>
+
+      <h1>Programming in R</h1>
+
+
+<p>
+  <a href="/rworkshop/scripts/programming.R"
+     class="iconlink" download title="Get script">
+    <i class="fas fa-code fa-2x"></i>
+  </a>
+  &nbsp;&nbsp;
+  
+</p>
+
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## libraries</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This short module is meant to introduce you to some of R programming
+features. In the first section, we’ll go through some common control
+flow functions. In the second section, we’ll go over building our own R
+functions.</p>
+
+<h1 id="control-flow">Control flow</h1>
+
+<p>By control flow, I just mean the functions that help you change how your
+script is read. Scripts in R are read from top to bottom unless specific
+commands tell R to skip some lines if some condition is false or repeat
+a set of commands while some condition is true.</p>
+
+<p>Repeating commands often involves a loop. Loops have a bad reputation in
+R, mostly for being slow, but they aren’t <em>that</em> slow and they are easy
+to write and understand.<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup></p>
+
+<h2 id="for">for</h2>
+
+<p>The <code class="highlighter-rouge">for()</code> function allows you to build loops. There are few ways to
+use <code class="highlighter-rouge">for()</code>, but its construction is the same:
+<code class="highlighter-rouge">for(variable in sequence)</code>.</p>
+
+<p>Reading it backwards, the <code class="highlighter-rouge">sequence</code> is just the set of numbers or
+objects that we’re going to work through. The <code class="highlighter-rouge">variable</code> is a new
+variable that will temporarily hold a value in each run through the
+loop. When the <code class="highlighter-rouge">sequence</code> is finished, so is the loop.</p>
+
+<p>First, let’s loop through a sequence of 10 numbers, printing each one at
+a time as we work through the loop.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## make vector of numbers between 1 and 10</span><span class="w">
+</span><span class="n">num_sequence</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="w">
+
+</span><span class="c1">## loop through, printing each num_sequence value, one at a time</span><span class="w">
+</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">num_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+</code></pre></div></div>
+
+<p>Notice the braces <code class="highlighter-rouge">{}</code> that come after <code class="highlighter-rouge">for()</code>. This is the code in the
+loop that will be repeated as long as the loop is run.</p>
+
+<p>Let’s do it again with characters.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## character vector using letters object from R base</span><span class="w">
+</span><span class="n">chr_sequence</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nb">letters</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">]</span><span class="w">
+
+</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">chr_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "a"
+## [1] "b"
+## [1] "c"
+## [1] "d"
+## [1] "e"
+## [1] "f"
+## [1] "g"
+## [1] "h"
+## [1] "i"
+## [1] "j"
+</code></pre></div></div>
+
+<p>With each loop, the <code class="highlighter-rouge">variable</code> <code class="highlighter-rouge">i</code> takes on each <code class="highlighter-rouge">chr_sequence</code> value in
+turn.</p>
+
+<blockquote>
+  <h4 id="quick-exercise">Quick exercise</h4>
+
+  <p>Can you modify the above loop so that it works through both the
+<code class="highlighter-rouge">num_sequence</code> and <code class="highlighter-rouge">chr_sequence</code> in the same loop? (HINT: how might
+you combine the two sequences?)</p>
+</blockquote>
+
+<p>Another way to make a for loop is work through a vector by its indices.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## for loop by indices</span><span class="w">
+</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">chr_sequence</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">print</span><span class="p">(</span><span class="n">chr_sequence</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "a"
+## [1] "b"
+## [1] "c"
+## [1] "d"
+## [1] "e"
+## [1] "f"
+## [1] "g"
+## [1] "h"
+## [1] "i"
+## [1] "j"
+</code></pre></div></div>
+
+<p>The result is the same as before, but instead of the values of
+<code class="highlighter-rouge">chr_sequence</code>, <code class="highlighter-rouge">i</code> takes on the values 1 through 10 (the length of the
+vector)</p>
+
+<blockquote>
+  <h4 id="quick-exercise-1">Quick exercise</h4>
+
+  <p>Add another print statement to the last loop that shows the value of
+<code class="highlighter-rouge">i</code> with each loop.</p>
+</blockquote>
+
+<h2 id="while">while</h2>
+
+<p>The <code class="highlighter-rouge">while()</code> function is similar to <code class="highlighter-rouge">for()</code> except that it doesn’t have
+a predetermined stopping point. As long the expression inside the
+parentheses is <code class="highlighter-rouge">TRUE</code>, the loop will keep going. Only when it becomes
+<code class="highlighter-rouge">FALSE</code> will it stop.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## set up a counter</span><span class="w">
+</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
+
+</span><span class="c1">## with each loop, add one to i</span><span class="w">
+</span><span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">11</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+</code></pre></div></div>
+
+<p>You have to careful with <code class="highlighter-rouge">while()</code> loops. If you forget to increment the
+counter (like I did the first time I set up this example), the loop
+won’t ever stop because <code class="highlighter-rouge">i</code> will never get larger and will always be
+less than 11!</p>
+
+<h2 id="if">if</h2>
+
+<p>We’ve already used a version of if, <code class="highlighter-rouge">ifelse()</code>, quite a bit. We can also
+use <code class="highlighter-rouge">if()</code> in a <code class="highlighter-rouge">for()</code> loop to set a condition that changes behavior
+sometimes.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## only print if number is not 5</span><span class="w">
+</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">num_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+</code></pre></div></div>
+
+<p>Notice how <code class="highlighter-rouge">5</code> wasn’t printed to the console. It worked!</p>
+
+<blockquote>
+  <h4 id="quick-exercise-2">Quick exercise</h4>
+
+  <p>Change the condition to print only numbers below 3 and above 7.</p>
+</blockquote>
+
+<p>We can add one or more <code class="highlighter-rouge">else()</code> partners to <code class="highlighter-rouge">if()</code> if we need, for
+example, option <strong>B</strong> to happen if option <strong>A</strong> does not.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## if/else loop</span><span class="w">
+</span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">num_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">print</span><span class="p">(</span><span class="s1">'five'</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] "five"
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+</code></pre></div></div>
+
+<h1 id="writing-functions">Writing functions</h1>
+
+<p>You can write your own functions in R and should! They don’t need to be
+complex. In fact, they tend to be best when kept simple. Mostly, you
+want a function to do one thing really well.</p>
+
+<p>To make a function, you use the <code class="highlighter-rouge">function()</code> function. Put the code that
+you want your function to run in the braces <code class="highlighter-rouge">{}</code>. Any arguments that you
+want you argument to take should be in the parentheses <code class="highlighter-rouge">()</code> right after
+the word <code class="highlighter-rouge">function</code>. The name of your function is the name of the object
+you assign it to.</p>
+
+<p>Let’s make one. The function below, <code class="highlighter-rouge">my_function()</code>, doesn’t take any
+arguments and prints a simple string when called. After you’ve built it,
+call your function using its name, not forgetting to include the
+parentheses.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## function to say hi!</span><span class="w">
+</span><span class="n">my_function</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="n">print</span><span class="p">(</span><span class="s1">'Hi!'</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="c1">## call it</span><span class="w">
+</span><span class="n">my_function</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Hi!"
+</code></pre></div></div>
+
+<p>Let’s make another one with an argument so that it’s more flexible. This
+time, we want it to print out a sequence of numbers, but we want to be
+able to change the number each time we call it.</p>
+
+<p>Notice how the variable <code class="highlighter-rouge">num_vector</code> is repeated in both the main
+function argument and inside the <code class="highlighter-rouge">for</code> parentheses. The <code class="highlighter-rouge">for()</code> function
+sees <code class="highlighter-rouge">num_vector</code> and looks for it in the main function. It finds it
+because the <code class="highlighter-rouge">num_vector</code> you give the main function, <code class="highlighter-rouge">print_nums()</code>, is
+passed through to the code inside. Now <code class="highlighter-rouge">for()</code> can see it and use it!</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## new function to print sequence of numbers</span><span class="w">
+</span><span class="n">print_nums</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">num_vector</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="c1">## this code looks familiar...</span><span class="w">
+    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">num_vector</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span><span class="c1">## try it out!</span><span class="w">
+</span><span class="n">print_nums</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+## [1] 2
+## [1] 3
+## [1] 4
+## [1] 5
+## [1] 6
+## [1] 7
+## [1] 8
+## [1] 9
+## [1] 10
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-3">Quick exercise</h4>
+
+  <p>What happens if you forget to put an argument in your new function?
+How do you think you might set a default argument for <code class="highlighter-rouge">num_vector</code>?
+Could you set it equal to something?</p>
+</blockquote>
+
+<p>Moving to a more realistic example, we could make a function that filled
+in missing values, a common task we’ve had. First, we’ll generate some
+fake data with missing values.</p>
+
+<p>Note that since we’re using R’s <code class="highlighter-rouge">sample()</code> function, your data will look
+a little different from mine due to randomness in the sample, but
+everything will work the same.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create tbl_df with around 10% missing values (-97,-98,-99) in three columns</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="s1">'id'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">100</span><span class="p">,</span><span class="w">
+                 </span><span class="s1">'age'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="m">11</span><span class="p">,</span><span class="m">20</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">-97</span><span class="p">),</span><span class="w">
+                                </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w">
+                                </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
+                                </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">.09</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">),</span><span class="w"> </span><span class="m">.1</span><span class="p">)),</span><span class="w">
+                 </span><span class="s1">'sibage'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="m">5</span><span class="p">,</span><span class="m">12</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">-98</span><span class="p">),</span><span class="w">
+                                   </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w">
+                                   </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
+                                   </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">.115</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">),</span><span class="w"> </span><span class="m">.08</span><span class="p">)),</span><span class="w">
+                 </span><span class="s1">'parage'</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sample</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="m">45</span><span class="p">,</span><span class="m">55</span><span class="p">,</span><span class="m">1</span><span class="p">),</span><span class="w"> </span><span class="m">-99</span><span class="p">),</span><span class="w">
+                                   </span><span class="n">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span><span class="w">
+                                          </span><span class="n">replace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
+                                   </span><span class="n">prob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">.085</span><span class="p">,</span><span class="w"> </span><span class="m">11</span><span class="p">),</span><span class="w"> </span><span class="m">.12</span><span class="p">))</span><span class="w">
+                 </span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">tbl_df</span><span class="p">()</span><span class="w">
+
+</span><span class="c1">## show</span><span class="w">
+</span><span class="n">df</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 100 x 4
+##       id   age sibage parage
+##    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1     1  15.0   6.00  -99.0
+##  2     2  12.0  10.0    50.0
+##  3     3 -97.0   6.00   49.0
+##  4     4  15.0  11.0    51.0
+##  5     5  13.0  10.0    45.0
+##  6     6  20.0   8.00   46.0
+##  7     7  18.0  10.0    45.0
+##  8     8  18.0 -98.0    53.0
+##  9     9  19.0  11.0    52.0
+## 10    10  20.0  10.0    52.0
+## # ... with 90 more rows
+</code></pre></div></div>
+
+<p>We could fix these manually like we have been, but it would be nice have
+a shorthand function. The function needs to flexible though, because the
+missing data values are coded differently in each column.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## function to fix missing values</span><span class="w">
+</span><span class="n">fix_missing</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="k">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">miss_val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+
+    </span><span class="c1">## in the vector, wherever the vector is the missval_num, make NA</span><span class="w">
+    </span><span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">miss_val</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NA</span><span class="w">
+
+    </span><span class="c1">## return instead of print because we want to store it</span><span class="w">
+    </span><span class="nf">return</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Our <code class="highlighter-rouge">fix_missing()</code> function should work. It takes the same bracket code
+we used in past modules, but instead of using the name of the object
+(like <code class="highlighter-rouge">df</code>), uses a variable name <code class="highlighter-rouge">x</code> that we can set each time. It does
+the same for <code class="highlighter-rouge">miss_val</code>. Instead of choosing a hard-coded value (a
+<a href="https://en.wikipedia.org/wiki/Magic_number_(programming)">magic
+number</a>), we
+can change it each time we call the function. Let’s try it out.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check</span><span class="w">
+</span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
+## -97  11  12  13  14  15  16  17  18  19  20 
+##   9   7  11  12  11   8   3   7  14   9   9
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## missing values in age are coded as -97</span><span class="w">
+</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">fix_missing</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="m">-97</span><span class="p">)</span><span class="w">
+
+</span><span class="c1">## recheck</span><span class="w">
+</span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
+##   11   12   13   14   15   16   17   18   19   20 &lt;NA&gt; 
+##    7   11   12   11    8    3    7   14    9    9    9
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise-4">Quick exercise</h4>
+
+  <p>Our new function should work in the tidyverse framework. Load
+tidyverse and see if you can fix the other two columns with our new
+command. (HINT: look back at a past module if you need to)</p>
+</blockquote>
+
+<h1 id="notes">Notes</h1>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>If you want to use more idimatic R, check out the
+<a href="https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/">apply</a>
+functions. If want to go really fast, check out
+<a href="http://www.rcpp.org">Rcpp</a> which incorporates C/C++ libraries and
+coding with R.&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+
+      </section>
+      <footer>
+        <p>
+  Benjamin Skinner</br>  
+  Research Assistant Professor of Education</br>  
+  University of Virginia</br>  
+  <a href="https://www.btskinner.me" class="iconlink">
+    <i class="fas fa-home fa-lg"></i></a> | 
+  <a href="https://github.com/btskinner" class="iconlink">
+    <i class="fab fa-github fa-lg"></i></a> | 
+  <a href="mailto:btskinner@virginia.edu" class="iconlink">
+    <i class="far fa-envelope fa-lg"></i></a> | 
+  <a href="https://twitter.com/btskinner" class="iconlink">
+    <i class="fab fa-twitter fa-lg"></i></a>
+</p>
+<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      </footer>
+    </div>
+    <script src="/rworkshop/assets/js/scale.fix.js"></script>
+
+    
+    
+    
+    
+
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-63981025-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>
