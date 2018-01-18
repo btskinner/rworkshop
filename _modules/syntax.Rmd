@@ -111,9 +111,7 @@ x
 
 ```
 
-You can also assign using a single equals sign, `=`, but note that
-functions also use single equal signs to associate values with
-arguments.
+You can also assign using a single equals sign, `=`:
 ```{r}
 ## assign value to object y using =
 y = 'a'
@@ -123,9 +121,13 @@ y
 
 ```
 
+Keep in mind, however, that since `=` sometimes has
+other meanings in R (it's how functions set argument options), it may
+be clearer to use `<-`.
+
 > #### Quick exercise
-> Assign the output of `1+1` to `x`. Next subtract 1 from `x` and
-> reassign the result to `x`.
+> Using the arrow, assign the output of `1 + 1` to `x`. Next subtract 1
+> from `x` and reassign the result to `x`.
 
 # Data types and structures
 ```{r, include = FALSE, purl = TRUE}
@@ -150,8 +152,9 @@ regularly use:
 ### Logical
 
 Logical vectors can be `TRUE`, `FALSE`, or `NA`. They can be assigned
-to objects or returned by logical operators, which makes them useful
-for control flow in loops and functions.
+to objects or returned by logical operators (*e.g.*, `==`, `!=`, `<`,
+`>`, etc), which makes them useful for control flow in loops and
+functions.
 
 **NB** In R, you can shorten `TRUE` to `T` and `FALSE` to `F`, but
 both the short and long versions must be capitalized.
@@ -183,7 +186,14 @@ is.logical(x)
 Numeric values can be both **integers** and double precision floating
 point values, or just **doubles**. R automatically converts between the two data
 types for you, so knowing the difference between the two isn't really
-important for most analyses.
+important for most analyses. 
+
+If you want to use an integer, place a capital `L` after the number
+like `1L`. If a number is stored as an integer, some R output will
+place an `L` behind the digits to let you know that. Mostly, R
+defaults to using doubles, but if you see a number with an `L` behind
+it, know that it's still a number.
+
 
 ```{r, include = FALSE, purl = TRUE}
 ## ------------
@@ -208,10 +218,12 @@ is.numeric(y)
 
 ### Character
 
-Character values are stored as strings. Numeric values can also be
-stored as strings (sometimes useful if you must store leading zeroes),
-but they have to coverted back to numbers before you can perform
-numeric operations on them. 
+Character values are stored as strings, which means you need to place
+either single `'` or double `"` quotes around them. Numeric values can
+also be stored as strings (sometimes useful if you must store leading
+zeroes), but they have to be converted back to numbers before you can
+perform numeric operations on them (like adding or subtracting) or use
+them in a statistical model.
 
 ```{r, include = FALSE, purl = TRUE}
 ## ------------
@@ -253,8 +265,11 @@ Building on these data types, R relies on four primary data structures:
 
 A vector in R is just a collection of the data types discussed. In
 fact, a single value is a vector of one. Vectors do not have
-diminsions (`dim()`), but do have `length()`. You combine values using
-the concatenate (`c()`) function.
+dimensions (`dim()`), but do have `length()`, which is good to
+remember when inspecting your data or writing loops and functions. 
+
+You combine multiple values using the concatenate, `c()`, function. We
+will use `c()` a lot.
 
 ```{r, include = FALSE, purl = TRUE}
 ## ------------
@@ -269,18 +284,29 @@ x <- 1
 ## check
 is.vector(x)
 
-## add to vector (can do so recursively)
-x <- c(x, 2, 3)
+## add to vector (can do so recursively meaning old x can help make new x)
+x <- c(x, 5, 8)
 x
 
-## no dim, but length
+## no dim...
 dim(x)
+
+## ...but length
 length(x)
 
 ```
 
 You can access the elements of a vector using brackets, `[]`, after
-the object name. 
+the object name. If you think of each element in the vector as having
+an address, that is, a way to access it specifically, then its address
+is its position number in the vector. This position number is called
+its index, and in R, the index always starts with `1`.
+
+In our current vector, we have three items, ```r x[1]```, ```r x[2]```, 
+and ```r x[3]```, which in turn have indices of `1`, `2`,
+and `3`. To access ```r x[2]``` specifically, we can call it using the
+brackets and its index: `x[2]`.
+
 ```{r}
 ## get the second element
 x[2]
@@ -329,9 +355,16 @@ x
 y <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
 y
 
-## has dimension
+## a matrix has dimension
 dim(x)
 
+```
+
+Use `nrow()` and `ncol()` to get the number of rows and columns,
+respectively.
+
+
+```{r}
 ## # of rows
 nrow(x)
 
@@ -344,17 +377,30 @@ Like a vector, you can access parts of a matrix. Since it has two
 dimensions, use a comma in the bracket to separate row indices from
 column indices.
 
+When using brackets with objects that have two dimensions, a
+good rule of thumb is to add your comma first: `x[ , ]`. Numbers or
+objects you put between the first bracket and the comma will affect
+the rows; numbers between the comma and the closing bracket will
+affect the columns.
+
+If you don't put anything in either of those spaces (a blank space
+doesn't count), R will assume you want all rows or columns, depending
+on which side of the comma is blank.
+
 ```{r}
 ## show the values in the first row
-x[1,]
+x[1, ]
 
 ## show the values in the third column
-x[,3]
+x[ ,3]
+
+## this is the same as just calling x by itself
+x[ , ]
 
 ```
 
 > #### Quick exercise
-> Return the middle value of the x matrix. Next assign the middle
+> Return the middle value of the `x` matrix. Next assign the middle
 > value the character value 'a'. What happens to the rest of the
 > values in the matrix?
 
@@ -367,9 +413,10 @@ x[,3]
 
 ```  
 
-Lists are a catch all data vectors that can hold an assortment of
-objects. They can be flat, meaning that all values are at the same
-level, or nested, with lists holding other lists.
+Lists are a catch all objects that can hold an assortment of other
+objects of different data types. They can be flat, meaning that all
+values are at the same level, or nested, with lists holding other
+lists.
 
 ```{r}
 ## create single-level list
@@ -385,10 +432,23 @@ is.list(x)
 y <- list()
 
 ## add to first list, creating nested list
-x <- list(x, y)
+z <- list(x, y)
 
 ## show
-x
+z
+
+```
+
+You access items in lists like you do vectors and matrices. You may,
+however, need to use double brackets, `[[]]`, and multiple pairs,
+`[[]][[]]`, to reach the item you need.
+
+```{r}
+## the first item in list z is list x
+z[[1]]
+
+## to get to 'a' in list x, need to add more brackets
+z[[1]][[2]]
 
 ```
 
@@ -408,7 +468,7 @@ Most of the time, you will be reading in data frames, but you can also
 create them.
 
 ```{r}
-## create data frame
+## create data frame where col_* are the column (variable) names
 df <- data.frame(col_a = c(1,2,3),
                  col_b = c(4,5,6),
                  col_c = c(7,8,9))
@@ -442,7 +502,7 @@ df$col_a
 
 ```
 
-You can also use the `df[['<var name>']]` contruction, which comes in
+You can also use the `df[['<var name>']]` construction, which comes in
 handy in loops and functions.
 
 ```{r}
@@ -457,9 +517,8 @@ df[['col_a']]
 
 # Packages
 
-Like I said above, user-submitted packages are a huge part of what makes
-R great. Most of your scripts will make use of one or more
-packages. 
+User-submitted packages are a huge part of what makes R great. Most of
+your scripts will make use of one or more packages.
 
 ## Installation
 ### CRAN
@@ -479,8 +538,9 @@ type.
 
 > #### Quick exercise 
 > Install the
-> [`Hmisc`](http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc) package,
-> which has a lot of useful functions. 
+> [`survey`](https://CRAN.R-project.org/package=survey) package,
+> which we will use in a later module. Don't forget to use single or
+> double quotation marks around the package name.
 
 ### GitHub
 
@@ -509,7 +569,9 @@ need to load these before you can use their functions in your
 scripts. Typically, they are placed at the top of the script file.
 
 > #### Quick exercise 
-> Load the `tidyverse` package, which you should have already installed.
+> Load the `tidyverse` package, which you should have already
+> installed. This will be a good test of the installation since we
+> will use tidyverse libraries throughout the rest of the workshop.
 
 # Help
 ```{r, echo = FALSE, purl = TRUE}
@@ -549,7 +611,7 @@ a 1,000 other people have too and at least one of them has been brave
 [CrossValidated](https://stackoverflow.com), or [R-help mailing
 list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
 
-# Other notes about R
+# Miscellaneous notes about R
 
 ## Compared to other statistical languages
 
@@ -561,16 +623,18 @@ or scripting languages, like
 [Python](https://www.python.org), and
 [Stata](https://www.stata.com).[^f3] 
 
-I came to R after learning Stata first, which is common for many
-researchers trained in econometric methods. For me and others who've
-made the same Stata-to-R transition, I think the root of many problems
-is the fundamental difference between how Stata and R operate. Whereas
-Stata is more of a [procedural
-language](https://en.wikipedia.org/wiki/Procedural_programming) in
-which commands **do** things in an environment (your data), R is more
-[object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming)
-in that data and functions are **stored** in variables or
-objects and await instructions that pertain to them.[^f4] 
+I came to R after learning Stata first, which I think is common for
+many researchers trained in econometric methods. For me and others
+who've made the same Stata-to-R transition, I think the root of many
+problems is the fundamental difference between how Stata and R
+operate. Whereas Stata is more of
+a
+[procedural language](https://en.wikipedia.org/wiki/Procedural_programming) in
+which commands **do** things in an environment (your data), R is
+more
+[object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming) in
+that data and functions are **stored** in variables or objects and
+await instructions that pertain to them.[^f4]
 
 As pointed out by my friend and colleague [Richard
 Blissett](https://www.shu.edu/profiles/RichardBlissett.cfm), users can
@@ -579,8 +643,8 @@ language. Stata commands tend to be verbs: `summarize`, `tabulate`,
 and `regress`; on the other hand, R functions are often nouns:
 `summary`, `table`, and `lm` (for linear model). And so, common
 problems in the R to Stata switch such as  
-- *I ran a model and didn't get any output*  
-- *How do I create local/global macros in R*  
+- *I ran a model and didn't get any output...*  
+- *How do I create local/global macros in R?*  
 - *Which of these data objects is the actual data?*  
 - *Why isn't R **doing** anything?*  
 

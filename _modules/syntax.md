@@ -82,11 +82,9 @@ x <- 1
 x
 ```
 
-    ## [1] 1
+    [1] 1
 
-You can also assign using a single equals sign, `=`, but note that
-functions also use single equal signs to associate values with
-arguments.
+You can also assign using a single equals sign, `=`:
 
 ``` r
 ## assign value to object y using =
@@ -96,12 +94,16 @@ y = 'a'
 y
 ```
 
-    ## [1] "a"
+    [1] "a"
+
+Keep in mind, however, that since `=` sometimes has other meanings in R
+(it’s how functions set argument options), it may be clearer to use
+`<-`.
 
 > #### Quick exercise
 >
-> Assign the output of `1+1` to `x`. Next subtract 1 from `x` and
-> reassign the result to `x`.
+> Using the arrow, assign the output of `1 + 1` to `x`. Next subtract 1
+> from `x` and reassign the result to `x`.
 
 Data types and structures
 =========================
@@ -117,8 +119,8 @@ There are three primary data types in R that you will regularly use:
 ### Logical
 
 Logical vectors can be `TRUE`, `FALSE`, or `NA`. They can be assigned to
-objects or returned by logical operators, which makes them useful for
-control flow in loops and functions.
+objects or returned by logical operators (*e.g.*, `==`, `!=`, `<`, `>`,
+etc), which makes them useful for control flow in loops and functions.
 
 **NB** In R, you can shorten `TRUE` to `T` and `FALSE` to `F`, but both
 the short and long versions must be capitalized.
@@ -129,28 +131,28 @@ x <- TRUE
 x
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 ## ! == NOT
 !x
 ```
 
-    ## [1] FALSE
+    [1] FALSE
 
 ``` r
 ## check
 is.logical(x)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 ## evaluate
 1 + 1 == 2
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ### Numeric: Integer and Double
 
@@ -159,13 +161,19 @@ point values, or just **doubles**. R automatically converts between the
 two data types for you, so knowing the difference between the two isn’t
 really important for most analyses.
 
+If you want to use an integer, place a capital `L` after the number like
+`1L`. If a number is stored as an integer, some R output will place an
+`L` behind the digits to let you know that. Mostly, R defaults to using
+doubles, but if you see a number with an `L` behind it, know that it’s
+still a number.
+
 ``` r
 ## use 'L' after digit to store as integer
 x <- 1L
 is.integer(x)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 ## R stores as double by default
@@ -173,27 +181,29 @@ y <- 1
 is.double(y)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 ## both are numeric
 is.numeric(x)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 is.numeric(y)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ### Character
 
-Character values are stored as strings. Numeric values can also be
-stored as strings (sometimes useful if you must store leading zeroes),
-but they have to coverted back to numbers before you can perform numeric
-operations on them.
+Character values are stored as strings, which means you need to place
+either single `'` or double `"` quotes around them. Numeric values can
+also be stored as strings (sometimes useful if you must store leading
+zeroes), but they have to be converted back to numbers before you can
+perform numeric operations on them (like adding or subtracting) or use
+them in a statistical model.
 
 ``` r
 ## store a string using quotation marks
@@ -201,7 +211,7 @@ x <- 'The quick brown fox jumps over the lazy dog.'
 x
 ```
 
-    ## [1] "The quick brown fox jumps over the lazy dog."
+    [1] "The quick brown fox jumps over the lazy dog."
 
 ``` r
 ## store a number with leading zeros
@@ -209,7 +219,7 @@ x <- '00001'
 x
 ```
 
-    ## [1] "00001"
+    [1] "00001"
 
 > #### Quick exercise
 >
@@ -231,9 +241,12 @@ Building on these data types, R relies on four primary data structures:
 ### Vector
 
 A vector in R is just a collection of the data types discussed. In fact,
-a single value is a vector of one. Vectors do not have diminsions
-(`dim()`), but do have `length()`. You combine values using the
-concatenate (`c()`) function.
+a single value is a vector of one. Vectors do not have dimensions
+(`dim()`), but do have `length()`, which is good to remember when
+inspecting your data or writing loops and functions.
+
+You combine multiple values using the concatenate, `c()`, function. We
+will use `c()` a lot.
 
 ``` r
 ## create vector
@@ -243,38 +256,46 @@ x <- 1
 is.vector(x)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
-## add to vector (can do so recursively)
-x <- c(x, 2, 3)
+## add to vector (can do so recursively meaning old x can help make new x)
+x <- c(x, 5, 8)
 x
 ```
 
-    ## [1] 1 2 3
+    [1] 1 5 8
 
 ``` r
-## no dim, but length
+## no dim...
 dim(x)
 ```
 
-    ## NULL
+    NULL
 
 ``` r
+## ...but length
 length(x)
 ```
 
-    ## [1] 3
+    [1] 3
 
 You can access the elements of a vector using brackets, `[]`, after the
-object name.
+object name. If you think of each element in the vector as having an
+address, that is, a way to access it specifically, then its address is
+its position number in the vector. This position number is called its
+index, and in R, the index always starts with `1`.
+
+In our current vector, we have three items, `1`, `5`, and `8`, which in
+turn have indices of `1`, `2`, and `3`. To access `5` specifically, we
+can call it using the brackets and its index: `x[2]`.
 
 ``` r
 ## get the second element
 x[2]
 ```
 
-    ## [1] 2
+    [1] 5
 
 > #### Quick exercise
 >
@@ -291,7 +312,7 @@ to least ambiguous type. We can check this with `class()`.
 class(x)
 ```
 
-    ## [1] "numeric"
+    [1] "numeric"
 
 ``` r
 ## add character
@@ -299,14 +320,14 @@ x <- c(x, 'a')
 x
 ```
 
-    ## [1] "1" "2" "3" "a"
+    [1] "1" "5" "8" "a"
 
 ``` r
 ## check class
 class(x)
 ```
 
-    ## [1] "character"
+    [1] "character"
 
 ### Matrix
 
@@ -319,10 +340,10 @@ x <- matrix(1:9, nrow = 3, ncol = 3)
 x
 ```
 
-    ##      [,1] [,2] [,3]
-    ## [1,]    1    4    7
-    ## [2,]    2    5    8
-    ## [3,]    3    6    9
+         [,1] [,2] [,3]
+    [1,]    1    4    7
+    [2,]    2    5    8
+    [3,]    3    6    9
 
 ``` r
 ## ...fill by row this time
@@ -330,61 +351,84 @@ y <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
 y
 ```
 
-    ##      [,1] [,2] [,3]
-    ## [1,]    1    2    3
-    ## [2,]    4    5    6
-    ## [3,]    7    8    9
+         [,1] [,2] [,3]
+    [1,]    1    2    3
+    [2,]    4    5    6
+    [3,]    7    8    9
 
 ``` r
-## has dimension
+## a matrix has dimension
 dim(x)
 ```
 
-    ## [1] 3 3
+    [1] 3 3
+
+Use `nrow()` and `ncol()` to get the number of rows and columns,
+respectively.
 
 ``` r
 ## # of rows
 nrow(x)
 ```
 
-    ## [1] 3
+    [1] 3
 
 ``` r
 ## # of columns
 ncol(x)
 ```
 
-    ## [1] 3
+    [1] 3
 
 Like a vector, you can access parts of a matrix. Since it has two
 dimensions, use a comma in the bracket to separate row indices from
 column indices.
 
+When using brackets with objects that have two dimensions, a good rule
+of thumb is to add your comma first: `x[ , ]`. Numbers or objects you
+put between the first bracket and the comma will affect the rows;
+numbers between the comma and the closing bracket will affect the
+columns.
+
+If you don’t put anything in either of those spaces (a blank space
+doesn’t count), R will assume you want all rows or columns, depending on
+which side of the comma is blank.
+
 ``` r
 ## show the values in the first row
-x[1,]
+x[1, ]
 ```
 
-    ## [1] 1 4 7
+    [1] 1 4 7
 
 ``` r
 ## show the values in the third column
-x[,3]
+x[ ,3]
 ```
 
-    ## [1] 7 8 9
+    [1] 7 8 9
+
+``` r
+## this is the same as just calling x by itself
+x[ , ]
+```
+
+         [,1] [,2] [,3]
+    [1,]    1    4    7
+    [2,]    2    5    8
+    [3,]    3    6    9
 
 > #### Quick exercise
 >
-> Return the middle value of the x matrix. Next assign the middle value
-> the character value ‘a’. What happens to the rest of the values in the
-> matrix?
+> Return the middle value of the `x` matrix. Next assign the middle
+> value the character value ‘a’. What happens to the rest of the values
+> in the matrix?
 
 ### List
 
-Lists are a catch all data vectors that can hold an assortment of
-objects. They can be flat, meaning that all values are at the same
-level, or nested, with lists holding other lists.
+Lists are a catch all objects that can hold an assortment of other
+objects of different data types. They can be flat, meaning that all
+values are at the same level, or nested, with lists holding other lists.
 
 ``` r
 ## create single-level list
@@ -394,46 +438,71 @@ x <- list(1, 'a', TRUE)
 x
 ```
 
-    ## [[1]]
-    ## [1] 1
-    ## 
-    ## [[2]]
-    ## [1] "a"
-    ## 
-    ## [[3]]
-    ## [1] TRUE
+    [[1]]
+    [1] 1
+
+    [[2]]
+    [1] "a"
+
+    [[3]]
+    [1] TRUE
 
 ``` r
 ## check
 is.list(x)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 ``` r
 ## create blank list
 y <- list()
 
 ## add to first list, creating nested list
-x <- list(x, y)
+z <- list(x, y)
 
 ## show
-x
+z
 ```
 
-    ## [[1]]
-    ## [[1]][[1]]
-    ## [1] 1
-    ## 
-    ## [[1]][[2]]
-    ## [1] "a"
-    ## 
-    ## [[1]][[3]]
-    ## [1] TRUE
-    ## 
-    ## 
-    ## [[2]]
-    ## list()
+    [[1]]
+    [[1]][[1]]
+    [1] 1
+
+    [[1]][[2]]
+    [1] "a"
+
+    [[1]][[3]]
+    [1] TRUE
+
+
+    [[2]]
+    list()
+
+You access items in lists like you do vectors and matrices. You may,
+however, need to use double brackets, `[[]]`, and multiple pairs,
+`[[]][[]]`, to reach the item you need.
+
+``` r
+## the first item in list z is list x
+z[[1]]
+```
+
+    [[1]]
+    [1] 1
+
+    [[2]]
+    [1] "a"
+
+    [[3]]
+    [1] TRUE
+
+``` r
+## to get to 'a' in list x, need to add more brackets
+z[[1]][[2]]
+```
+
+    [1] "a"
 
 ### Data frame
 
@@ -446,7 +515,7 @@ Most of the time, you will be reading in data frames, but you can also
 create them.
 
 ``` r
-## create data frame
+## create data frame where col_* are the column (variable) names
 df <- data.frame(col_a = c(1,2,3),
                  col_b = c(4,5,6),
                  col_c = c(7,8,9))
@@ -455,17 +524,17 @@ df <- data.frame(col_a = c(1,2,3),
 df
 ```
 
-    ##   col_a col_b col_c
-    ## 1     1     4     7
-    ## 2     2     5     8
-    ## 3     3     6     9
+      col_a col_b col_c
+    1     1     4     7
+    2     2     5     8
+    3     3     6     9
 
 ``` r
 ## check
 is.data.frame(df)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 Like matrices, data frames have a `dim()` and the number of rows and
 columns can be recovered using `nrow()` and `ncol()`. The column names,
@@ -477,7 +546,7 @@ accessed using `names()`.
 names(df)
 ```
 
-    ## [1] "col_a" "col_b" "col_c"
+    [1] "col_a" "col_b" "col_c"
 
 To access a column, you need to give R the data frame’s name followed by
 a `$` and then the variable name.
@@ -487,9 +556,9 @@ a `$` and then the variable name.
 df$col_a
 ```
 
-    ## [1] 1 2 3
+    [1] 1 2 3
 
-You can also use the `df[['<var name>']]` contruction, which comes in
+You can also use the `df[['<var name>']]` construction, which comes in
 handy in loops and functions.
 
 ``` r
@@ -497,7 +566,7 @@ handy in loops and functions.
 df[['col_a']]
 ```
 
-    ## [1] 1 2 3
+    [1] 1 2 3
 
 > #### Quick exercise
 >
@@ -508,8 +577,8 @@ df[['col_a']]
 Packages
 ========
 
-Like I said above, user-submitted packages are a huge part of what makes
-R great. Most of your scripts will make use of one or more packages.
+User-submitted packages are a huge part of what makes R great. Most of
+your scripts will make use of one or more packages.
 
 Installation
 ------------
@@ -530,9 +599,9 @@ how you installed R and download the right operating system file type.
 
 > #### Quick exercise
 >
-> Install the
-> [`Hmisc`](http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc) package,
-> which has a lot of useful functions.
+> Install the [`survey`](https://CRAN.R-project.org/package=survey)
+> package, which we will use in a later module. Don’t forget to use
+> single or double quotation marks around the package name.
 
 ### GitHub
 
@@ -564,6 +633,8 @@ Typically, they are placed at the top of the script file.
 > #### Quick exercise
 >
 > Load the `tidyverse` package, which you should have already installed.
+> This will be a good test of the installation since we will use
+> tidyverse libraries throughout the rest of the workshop.
 
 Help
 ====
@@ -600,8 +671,8 @@ foolhardy!) enough to ask about it in a forum like
 [CrossValidated](https://stackoverflow.com), or [R-help mailing
 list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
 
-Other notes about R
-===================
+Miscellaneous notes about R
+===========================
 
 Compared to other statistical languages
 ---------------------------------------
@@ -614,7 +685,7 @@ scripting languages, like
 [Python](https://www.python.org), and
 [Stata](https://www.stata.com).[^5]
 
-I came to R after learning Stata first, which is common for many
+I came to R after learning Stata first, which I think is common for many
 researchers trained in econometric methods. For me and others who’ve
 made the same Stata-to-R transition, I think the root of many problems
 is the fundamental difference between how Stata and R operate. Whereas
@@ -632,8 +703,8 @@ Stata commands tend to be verbs: `summarize`, `tabulate`, and `regress`;
 on the other hand, R functions are often nouns: `summary`, `table`, and
 `lm` (for linear model). And so, common problems in the R to Stata
 switch such as  
-- *I ran a model and didn’t get any output*  
-- *How do I create local/global macros in R*  
+- *I ran a model and didn’t get any output…*  
+- *How do I create local/global macros in R?*  
 - *Which of these data objects is the actual data?*  
 - *Why isn’t R **doing** anything?*
 
