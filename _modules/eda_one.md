@@ -384,7 +384,7 @@ df %>%
 
     ## # A tibble: 9 x 2
     ##   bypared                                      n
-    ##   <fctr>                                   <int>
+    ##   <fct>                                    <int>
     ## 1 did not finish high school                 942
     ## 2 graduated from high school or ged         3044
     ## 3 attended 2-year school, no degree         1663
@@ -457,7 +457,7 @@ df %>%
     ## # A tibble: 19 x 3
     ## # Groups: bysex [3]
     ##    bysex  bypared                                      n
-    ##    <fctr> <fctr>                                   <int>
+    ##    <fct>  <fct>                                    <int>
     ##  1 male   did not finish high school                 440
     ##  2 male   graduated from high school or ged         1496
     ##  3 male   attended 2-year school, no degree          823
@@ -492,7 +492,7 @@ df %>%
 
     ## # A tibble: 9 x 4
     ##   bypared                                   male female `<NA>`
-    ## * <fctr>                                   <int>  <int>  <int>
+    ## * <fct>                                    <int>  <int>  <int>
     ## 1 did not finish high school                 440    502     NA
     ## 2 graduated from high school or ged         1496   1548     NA
     ## 3 attended 2-year school, no degree          823    840     NA
@@ -586,7 +586,7 @@ df %>%
 
     ## # A tibble: 9 x 2
     ##   bypared                                  bynels2m
-    ##   <fctr>                                      <dbl>
+    ##   <fct>                                       <dbl>
     ## 1 did not finish high school                   36.3
     ## 2 graduated from high school or ged            40.5
     ## 3 attended 2-year school, no degree            42.6
@@ -613,7 +613,7 @@ df %>%
     ## # A tibble: 18 x 3
     ## # Groups: bypared [?]
     ##    bypared                                  lowinc bynels2m
-    ##    <fctr>                                    <dbl>    <dbl>
+    ##    <fct>                                     <dbl>    <dbl>
     ##  1 did not finish high school                 0        36.7
     ##  2 did not finish high school                 1.00     35.9
     ##  3 graduated from high school or ged          0        42.1

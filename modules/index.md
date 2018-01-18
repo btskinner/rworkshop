@@ -10,7 +10,7 @@ class="fas fa-database"></i></span>) used to create each module will be
 linked at the top of the page. Alternately, all scripts and data may
 be 
 
-* Downloaded as a [zip file]({{ site.zip }})
+* Downloaded as a <a href="{{ site.zip }}" download="rworkshop">zip file</a>
 * Cloned in bulk from the workshop's [GitHub
 repository]({{ site.repo }}).
 
