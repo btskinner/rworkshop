@@ -18,6 +18,12 @@ rm(list = ls())
 df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE,
                  stringsAsFactors = FALSE)
 
+## ## check current directory
+## getwd()
+## 
+## set the working directory, uncomment and change <path>/<to> as needed
+## setwd('<path>/<to>/rworkshop/scripts')
+
 ## show the first few rows (or view in RStudio's view)
 head(df)
 

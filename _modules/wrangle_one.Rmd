@@ -59,12 +59,16 @@ descriptions of the variables, see the <a href = '{{ site.baseurl
 First things first, let's read in the data. Base R can `load()` its
 own data formats, `.rda` and `.RData`, as well as read flat
 files like `.txt`, `.csv`, and `.tsv` files. (We'll discuss how to
-read in data files from other languages later.) Since the data come in
-a CSV file, we could use the special command `read.csv()`, but
-`read.table()` works just as well as long as we tell R that items in
-each row are `sep`arated by a `,`. Finally, we won't talk about
-factors until later, but let's read in the data keeping string values
-as character vectors.
+read in data files from other languages later.) 
+
+Since the data come in a CSV file, we could use the special command
+`read.csv()`. The more generic function `read.table()` works just as
+well, though, as long as we tell R that items in each row of our data
+file are separated by a `,` using the `sep = ','` argument. By
+default, R assumes that the data just begin, but since our file has
+the variable names in the first row, we also need to use `header =
+TRUE`. We won't talk about factors until later, but let's read in the
+data keeping string values as character vectors as well.
 
 ```{r}
 ## read in the data, making sure that first line is read as column names
@@ -72,12 +76,72 @@ df <- read.table('../data/els_plans.csv', sep = ',', header = TRUE,
                  stringsAsFactors = FALSE)
 
 ```
-Let's look at the first few rows and the variable names.
+
+## ...error!
+
+If you tried to read the data and got an error that looked like this
+```
+Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '../data/els_plans.csv': No such file or directory
+```
+
+then you have one of three issues:
+
+1. You haven't downloaded the data (get it from link at top of page)
+2. You don't have your directory/folder structure set up correctly (go
+   back to the <a href="{{ site.baseurl
+   }}/modules/#directory-structure">main module page</a> for information
+   about how you should set things up)
+3. You don't have R set to the correct working directory
+
+To check your current working directory, use the `getwd()` function.
+
+```{r, eval = FALSE, purl = TRUE}
+## check current directory
+getwd()
+
+```
+
+If you had a problem, it's possible that you aren't in the right
+working directory. This means that R can't find your data because even
+though it has directions on where to find it, it's starting in the
+wrong spot so the directions are worthless!
+
+If you know where your `scripts` directory/folder is, you can use the
+`setwd()` function to change your working directory to the right one.
+
+```{r}
+## set the working directory, uncomment and change <path>/<to> as needed
+## setwd('<path>/<to>/rworkshop/scripts')
+
+```
+
+You can correctly set the working directory by opening the script
+using Rstudio's *Files* menu, which is in the bottom right-hand
+box. Once you've found your script, use the *More* menu option "Set As
+Working Directory" to set the `scripts` directory to the working
+directory. Try reading the data again.
+
+# Viewing data
+
+Let's look at the first few rows and the variable names using the
+`head()` function. RStudio makes it easy to see your data by using
+its
+[viewer](https://support.rstudio.com/hc/en-us/articles/205175388-Using-the-Data-Viewer),
+(which really just calls the `View()` function around the data
+object).
 
 ```{r}
 ## show the first few rows (or view in RStudio's view)
 head(df)
 
+```
+
+Remember that we can also use `names()` to see just the variable names.
+
+```{r}
 ## show the column names
 names(df)
 
@@ -145,7 +209,7 @@ The first way uses brackets, `[]`, after the variable name to set the
 condition where the assignment is true. For version 1 below, the new
 variable `female` is assigned a value of 1 in the rows where it is
 `TRUE` that `bysex == 'female'`. In the rows that's `FALSE`, R will
-assign `NA` since there's no information. We can backfill 0s in the
+assign `NA` since there's no information. We can back fill 0s in the
 second line.
 
 The other way is to use the `ifelse(test, yes, no)` function. Going
