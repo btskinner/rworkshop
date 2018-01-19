@@ -13,12 +13,12 @@ output:
 ---
 
 R has undergone a transformation in the past few years and this may
-change how you choose to approach data wrangling. While the core R
-functions for data manipulation haven’t really changed[^1], a new suite
-of packages, the [tidyverse](https://www.tidyverse.org) (formerly known
-as the “Hadleyverse” after their key creater, [Hadley
-Wickham](http://hadley.nz)), has really changed the way many people
-approach using R.
+affect how you choose to approach data wrangling. While the core R
+functions for data manipulation are still the same, a new suite of
+packages, the [tidyverse](https://www.tidyverse.org) (formerly known as
+the “Hadleyverse” after their key creator, [Hadley
+Wickham](http://hadley.nz)), has really changed the way many people use
+R.
 
 In this module, I’m going to show you how to wrangle data the tidyverse
 way. The sequence is almost the same as those in the last module. In the
@@ -63,20 +63,26 @@ The key feature of the tidyverse is its use of pipes, `%>%`, from the
 [![badge](https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png)](https://www.fine-arts-museum.be/uploads/exhibitions/images/magritte_la_trahison_des_images_large@2x.jpg)
 </span>
 
-Pipes take values/output from the left side and pipe it to the input of
-the right side. So `sum(x)` can be rewritten as `x %>% sum`. This is a
-silly example (why would you do that?), but pipes are powerful because
-they can be chained together. Nested layers of functions that would be
-difficult to read from the inside out can be made clearer. Let’s use
-[Hadley’s canonical
+Pipes take output from the left side and pipe it to the input of the
+right side. So `sum(x)` can be rewritten as `x %>% sum`: `x` outputs
+itself and the pipe, `%>%`, makes it the input for `sum()`.
+
+This is a silly example (why would you do that?), but pipes are powerful
+because they can be chained together. Functions can be nested in R, but
+after too many, the code becomes difficult to parse since it has to be
+read from the inside out. Pipes allow functions to come one after
+another in the order of the work being done.
+
+Let’s use [Hadley’s canonical
 example](https://twitter.com/_inundata/status/557980236130689024) to
-make it clearer:
+make the readability comparison between nested functions and piped
+functions clearer:
 
 ``` r
 ## foo_foo is an instance of a little bunny
 foo_foo <- little_bunny()
 
-## adventures in base R
+## adventures in base R must be read from the middle up and backwards
 bop_on(
     scoop_up(
         hop_through(foo_foo, forest),
@@ -85,7 +91,7 @@ bop_on(
     head
 )
 
-## adventures w/ pipes
+## adventures w/ pipes start at the top and work down
 foo_foo %>%
     hop_through(forest) %>%
     scoop_up(field_mouse) %>%
@@ -142,11 +148,21 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
 Mutate
 ------
 
-To add variables and change existing ones, use the `mutate()`.
+To add variables and change existing ones, use the `mutate()` function.
 
-Note that with this (and the following) tidyverse functions, you don’t
-need to use the data frame name with the dollar sign construction and
-you don’t need to put quotation marks around the column names.
+Most if not all of the primary tidyverse functions take the data object
+as the first argument. So the `mutate()` function would be
+`mutate(df, ...)` where `...` is the stuff we want to do. Because we’re
+using the `%>%`, however, we start with the data by itself and pipe it
+into the `mutate()` function. We’ll do this with the rest of the
+tidyverse functions. While not necessary, I think it helps reading
+through the code: *Starting with the data (`df`), we next create new
+variables with the `mutate()` function…* and so on.
+
+Note that with tidyverse functions, you usually don’t need to use the
+data frame name with the dollar sign construction (`df$<var_name>`) and
+you don’t need to put quotation marks around the column names. There are
+some rare cases where you do, but we won’t get into those.
 
 ``` r
 ## assign values inside function using = sign (not <-)
@@ -446,8 +462,8 @@ Long –\> wide
 
 To go in the opposite direction, use the `spread(var, value)` function,
 which makes columns for every unique `var` and assigns the `value` that
-was in the `var`s row. Unlike `gather()`, we don’t have explicily say to
-ignore columns that want to ignore.
+was in the `var`s row. Unlike `gather()`, we don’t have explicitly say
+to ignore columns that want to ignore.
 
 ``` r
 df_wide <- df_long %>%
@@ -476,7 +492,7 @@ identical(df, df_wide)
 
     [1] TRUE
 
-Success![^2]
+Success![^1]
 
 > #### Quick exercise
 >
@@ -491,9 +507,7 @@ Success![^2]
 Notes
 =====
 
-[^1]: Except maybe under the hood in a few cases.
-
-[^2]: For a slightly more complicated version that uses [regular
+[^1]: For a slightly more complicated version that uses [regular
     expressions](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html)
     to adjust the variable names and values after each reshape, see this
     [gist](https://gist.github.com/btskinner/a1f5bc5c1c32b48d4f45b05d2531e423)
