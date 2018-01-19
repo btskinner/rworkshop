@@ -58,16 +58,16 @@ for (i in num_sequence) {
 }
 ```
 
-    ## [1] 1
-    ## [1] 2
-    ## [1] 3
-    ## [1] 4
-    ## [1] 5
-    ## [1] 6
-    ## [1] 7
-    ## [1] 8
-    ## [1] 9
-    ## [1] 10
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] 5
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
 
 Notice the braces `{}` that come after `for()`. This is the code in the
 loop that will be repeated as long as the loop is run.
@@ -83,16 +83,16 @@ for (i in chr_sequence) {
 }
 ```
 
-    ## [1] "a"
-    ## [1] "b"
-    ## [1] "c"
-    ## [1] "d"
-    ## [1] "e"
-    ## [1] "f"
-    ## [1] "g"
-    ## [1] "h"
-    ## [1] "i"
-    ## [1] "j"
+    [1] "a"
+    [1] "b"
+    [1] "c"
+    [1] "d"
+    [1] "e"
+    [1] "f"
+    [1] "g"
+    [1] "h"
+    [1] "i"
+    [1] "j"
 
 With each loop, the `variable` `i` takes on each `chr_sequence` value in
 turn.
@@ -112,16 +112,16 @@ for (i in 1:length(chr_sequence)) {
 }
 ```
 
-    ## [1] "a"
-    ## [1] "b"
-    ## [1] "c"
-    ## [1] "d"
-    ## [1] "e"
-    ## [1] "f"
-    ## [1] "g"
-    ## [1] "h"
-    ## [1] "i"
-    ## [1] "j"
+    [1] "a"
+    [1] "b"
+    [1] "c"
+    [1] "d"
+    [1] "e"
+    [1] "f"
+    [1] "g"
+    [1] "h"
+    [1] "i"
+    [1] "j"
 
 The result is the same as before, but instead of the values of
 `chr_sequence`, `i` takes on the values 1 through 10 (the length of the
@@ -151,16 +151,16 @@ while(i < 11) {
 }
 ```
 
-    ## [1] 1
-    ## [1] 2
-    ## [1] 3
-    ## [1] 4
-    ## [1] 5
-    ## [1] 6
-    ## [1] 7
-    ## [1] 8
-    ## [1] 9
-    ## [1] 10
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] 5
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
 
 You have to careful with `while()` loops. If you forget to increment the
 counter (like I did the first time I set up this example), the loop
@@ -183,15 +183,15 @@ for (i in num_sequence) {
 }
 ```
 
-    ## [1] 1
-    ## [1] 2
-    ## [1] 3
-    ## [1] 4
-    ## [1] 6
-    ## [1] 7
-    ## [1] 8
-    ## [1] 9
-    ## [1] 10
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
 
 Notice how `5` wasn’t printed to the console. It worked!
 
@@ -213,16 +213,16 @@ for (i in num_sequence) {
 }
 ```
 
-    ## [1] 1
-    ## [1] 2
-    ## [1] 3
-    ## [1] 4
-    ## [1] "five"
-    ## [1] 6
-    ## [1] 7
-    ## [1] 8
-    ## [1] 9
-    ## [1] 10
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] "five"
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
 
 Writing functions
 =================
@@ -252,7 +252,7 @@ my_function <- function() {
 my_function()
 ```
 
-    ## [1] "Hi!"
+    [1] "Hi!"
 
 Let’s make another one with an argument so that it’s more flexible. This
 time, we want it to print out a sequence of numbers, but we want to be
@@ -277,16 +277,16 @@ print_nums <- function(num_vector) {
 print_nums(1:10)
 ```
 
-    ## [1] 1
-    ## [1] 2
-    ## [1] 3
-    ## [1] 4
-    ## [1] 5
-    ## [1] 6
-    ## [1] 7
-    ## [1] 8
-    ## [1] 9
-    ## [1] 10
+    [1] 1
+    [1] 2
+    [1] 3
+    [1] 4
+    [1] 5
+    [1] 6
+    [1] 7
+    [1] 8
+    [1] 9
+    [1] 10
 
 > #### Quick exercise
 >
@@ -324,20 +324,20 @@ df <- data.frame('id' = 1:100,
 df
 ```
 
-    ## # A tibble: 100 x 4
-    ##       id   age sibage parage
-    ##    <int> <dbl>  <dbl>  <dbl>
-    ##  1     1  18.0   7.00  -99.0
-    ##  2     2  13.0  12.0   -99.0
-    ##  3     3  18.0  11.0    47.0
-    ##  4     4  20.0   6.00   47.0
-    ##  5     5  17.0  11.0    52.0
-    ##  6     6  19.0  11.0    53.0
-    ##  7     7 -97.0  10.0   -99.0
-    ##  8     8  20.0  11.0    51.0
-    ##  9     9  13.0   6.00   49.0
-    ## 10    10  20.0 -98.0    50.0
-    ## # ... with 90 more rows
+    # A tibble: 100 x 4
+          id   age sibage parage
+       <int> <dbl>  <dbl>  <dbl>
+     1     1  19.0  12.0    49.0
+     2     2  16.0  10.0    50.0
+     3     3  15.0  11.0    52.0
+     4     4  17.0   6.00   50.0
+     5     5  18.0  11.0    45.0
+     6     6  13.0   8.00   52.0
+     7     7  12.0  10.0    55.0
+     8     8  17.0   7.00   53.0
+     9     9  17.0 -98.0    53.0
+    10    10  12.0   8.00   49.0
+    # ... with 90 more rows
 
 We could fix these manually like we have been, but it would be nice have
 a shorthand function. The function needs to flexible though, because the
@@ -368,9 +368,9 @@ can change it each time we call the function. Let’s try it out.
 table(df$age, useNA = 'ifany')
 ```
 
-    ## 
-    ## -97  11  12  13  14  15  16  17  18  19  20 
-    ##   6   3  11   7  10   9  10  10  10  10  14
+
+    -97  11  12  13  14  15  16  17  18  19  20 
+      8  12   8   9  10   7   8  11   9   8  10 
 
 ``` r
 ## missing values in age are coded as -97
@@ -380,9 +380,9 @@ df$age <- fix_missing(df$age, -97)
 table(df$age, useNA = 'ifany')
 ```
 
-    ## 
-    ##   11   12   13   14   15   16   17   18   19   20 <NA> 
-    ##    3   11    7   10    9   10   10   10   10   14    6
+
+      11   12   13   14   15   16   17   18   19   20 <NA> 
+      12    8    9   10    7    8   11    9    8   10    8 
 
 > #### Quick exercise
 >

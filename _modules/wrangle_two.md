@@ -100,16 +100,16 @@ Data wrangling with tidyverse
 library(tidyverse)
 ```
 
-    ## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
+    ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
-    ## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-    ## ✔ tibble  1.4.1     ✔ dplyr   0.7.4
-    ## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
-    ## ✔ readr   1.1.1     ✔ forcats 0.2.0
+    ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+    ✔ tibble  1.4.1     ✔ dplyr   0.7.4
+    ✔ tidyr   0.7.2     ✔ stringr 1.2.0
+    ✔ readr   1.1.1     ✔ forcats 0.2.0
 
-    ## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
+    ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+    ✖ dplyr::filter() masks stats::filter()
+    ✖ dplyr::lag()    masks stats::lag()
 
 Let’s reread the original data. Like `read.table()`, `read_delim()` is
 the generic function that needs you to give it the separating/delimiting
@@ -120,24 +120,24 @@ character. You could also just use `read_csv()`.
 df <- read_delim('../data/els_plans.csv', delim = ',')
 ```
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_character(),
-    ##   stu_id = col_integer(),
-    ##   sch_id = col_integer(),
-    ##   strat_id = col_integer(),
-    ##   f1sch_id = col_integer(),
-    ##   bystuwt = col_double(),
-    ##   bydob_p = col_integer(),
-    ##   byses1 = col_double(),
-    ##   byses2 = col_double(),
-    ##   bynels2m = col_double(),
-    ##   bynels2r = col_double(),
-    ##   f1qwt = col_double(),
-    ##   f1pnlwt = col_double()
-    ## )
+    Parsed with column specification:
+    cols(
+      .default = col_character(),
+      stu_id = col_integer(),
+      sch_id = col_integer(),
+      strat_id = col_integer(),
+      f1sch_id = col_integer(),
+      bystuwt = col_double(),
+      bydob_p = col_integer(),
+      byses1 = col_double(),
+      byses2 = col_double(),
+      bynels2m = col_double(),
+      bynels2r = col_double(),
+      f1qwt = col_double(),
+      f1pnlwt = col_double()
+    )
 
-    ## See spec(...) for full column specifications.
+    See spec(...) for full column specifications.
 
 Mutate
 ------
@@ -187,10 +187,10 @@ df <- df %>% select(-f1pnlwt)
 names(df)
 ```
 
-    ##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-    ##  [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-    ## [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-    ## [19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"
+     [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+     [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+    [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+    [19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"  
 
 > #### Quick exercise
 >
@@ -210,7 +210,7 @@ than zero as `NA`. Let’s drop those.
 nrow(df)
 ```
 
-    ## [1] 16160
+    [1] 16160
 
 ``` r
 ## keep if not (!) missing
@@ -218,7 +218,7 @@ df <- df %>% filter(!is.na(bydob_p))
 nrow(df)
 ```
 
-    ## [1] 15183
+    [1] 15183
 
 > #### Quick exercise
 >
@@ -237,19 +237,19 @@ Sort values using the `arrange()` function.
 df %>% select(stu_id, bydob_p) %>% head(10)
 ```
 
-    ## # A tibble: 10 x 2
-    ##    stu_id bydob_p
-    ##     <int>   <int>
-    ##  1 101101  198512
-    ##  2 101102  198605
-    ##  3 101104  198601
-    ##  4 101105  198607
-    ##  5 101106  198511
-    ##  6 101107  198510
-    ##  7 101108  198607
-    ##  8 101109  198512
-    ##  9 101110  198505
-    ## 10 101111  198507
+    # A tibble: 10 x 2
+       stu_id bydob_p
+        <int>   <int>
+     1 101101  198512
+     2 101102  198605
+     3 101104  198601
+     4 101105  198607
+     5 101106  198511
+     6 101107  198510
+     7 101108  198607
+     8 101109  198512
+     9 101110  198505
+    10 101111  198507
 
 ``` r
 ## arrange
@@ -259,19 +259,19 @@ df <- df %>% arrange(bydob_p)
 df %>% select(stu_id, bydob_p) %>% head(10)
 ```
 
-    ## # A tibble: 10 x 2
-    ##    stu_id bydob_p
-    ##     <int>   <int>
-    ##  1 133211  198300
-    ##  2 195210  198300
-    ##  3 195213  198300
-    ##  4 225203  198300
-    ##  5 268219  198300
-    ##  6 268225  198300
-    ##  7 274222  198300
-    ##  8 280215  198300
-    ##  9 324119  198300
-    ## 10 327128  198300
+    # A tibble: 10 x 2
+       stu_id bydob_p
+        <int>   <int>
+     1 133211  198300
+     2 195210  198300
+     3 195213  198300
+     4 225203  198300
+     5 268219  198300
+     6 268225  198300
+     7 274222  198300
+     8 280215  198300
+     9 324119  198300
+    10 327128  198300
 
 > #### Quick exercise
 >
@@ -303,20 +303,20 @@ sch_m <- df %>%
 sch_m
 ```
 
-    ## # A tibble: 751 x 2
-    ##    sch_id sch_bynels2m
-    ##     <int>        <dbl>
-    ##  1   1011         45.3
-    ##  2   1012         43.3
-    ##  3   1021         28.9
-    ##  4   1022         38.6
-    ##  5   1031         40.0
-    ##  6   1032         35.3
-    ##  7   1033         42.2
-    ##  8   1041         44.9
-    ##  9   1042         52.2
-    ## 10   1051         45.9
-    ## # ... with 741 more rows
+    # A tibble: 751 x 2
+       sch_id sch_bynels2m
+        <int>        <dbl>
+     1   1011         45.3
+     2   1012         43.3
+     3   1021         28.9
+     4   1022         38.6
+     5   1031         40.0
+     6   1032         35.3
+     7   1033         42.2
+     8   1041         44.9
+     9   1042         52.2
+    10   1051         45.9
+    # ... with 741 more rows
 
 > #### Quick exercise
 >
@@ -391,13 +391,13 @@ df <- data.frame(schid = c('A','B','C','D'),
 df
 ```
 
-    ## # A tibble: 4 x 5
-    ##   schid  year var_x var_y var_z
-    ##   <chr> <dbl> <int> <int> <int>
-    ## 1 A      2013     1     5     9
-    ## 2 B      2013     2     6    10
-    ## 3 C      2013     3     7    11
-    ## 4 D      2013     4     8    12
+    # A tibble: 4 x 5
+      schid  year var_x var_y var_z
+      <chr> <dbl> <int> <int> <int>
+    1 A      2013     1     5     9
+    2 B      2013     2     6    10
+    3 C      2013     3     7    11
+    4 D      2013     4     8    12
 
 Wide –\> long
 -------------
@@ -420,21 +420,21 @@ df_long <- df %>%
 df_long
 ```
 
-    ## # A tibble: 12 x 4
-    ##    schid  year var   value
-    ##    <chr> <dbl> <chr> <int>
-    ##  1 A      2013 var_x     1
-    ##  2 A      2013 var_y     5
-    ##  3 A      2013 var_z     9
-    ##  4 B      2013 var_x     2
-    ##  5 B      2013 var_y     6
-    ##  6 B      2013 var_z    10
-    ##  7 C      2013 var_x     3
-    ##  8 C      2013 var_y     7
-    ##  9 C      2013 var_z    11
-    ## 10 D      2013 var_x     4
-    ## 11 D      2013 var_y     8
-    ## 12 D      2013 var_z    12
+    # A tibble: 12 x 4
+       schid  year var   value
+       <chr> <dbl> <chr> <int>
+     1 A      2013 var_x     1
+     2 A      2013 var_y     5
+     3 A      2013 var_z     9
+     4 B      2013 var_x     2
+     5 B      2013 var_y     6
+     6 B      2013 var_z    10
+     7 C      2013 var_x     3
+     8 C      2013 var_y     7
+     9 C      2013 var_z    11
+    10 D      2013 var_x     4
+    11 D      2013 var_y     8
+    12 D      2013 var_z    12
 
 > #### Quick exercise
 >
@@ -458,13 +458,13 @@ df_wide <- df_long %>%
 df_wide
 ```
 
-    ## # A tibble: 4 x 5
-    ##   schid  year var_x var_y var_z
-    ##   <chr> <dbl> <int> <int> <int>
-    ## 1 A      2013     1     5     9
-    ## 2 B      2013     2     6    10
-    ## 3 C      2013     3     7    11
-    ## 4 D      2013     4     8    12
+    # A tibble: 4 x 5
+      schid  year var_x var_y var_z
+      <chr> <dbl> <int> <int> <int>
+    1 A      2013     1     5     9
+    2 B      2013     2     6    10
+    3 C      2013     3     7    11
+    4 D      2013     4     8    12
 
 In theory, our new `df_wide` data frame should be the same as the one we
 started with. Let’s check:
@@ -474,7 +474,7 @@ started with. Let’s check:
 identical(df, df_wide)
 ```
 
-    ## [1] TRUE
+    [1] TRUE
 
 Success![^2]
 

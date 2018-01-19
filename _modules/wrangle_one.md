@@ -65,7 +65,8 @@ If you tried to read the data and got an error that looked like this
 
 then you have one of three issues:
 
-1.  You haven’t downloaded the data (get it from link at top of page)
+1.  You haven’t downloaded the data (get it from the link at top of
+    page)
 2.  You don’t have your directory/folder structure set up correctly (go
     back to the <a href="{{ site.baseurl
     }}/modules/#directory-structure">main module page</a> for
@@ -79,10 +80,11 @@ To check your current working directory, use the `getwd()` function.
 getwd()
 ```
 
-If you had a problem, it’s possible that you aren’t in the right working
-directory. This means that R can’t find your data because even though it
-has directions on where to find it, it’s starting in the wrong spot so
-the directions are worthless!
+If the output isn’t the `scripts` subdirectory, then your working
+directory isn’t correct. If you aren’t in the right directory, this
+means that R can’t find your data because even though it has directions
+on where to find it—in the path given to the `read.table()`
+function—it’s starting in the wrong spot. The directions are worthless!
 
 If you know where your `scripts` directory/folder is, you can use the
 `setwd()` function to change your working directory to the right one.
@@ -92,11 +94,11 @@ If you know where your `scripts` directory/folder is, you can use the
 ## setwd('<path>/<to>/rworkshop/scripts')
 ```
 
-You can correctly set the working directory by opening the script using
-Rstudio’s *Files* menu, which is in the bottom right-hand box. Once
-you’ve found your script, use the *More* menu option “Set As Working
-Directory” to set the `scripts` directory to the working directory. Try
-reading the data again.
+Since we’re using RStudio, you can also correctly set the working
+directory by opening the script using Rstudio’s *Files* menu, which is
+in the bottom right-hand window. Once you’ve found your script, use the
+*More* menu option “Set As Working Directory” to set the `scripts`
+directory to the working directory. Try reading the data again.
 
 Viewing data
 ============
@@ -182,11 +184,11 @@ use data from other columns. R will assign values row by row, using the
 right-hand side values that align.
 
 ``` r
-## add simply column of ones
+## add a column of ones (the 1 will repeat and fill each row)
 df$ones <- 1
 
 ## add sum of test scores (bynels2r + bynels2m)
-df$sum_test <- (df$bynels2r + df$bynels2m)
+df$sum_test <- df$bynels2r + df$bynels2m
 
 ## check names
 names(df)
@@ -229,9 +231,9 @@ ways.
 The first way uses brackets, `[]`, after the variable name to set the
 condition where the assignment is true. For version 1 below, the new
 variable `female` is assigned a value of 1 in the rows where it is
-`TRUE` that `bysex == 'female'`. In the rows that’s `FALSE`, R will
-assign `NA` since there’s no information. We can back fill 0s in the
-second line.
+`TRUE` that `bysex == 'female'`. In the rows where that expression is
+`FALSE`, R will assign `NA` since there’s no information. We can back
+fill `0`s using the second line.
 
 The other way is to use the `ifelse(test, yes, no)` function. Going row
 by row, the `test` (`bysex == 'female'`) is performed. If `TRUE`, the
@@ -240,8 +242,8 @@ new variable gets a 1; if `FALSE`, it gets a 0.
 ``` r
 ## make a numeric column that == 1 if bysex is female, 0 otherwise
 ## v.1
-df$female_v1[df$bysex == 'female'] <- 1
-df$female_v1[df$bysex != 'female'] <- 0
+df$female_v1[df$bysex == 'female'] <- 1 # double == for IS EQUAL TO
+df$female_v1[df$bysex != 'female'] <- 0 # != --> NOT EQUAL TO
 
 ## v.2
 df$female_v2 <- ifelse(df$bysex == 'female', 1, 0)
@@ -251,6 +253,15 @@ identical(df$female_v1, df$female_v2)
 ```
 
     [1] TRUE
+
+**Important Note** The code above assumes that `bysex` has only two
+outcomes, `male` and `female`. But since `bysex` has missing values,
+which are coded with other string names, the code above could be
+misinterpreted in later analyses. Though when `female ==     1` it will
+always be true that `bysex == 'female'`, when `female     == 0`, `bysex`
+could be `male` or one of the other other string values that indicates
+missing values. We will leave it as is for now, but will return to
+missing values later.
 
 > #### Quick exercise
 >
@@ -263,6 +274,11 @@ Filter
 
 You can also use brackets to conditionally drop rows, such as those with
 missing values.
+
+In this data set, each student’s date of birth, `bydob_p`, is coded as
+the four-digit year plus two-digit month run together: January 1983
+becomes 198301. If the value is missing, it is given a negative number.
+We can use the less than operator (`<`) to filter.
 
 ``` r
 ## assign as NA if < 0
@@ -282,9 +298,9 @@ nrow(df)
 
 > #### Quick exercise
 >
-> The variable `byrace` also uses negative values to represent missing
+> The variable `bynels2m` also uses negative values to represent missing
 > values. Reassign `NA`s to values that are less than zero. Next drop
-> observations from the data set if they are missing `byrace` values.
+> observations from the data set if they are missing `bynels2m` values.
 > (HINT 1: Pay attention to your commas each time!) (HINT 2: Before
 > dropping observations, save your data set object, `df` in another
 > object, `df_hold`, just in case things don’t go well the first time…)
@@ -296,7 +312,7 @@ Sort the data frame using the `order()` function as a condition.
 
 ``` r
 ## show first few rows of student and base year math scores
-df[1:10, c('stu_id','bydob_p')]
+df[1:10, c('stu_id','bydob_p')]         # subset columns using c() + names
 ```
 
        stu_id bydob_p
@@ -340,17 +356,25 @@ df[1:10, c('stu_id','bydob_p')]
 Aggregate
 ---------
 
-To collapse the data, generating some summary statistic in the process,
-use the `aggregate(x, by, FUN)`, where `x` is the data frame, `by` is
-the grouping variable in a `list()`, and `FUN` is the function that you
-want to use. These can be base R functions or one you create yourself.
-Let’s get the average math score within each school.
+To collapse the data, generating a summary statistic in the process, use
+the `aggregate(x, by, FUN)`, where `x` is the data frame, `by` is the
+grouping variable in a `list()`, and `FUN` is the function that you want
+to use. The function you use can be a base R function or one you create
+yourself. Let’s get the average math score within each school.
+
+**Quick Note** Because `mean()` cannot compute a mean when missing
+values are present (try it and see what you get), we can add the
+`na.rm = TRUE` argument, which tells the function to drop `NA` values.
+Normally, the argument needs to be inside the `mean()` function’s
+parentheses. The `aggregate()` function and others like are special in
+that they will let you just tack on any arguments to the `FUN` function
+at the end, separated by commas.
 
 ``` r
-## first, make test score values < 0 == NA
+## first, make test score values < 0 ==> NA (if you didn't already)
 df$bynels2m[df$bynels2m < 0] <- NA
 
-## create new data frame
+## create new data frame with mean math scores, dropping NAs
 sch_m <- aggregate(df$bynels2m, by = list(df$sch_id), FUN = mean, na.rm = T)
 
 ## show
@@ -376,8 +400,8 @@ Merge
 Since you can have multiple data frames in memory (as objects) at the
 same time in R, you may not find yourself merging data sets as often you
 would in another language (like Stata, where you have to). That said, it
-still needs to happen. Use the `merge()` function. Let’s merge the
-aggregated test score data back into the data set.
+still needs to happen. Use the `merge()` function to do so. Let’s merge
+the aggregated test score data back into the data set.
 
 ``` r
 ## first fix names from aggregated data set
@@ -447,6 +471,15 @@ head(df)
     5    1   114.82         0         0     45.26387
     6    1    85.79         0         0     45.26387
 
+We’ll talk more about joins (another word for merge) in the next module,
+but know now that by default, the `merge()` function only keeps rows in
+the `x` and `y` data sets (`df` and `sch_m`, respectively, in our case)
+that can be matched. If you want to keep unmatched rows from the `x` or
+`y` data frame, you need to use `all.x = TRUE` and/or `all.y = TRUE`
+arguments as needed. See the
+[`merge()`](https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/merge)
+help file for more information.
+
 > #### Quick exercise
 >
 > Merge the average school level reading score data set you created to
@@ -458,6 +491,11 @@ Write
 Finally we can write our new data set to disk. We can save it as an R
 data file type, but since we may want to share with non-R users, we’ll
 save it as a csv file again.
+
+It’s not strictly necessary but good practice nonetheless to change the
+name of the modified file. That way, we still have the untouched raw
+data in case we need to change how we wrangle new data sets in the
+future.
 
 ``` r
 write.csv(df, '../data/els_plans_mod.csv', row.names = FALSE)

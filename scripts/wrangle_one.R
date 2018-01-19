@@ -34,11 +34,11 @@ names(df)
 ## add variables
 ## ---------------------------
 
-## add simply column of ones
+## add a column of ones (the 1 will repeat and fill each row)
 df$ones <- 1
 
 ## add sum of test scores (bynels2r + bynels2m)
-df$sum_test <- (df$bynels2r + df$bynels2m)
+df$sum_test <- df$bynels2r + df$bynels2m
 
 ## check names
 names(df)
@@ -59,8 +59,8 @@ names(df)
 
 ## make a numeric column that == 1 if bysex is female, 0 otherwise
 ## v.1
-df$female_v1[df$bysex == 'female'] <- 1
-df$female_v1[df$bysex != 'female'] <- 0
+df$female_v1[df$bysex == 'female'] <- 1 # double == for IS EQUAL TO
+df$female_v1[df$bysex != 'female'] <- 0 # != --> NOT EQUAL TO
 
 ## v.2
 df$female_v2 <- ifelse(df$bysex == 'female', 1, 0)
@@ -85,7 +85,7 @@ nrow(df)
 ## ---------------------------
 
 ## show first few rows of student and base year math scores
-df[1:10, c('stu_id','bydob_p')]
+df[1:10, c('stu_id','bydob_p')]         # subset columns using c() + names
 
 ## since a data frame has two dims, notice the comma in the brackets
 df <- df[order(df$bydob_p),]
@@ -97,10 +97,10 @@ df[1:10, c('stu_id','bydob_p')]
 ## aggregate
 ## ---------------------------
 
-## first, make test score values < 0 == NA
+## first, make test score values < 0 ==> NA (if you didn't already)
 df$bynels2m[df$bynels2m < 0] <- NA
 
-## create new data frame
+## create new data frame with mean math scores, dropping NAs
 sch_m <- aggregate(df$bynels2m, by = list(df$sch_id), FUN = mean, na.rm = T)
 
 ## show
