@@ -1,7 +1,7 @@
 ---
 layout: module
 title: Exploratory data analysis I
-date: 2018-01-01 00:00:05
+date: 2018-01-01 00:00:06
 category: module
 links: 
   script: eda_one.R
@@ -38,11 +38,13 @@ For practice, we’ll use the same ELS plans data set as before, but this
 time stored in a Stata `*.dta` file.
 
 One benefit of Stata and other stats programs like SAS is that you can
-label variable and values. Base R data frames don’t support labels, but
-tibbles (`tbl_df()`) in the tidyverse do. By default, the `read_dta()`
-function we’ll use puts the data in tibble. So that we can access the
-variable and value labels that were saved in the `*dta` file, we’ll also
-load the `labelled` library.
+label variables and values. Base R data frames don’t support labels, but
+[tibbles](http://tibble.tidyverse.org) (`tbl_df()`) in the tidyverse do.
+By default, the `read_dta()` function we’ll use reads the data into a
+tibble. So that we can work with the variable and value labels that were
+saved in the `*dta` file, we’ll also load the
+[labelled](https://cran.r-project.org/web/packages/labelled/vignettes/intro_labelled.html)
+library.
 
 ``` r
 ## libraries: tidyverse + haven and labelled
@@ -68,7 +70,7 @@ You can also use the `glimpse()` function to see a nicely formatted
 glimpse of the data
 
 ``` r
-## use glipse
+## use glimpse
 glimpse(df)
 ```
 
@@ -100,8 +102,9 @@ glimpse(df)
 The `glimpse()` function doesn’t show the labels, but it does let you
 know that columns like `bysex` have them with the `<dbl+lbl>` tag.
 
-To see the variable labels, use the `var_label()` function from the
-**labelled** library.
+To see the variable labels, use the `var_label()` function. Notice that
+we can just add it to the end of the function chain, letting the pipe
+(`%>%`) input the selected columns.
 
 ``` r
 ## show the labels for just a few variables
@@ -123,8 +126,9 @@ df %>%
     [1] "els-nels 1992 scale equated sophomore math score"
 
 Unfortunately, the label for the `bysex` column doesn’t really tell us
-anything that we probably didn’t already guess. The problem with the
-name and label is that it is ambiguous. So are the values:
+anything that we probably didn’t already guess based on the variable
+name. The problem with the name and label is that it is ambiguous.
+Unfortunately, so are the values:
 
 ``` r
 ## who first few rows of bysex
@@ -164,7 +168,7 @@ df %>% select(bysex) %>% val_labels()
                                    female 
                                         2 
 
-Ok. In this data set, male students are coded as 1 and female students
+Okay. In this data set, male students are coded as 1 and female students
 are coded as 2.
 
 > #### Quick exercise
@@ -174,7 +178,7 @@ are coded as 2.
 
 It turns out that the `head()` function (which works with regular data
 frames and vectors) will also give the value labels if it’s given a
-tibble.
+tibble and the values are labelled.
 
 ``` r
 ## show more information about bysex variable
@@ -236,10 +240,10 @@ drop those when calculating those statistics. It can be a little
 annoying at first, but really it’s a nice feature because it lets you
 know that your data aren’t complete.
 
-To ignore `NA`s, set the `na.rm` to `TRUE`.
+To ignore `NA`s, set the `na.rm` argument to `TRUE`.
 
 ``` r
-## need to tell R to remove NAs
+## find mean and sd, telling R to remove NAs
 mean(df$bynels2m, na.rm = TRUE)
 ```
 
@@ -255,11 +259,29 @@ sd(df$bynels2m, na.rm = TRUE)
 >
 > Find the mean and standard deviation of reading scores.
 
-You can also compute summary statistics using dplyr and the
-`summarise_all()`, `summarise_at()`, and `summarise_if()` functions.
-Since we want to focus on one variable, we’ll use the `summarise_at()`
-function. (More information about the other commands can be found
+You can also compute summary statistics using
+[dplyr](http://dplyr.tidyverse.org) and the `summarise_all()`,
+`summarise_at()`, and `summarise_if()` functions. Since we want to focus
+on one variable, we’ll use the `summarise_at()` function. (More
+information about the other commands can be found
 [here](http://dplyr.tidyverse.org/reference/summarise_all.html).)
+
+The `summarise_at()` function takes two main arguments, `.vars` and
+`.funs`. These are exactly what they sound like. `.vars` wants to know
+which variables (or columns) you want to work with. Wrap the ones you
+want in the `vars()` (no dot, `.`) function. `.funs` wants to know the
+summarizing function(s) you want, this time wrapped in the `funs()`
+function.
+
+The `funs()` function can also take an argument, `.args = list()`, in
+which you can put all the arguments you want passed to the summarizing
+functions. Since we want `mean()` and `sd()` to ignore missing values,
+we put `na.rm = TRUE` in the `list()` that we pass to `.args()`. Keep in
+mind that the arguments in the `.args` list are passed to each and every
+function in `funs()`. Note that it may not always be the case that all
+the functions in `funs()` can take the same arguments, but it’s okay and
+even efficient in our case since we only have to include `na.rm = TRUE`
+once.
 
 ``` r
 ## mean and sd using dplyr
@@ -286,20 +308,20 @@ with the argument `'ifany'`.
 
 ``` r
 ## table of parental education levels
-table(df$bypared, useNA='ifany')
+table(df$bypared, useNA = 'ifany')
 ```
 
 
        1    2    3    4    5    6    7    8 <NA> 
      942 3044 1663 1597 1758 3466 1785 1049  856 
 
-Unfortunately, these numbers don’t mean much without reference to a
-codebook. However, because are data are labelled, we can use the
+Unfortunately, these numbers don’t mean much without reference to a code
+book. However, because are data are labelled, we can use the
 `as_factor()` function to see the labels.
 
 ``` r
 ## use as_factor() to get the value labels
-table(as_factor(df$bypared), useNA='ifany')
+table(as_factor(df$bypared), useNA = 'ifany')
 ```
 
 
@@ -373,7 +395,8 @@ negative values.
 
 To generate counts using dplyr, use the `count()` function. By chaining
 `as_factor()` to the end of the call, we can get the counts with
-associated labels.
+associated labels. Notice that unlike `table()` in base R, `count()`
+includes missing values in the output.
 
 ``` r
 ## using dplyr to make a table
@@ -384,7 +407,7 @@ df %>%
 
     # A tibble: 9 x 2
       bypared                                      n
-      <fctr>                                   <int>
+      <fct>                                    <int>
     1 did not finish high school                 942
     2 graduated from high school or ged         3044
     3 attended 2-year school, no degree         1663
@@ -404,7 +427,8 @@ Two-way table
 -------------
 
 Cross tabulations are also useful. With the `table()` function, instead
-of doing just `table(x)`, do `table(x, y)`.
+of calling just `table(x)`, that is, `table()` with one column, call
+`table(x, y)`, where `x` and `y` are two columns with discrete values.
 
 ``` r
 ## table of parental education levels
@@ -457,7 +481,7 @@ df %>%
     # A tibble: 19 x 3
     # Groups: bysex [3]
        bysex  bypared                                      n
-       <fctr> <fctr>                                   <int>
+       <fct>  <fct>                                    <int>
      1 male   did not finish high school                 440
      2 male   graduated from high school or ged         1496
      3 male   attended 2-year school, no degree          823
@@ -492,7 +516,7 @@ df %>%
 
     # A tibble: 9 x 4
       bypared                                   male female `<NA>`
-    * <fctr>                                   <int>  <int>  <int>
+    * <fct>                                    <int>  <int>  <int>
     1 did not finish high school                 440    502     NA
     2 graduated from high school or ged         1496   1548     NA
     3 attended 2-year school, no degree          823    840     NA
@@ -512,10 +536,11 @@ df %>%
 Conditional mean
 ================
 
-Aside from crosstabs, finding averages of continuous variables within
-groups or conditional means is a common task. We’ve already done this in
-the last couple of modules. With base R, use the `aggregate()` function
-to compute summary statistics of continuous values by group.
+Aside from cross tabulations, finding averages of continuous variables
+within groups, sometimes called conditional means, is a common task.
+We’ve already done this in the last couple of modules. With base R, use
+the `aggregate()` function to compute summary statistics of continuous
+values by group.
 
 ``` r
 ## get average math score by parental education 
@@ -538,7 +563,9 @@ aggregate(df$bynels2m, by = list(df$bypared), mean, na.rm = TRUE)
 > levels instead of just the number in the above tables?
 
 Adding a secondary group is not difficult. Just add another variable to
-the `by` list:
+the `by` list. Do demonstrate this, we’ll first create an indicator
+variable that equals one if a student’s base year family income was
+$25,000 or less and zero otherwise.
 
 ``` r
 df <- df %>%
@@ -586,7 +613,7 @@ df %>%
 
     # A tibble: 9 x 2
       bypared                                  bynels2m
-      <fctr>                                      <dbl>
+      <fct>                                       <dbl>
     1 did not finish high school                   36.3
     2 graduated from high school or ged            40.5
     3 attended 2-year school, no degree            42.6
@@ -613,7 +640,7 @@ df %>%
     # A tibble: 18 x 3
     # Groups: bypared [?]
        bypared                                  lowinc bynels2m
-       <fctr>                                    <dbl>    <dbl>
+       <fct>                                     <dbl>    <dbl>
      1 did not finish high school                 0        36.7
      2 did not finish high school                 1.00     35.9
      3 graduated from high school or ged          0        42.1

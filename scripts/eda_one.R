@@ -26,7 +26,7 @@ df <- read_dta('../data/els_plans.dta')
 ## Viewing data and labels
 ## ---------------------------------------------------------
 
-## use glipse
+## use glimpse
 glimpse(df)
 
 ## show the labels for just a few variables
@@ -58,7 +58,7 @@ df <- df %>%
 mean(df$bynels2m)
 sd(df$bynels2m)
 
-## need to tell R to remove NAs
+## find mean and sd, telling R to remove NAs
 mean(df$bynels2m, na.rm = TRUE)
 sd(df$bynels2m, na.rm = TRUE)
 
@@ -75,10 +75,10 @@ df %>%
 ## ------------
 
 ## table of parental education levels
-table(df$bypared, useNA='ifany')
+table(df$bypared, useNA = 'ifany')
 
 ## use as_factor() to get the value labels
-table(as_factor(df$bypared), useNA='ifany')
+table(as_factor(df$bypared), useNA = 'ifany')
 
 ## check how bypared labels are assigned
 val_labels(df$bypared)
