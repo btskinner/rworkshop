@@ -160,9 +160,9 @@ df %>% select(bysex) %>% val_labels()
 
     $bysex
     {survey component legitimate skip/na} 
-                                       -8 
+                                       NA 
                           {nonrespondent} 
-                                       -4 
+                                       NA 
                                      male 
                                         1 
                                    female 
@@ -190,8 +190,8 @@ head(df$bysex)
 
     Labels:
      value                                 label
-        -8 {survey component legitimate skip/na}
-        -4                       {nonrespondent}
+     NA(s) {survey component legitimate skip/na}
+     NA(w)                       {nonrespondent}
          1                                  male
          2                                female
 
@@ -325,12 +325,6 @@ table(as_factor(df$bypared), useNA = 'ifany')
 ```
 
 
-                                   {missing} 
-                                           0 
-       {survey component legitimate skip/na} 
-                                           0 
-                             {nonrespondent} 
-                                           0 
                   did not finish high school 
                                          942 
            graduated from high school or ged 
@@ -347,6 +341,12 @@ table(as_factor(df$bypared), useNA = 'ifany')
                                         1785 
     completed phd, md, other advanced degree 
                                         1049 
+                                   {missing} 
+                                           0 
+       {survey component legitimate skip/na} 
+                                           0 
+                             {nonrespondent} 
+                                           0 
                                         <NA> 
                                          856 
 
@@ -361,11 +361,11 @@ val_labels(df$bypared)
 ```
 
                                    {missing} 
-                                          -9 
+                                          NA 
        {survey component legitimate skip/na} 
-                                          -8 
+                                          NA 
                              {nonrespondent} 
-                                          -4 
+                                          NA 
                   did not finish high school 
                                            1 
            graduated from high school or ged 
@@ -436,10 +436,20 @@ table(as_factor(df$bypared), as_factor(df$bysex))
 ```
 
                                               
+                                               male female
+      did not finish high school                440    502
+      graduated from high school or ged        1496   1548
+      attended 2-year school, no degree         823    840
+      graduated from 2-year school              849    748
+      attended college, no 4-year degree        859    899
+      graduated from college                   1737   1729
+      completed master^s degree or equivalent   911    874
+      completed phd, md, other advanced degree  503    546
+      {missing}                                   0      0
+      {survey component legitimate skip/na}       0      0
+      {nonrespondent}                             0      0
+                                              
                                                {survey component legitimate skip/na}
-      {missing}                                                                    0
-      {survey component legitimate skip/na}                                        0
-      {nonrespondent}                                                              0
       did not finish high school                                                   0
       graduated from high school or ged                                            0
       attended 2-year school, no degree                                            0
@@ -448,19 +458,22 @@ table(as_factor(df$bypared), as_factor(df$bysex))
       graduated from college                                                       0
       completed master^s degree or equivalent                                      0
       completed phd, md, other advanced degree                                     0
+      {missing}                                                                    0
+      {survey component legitimate skip/na}                                        0
+      {nonrespondent}                                                              0
                                               
-                                               {nonrespondent} male female
-      {missing}                                              0    0      0
-      {survey component legitimate skip/na}                  0    0      0
-      {nonrespondent}                                        0    0      0
-      did not finish high school                             0  440    502
-      graduated from high school or ged                      0 1496   1548
-      attended 2-year school, no degree                      0  823    840
-      graduated from 2-year school                           0  849    748
-      attended college, no 4-year degree                     0  859    899
-      graduated from college                                 0 1737   1729
-      completed master^s degree or equivalent                0  911    874
-      completed phd, md, other advanced degree               0  503    546
+                                               {nonrespondent}
+      did not finish high school                             0
+      graduated from high school or ged                      0
+      attended 2-year school, no degree                      0
+      graduated from 2-year school                           0
+      attended college, no 4-year degree                     0
+      graduated from college                                 0
+      completed master^s degree or equivalent                0
+      completed phd, md, other advanced degree               0
+      {missing}                                              0
+      {survey component legitimate skip/na}                  0
+      {nonrespondent}                                        0
 
 > #### Quick exercise
 >

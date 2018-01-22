@@ -375,16 +375,16 @@ df
     # A tibble: 100 x 4
           id   age sibage parage
        <int> <dbl>  <dbl>  <dbl>
-     1     1  12.0  11.0    50.0
-     2     2  14.0  12.0    50.0
-     3     3  14.0   6.00   50.0
-     4     4  12.0   8.00   50.0
-     5     5  13.0   8.00   47.0
-     6     6  16.0  10.0    53.0
-     7     7  16.0  11.0    55.0
-     8     8 -97.0   7.00   48.0
-     9     9  19.0   6.00  -99.0
-    10    10  16.0  11.0    54.0
+     1     1  18.0  12.0    54.0
+     2     2  13.0   5.00   49.0
+     3     3  19.0   5.00   54.0
+     4     4  15.0   5.00   52.0
+     5     5  12.0  10.0    45.0
+     6     6  15.0   6.00   47.0
+     7     7 -97.0   9.00   50.0
+     8     8  11.0   8.00  -99.0
+     9     9  13.0   5.00   51.0
+    10    10  14.0   5.00  -99.0
     # ... with 90 more rows
 
 We could fix these manually like we have been, but it would be nice have
@@ -418,7 +418,7 @@ table(df$age, useNA = 'ifany')
 
 
     -97  11  12  13  14  15  16  17  18  19  20 
-      8  13  10  10   7   9   7   6   5   6  19 
+     11  10   9   8   4  15   9   6  10  10   8 
 
 ``` r
 ## missing values in age are coded as -97
@@ -430,7 +430,7 @@ table(df$age, useNA = 'ifany')
 
 
       11   12   13   14   15   16   17   18   19   20 <NA> 
-      13   10   10    7    9    7    6    5    6   19    8 
+      10    9    8    4   15    9    6   10   10    8   11 
 
 It worked! All the values that were -97 before, are now in the `NA`
 table column. Importantly, none of the other values changed.
