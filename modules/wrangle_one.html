@@ -78,82 +78,140 @@ variables, see the <a href="/rworkshop/data/#els_planscsv">codebook</a>.</p>
 <p>First things first, let’s read in the data. Base R can <code class="highlighter-rouge">load()</code> its own
 data formats, <code class="highlighter-rouge">.rda</code> and <code class="highlighter-rouge">.RData</code>, as well as read flat files like
 <code class="highlighter-rouge">.txt</code>, <code class="highlighter-rouge">.csv</code>, and <code class="highlighter-rouge">.tsv</code> files. (We’ll discuss how to read in data
-files from other languages later.) Since the data come in a CSV file, we
-could use the special command <code class="highlighter-rouge">read.csv()</code>, but <code class="highlighter-rouge">read.table()</code> works
-just as well as long as we tell R that items in each row are <code class="highlighter-rouge">sep</code>arated
-by a <code class="highlighter-rouge">,</code>. Finally, we won’t talk about factors until later, but let’s
-read in the data keeping string values as character vectors.</p>
+files from other languages later.)</p>
+
+<p>Since the data come in a CSV file, we could use the special command
+<code class="highlighter-rouge">read.csv()</code>. The more generic function <code class="highlighter-rouge">read.table()</code> works just as
+well, though, as long as we tell R that items in each row of our data
+file are separated by a <code class="highlighter-rouge">,</code> using the <code class="highlighter-rouge">sep = ','</code> argument. By default,
+R assumes that the data just begin, but since our file has the variable
+names in the first row, we also need to use <code class="highlighter-rouge">header = TRUE</code>. We won’t
+talk about factors until later, but let’s read in the data keeping
+string values as character vectors as well.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## read in the data, making sure that first line is read as column names</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read.table</span><span class="p">(</span><span class="s1">'../data/els_plans.csv'</span><span class="p">,</span><span class="w"> </span><span class="n">sep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">','</span><span class="p">,</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span><span class="w">
                  </span><span class="n">stringsAsFactors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<p>Let’s look at the first few rows and the variable names.</p>
+<h2 id="error">…error!</h2>
+
+<p>If you tried to read the data and got an error that looked like this</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error in file(file, "rt") : cannot open the connection
+In addition: Warning message:
+In file(file, "rt") :
+  cannot open file '../data/els_plans.csv': No such file or directory
+</code></pre></div></div>
+
+<p>then you have one of three issues:</p>
+
+<ol>
+  <li>You haven’t downloaded the data (get it from the link at top of
+page)</li>
+  <li>You don’t have your directory/folder structure set up correctly (go
+back to the <a href="/rworkshop/modules/#directory-structure">main module page</a> for
+information about how you should set things up)</li>
+  <li>You don’t have R set to the correct working directory</li>
+</ol>
+
+<p>To check your current working directory, use the <code class="highlighter-rouge">getwd()</code> function.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check current directory</span><span class="w">
+</span><span class="n">getwd</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<p>If the output isn’t the <code class="highlighter-rouge">scripts</code> subdirectory, then your working
+directory isn’t correct. If you aren’t in the right directory, this
+means that R can’t find your data because even though it has directions
+on where to find it—in the path given to the <code class="highlighter-rouge">read.table()</code>
+function—it’s starting in the wrong spot. The directions are worthless!</p>
+
+<p>If you know where your <code class="highlighter-rouge">scripts</code> directory/folder is, you can use the
+<code class="highlighter-rouge">setwd()</code> function to change your working directory to the right one.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## set the working directory, uncomment and change &lt;path&gt;/&lt;to&gt; as needed</span><span class="w">
+</span><span class="c1">## setwd('&lt;path&gt;/&lt;to&gt;/rworkshop/scripts')</span><span class="w">
+</span></code></pre></div></div>
+
+<p>Since we’re using RStudio, you can also correctly set the working
+directory by opening the script using Rstudio’s <em>Files</em> menu, which is
+in the bottom right-hand window. Once you’ve found your script, use the
+<em>More</em> menu option “Set As Working Directory” to set the <code class="highlighter-rouge">scripts</code>
+directory to the working directory. Try reading the data again.</p>
+
+<h1 id="viewing-data">Viewing data</h1>
+
+<p>Let’s look at the first few rows and the variable names using the
+<code class="highlighter-rouge">head()</code> function. RStudio makes it easy to see your data by using its
+<a href="https://support.rstudio.com/hc/en-us/articles/205175388-Using-the-Data-Viewer">viewer</a>,
+(which really just calls the <code class="highlighter-rouge">View()</code> function around the data object).</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the first few rows (or view in RStudio's view)</span><span class="w">
 </span><span class="n">head</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##   stu_id sch_id strat_id   psu f1sch_id  bystuwt  bysex
-## 1 101101   1011      101 psu 1     1011 178.9513 female
-## 2 101102   1011      101 psu 1     1011  28.2951 female
-## 3 101104   1011      101 psu 1     1011 589.7248 female
-## 4 101105   1011      101 psu 1     1011 235.7822 female
-## 5 101106   1011      101 psu 1     1011 178.9513 female
-## 6 101107   1011      101 psu 1     1011 256.9656   male
-##                                     byrace bydob_p
-## 1                 hispanic, race specified  198512
-## 2 asian, hawaii/pac. islander,non-hispanic  198605
-## 3                      white, non-hispanic  198601
-## 4  black or african american, non-hispanic  198607
-## 5              hispanic, no race specified  198511
-## 6              hispanic, no race specified  198510
-##                              bypared                           bymothed
-## 1 attended college, no 4-year degree         did not finish high school
-## 2 attended college, no 4-year degree attended college, no 4-year degree
-## 3  graduated from high school or ged  graduated from high school or ged
-## 4  graduated from high school or ged  graduated from high school or ged
-## 5         did not finish high school         did not finish high school
-## 6  graduated from high school or ged  graduated from high school or ged
-##                             byfathed         byincome byses1 byses2
-## 1 attended college, no 4-year degree  $50,001-$75,000  -0.25  -0.23
-## 2 attended college, no 4-year degree $75,001-$100,000   0.58   0.69
-## 3  graduated from high school or ged  $50,001-$75,000  -0.85  -0.68
-## 4  graduated from high school or ged   $1,000 or less  -0.80  -0.89
-## 5         did not finish high school  $15,001-$20,000  -1.41  -1.28
-## 6         did not finish high school  $35,001-$50,000  -1.07  -0.93
-##                                    bystexp bynels2m bynels2r    f1qwt
-## 1 attend or complete 2-year college/school    47.84    39.04 152.9769
-## 2 obtain phd, md, or other advanced degree    55.30    36.35  25.3577
-## 3                             {don^t know}    66.24    42.68 709.4246
-## 4                    graduate from college    35.33    27.86 199.7193
-## 5                    graduate from college    29.97    13.07 152.9769
-## 6 attend college, 4-year degree incomplete    24.28    11.70 205.2692
-##    f1pnlwt                               f1psepln
-## 1 155.6312 don^t know or planning but unspecified
-## 2  25.4906        four-year college or university
-## 3 725.6926        four-year college or university
-## 4 205.1919             two-year community college
-## 5 155.6312        four-year college or university
-## 6 211.4690             two-year community college
-##                                f2ps1sec
-## 1 {Survey component legitimate skip/NA}
-## 2               Public, 4-year or above
-## 3               Public, 4-year or above
-## 4                        Public, 2-year
-## 5                        Public, 2-year
-## 6             {Item legitimate skip/NA}
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  stu_id sch_id strat_id   psu f1sch_id  bystuwt  bysex
+1 101101   1011      101 psu 1     1011 178.9513 female
+2 101102   1011      101 psu 1     1011  28.2951 female
+3 101104   1011      101 psu 1     1011 589.7248 female
+4 101105   1011      101 psu 1     1011 235.7822 female
+5 101106   1011      101 psu 1     1011 178.9513 female
+6 101107   1011      101 psu 1     1011 256.9656   male
+                                    byrace bydob_p
+1                 hispanic, race specified  198512
+2 asian, hawaii/pac. islander,non-hispanic  198605
+3                      white, non-hispanic  198601
+4  black or african american, non-hispanic  198607
+5              hispanic, no race specified  198511
+6              hispanic, no race specified  198510
+                             bypared                           bymothed
+1 attended college, no 4-year degree         did not finish high school
+2 attended college, no 4-year degree attended college, no 4-year degree
+3  graduated from high school or ged  graduated from high school or ged
+4  graduated from high school or ged  graduated from high school or ged
+5         did not finish high school         did not finish high school
+6  graduated from high school or ged  graduated from high school or ged
+                            byfathed         byincome byses1 byses2
+1 attended college, no 4-year degree  $50,001-$75,000  -0.25  -0.23
+2 attended college, no 4-year degree $75,001-$100,000   0.58   0.69
+3  graduated from high school or ged  $50,001-$75,000  -0.85  -0.68
+4  graduated from high school or ged   $1,000 or less  -0.80  -0.89
+5         did not finish high school  $15,001-$20,000  -1.41  -1.28
+6         did not finish high school  $35,001-$50,000  -1.07  -0.93
+                                   bystexp bynels2m bynels2r    f1qwt
+1 attend or complete 2-year college/school    47.84    39.04 152.9769
+2 obtain phd, md, or other advanced degree    55.30    36.35  25.3577
+3                             {don^t know}    66.24    42.68 709.4246
+4                    graduate from college    35.33    27.86 199.7193
+5                    graduate from college    29.97    13.07 152.9769
+6 attend college, 4-year degree incomplete    24.28    11.70 205.2692
+   f1pnlwt                               f1psepln
+1 155.6312 don^t know or planning but unspecified
+2  25.4906        four-year college or university
+3 725.6926        four-year college or university
+4 205.1919             two-year community college
+5 155.6312        four-year college or university
+6 211.4690             two-year community college
+                               f2ps1sec
+1 {Survey component legitimate skip/NA}
+2               Public, 4-year or above
+3               Public, 4-year or above
+4                        Public, 2-year
+5                        Public, 2-year
+6             {Item legitimate skip/NA}
 </code></pre></div></div>
+
+<p>Remember that we can also use <code class="highlighter-rouge">names()</code> to see just the variable names.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the column names</span><span class="w">
 </span><span class="nf">names</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-##  [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-## [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-## [19] "f1qwt"    "f1pnlwt"  "f1psepln" "f2ps1sec"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+ [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+[13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+[19] "f1qwt"    "f1pnlwt"  "f1psepln" "f2ps1sec"
 </code></pre></div></div>
 
 <h2 id="add-variables">Add variables</h2>
@@ -163,20 +221,20 @@ repeat the values as necessary to fill the number of rows. You can also
 use data from other columns. R will assign values row by row, using the
 right-hand side values that align.</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## add simply column of ones</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## add a column of ones (the 1 will repeat and fill each row)</span><span class="w">
 </span><span class="n">df</span><span class="o">$</span><span class="n">ones</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
 
 </span><span class="c1">## add sum of test scores (bynels2r + bynels2m)</span><span class="w">
-</span><span class="n">df</span><span class="o">$</span><span class="n">sum_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">)</span><span class="w">
+</span><span class="n">df</span><span class="o">$</span><span class="n">sum_test</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">bynels2r</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="w">
 
 </span><span class="c1">## check names</span><span class="w">
 </span><span class="nf">names</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-##  [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-## [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-## [19] "f1qwt"    "f1pnlwt"  "f1psepln" "f2ps1sec" "ones"     "sum_test"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+ [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+[13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+[19] "f1qwt"    "f1pnlwt"  "f1psepln" "f2ps1sec" "ones"     "sum_test"
 </code></pre></div></div>
 
 <blockquote>
@@ -196,10 +254,10 @@ right-hand side values that align.</p>
 </span><span class="nf">names</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-##  [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-## [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-## [19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "sum_test"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+ [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+[13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+[19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "sum_test"
 </code></pre></div></div>
 
 <h2 id="conditionally-change-values">Conditionally change values</h2>
@@ -211,9 +269,9 @@ ways.</p>
 <p>The first way uses brackets, <code class="highlighter-rouge">[]</code>, after the variable name to set the
 condition where the assignment is true. For version 1 below, the new
 variable <code class="highlighter-rouge">female</code> is assigned a value of 1 in the rows where it is
-<code class="highlighter-rouge">TRUE</code> that <code class="highlighter-rouge">bysex == 'female'</code>. In the rows that’s <code class="highlighter-rouge">FALSE</code>, R will
-assign <code class="highlighter-rouge">NA</code> since there’s no information. We can backfill 0s in the
-second line.</p>
+<code class="highlighter-rouge">TRUE</code> that <code class="highlighter-rouge">bysex == 'female'</code>. In the rows where that expression is
+<code class="highlighter-rouge">FALSE</code>, R will assign <code class="highlighter-rouge">NA</code> since there’s no information. We can back
+fill <code class="highlighter-rouge">0</code>s using the second line.</p>
 
 <p>The other way is to use the <code class="highlighter-rouge">ifelse(test, yes, no)</code> function. Going row
 by row, the <code class="highlighter-rouge">test</code> (<code class="highlighter-rouge">bysex == 'female'</code>) is performed. If <code class="highlighter-rouge">TRUE</code>, the
@@ -221,8 +279,8 @@ new variable gets a 1; if <code class="highlighter-rouge">FALSE</code>, it gets 
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## make a numeric column that == 1 if bysex is female, 0 otherwise</span><span class="w">
 </span><span class="c1">## v.1</span><span class="w">
-</span><span class="n">df</span><span class="o">$</span><span class="n">female_v1</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'female'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
-</span><span class="n">df</span><span class="o">$</span><span class="n">female_v1</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">'female'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w">
+</span><span class="n">df</span><span class="o">$</span><span class="n">female_v1</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'female'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="c1"># double == for IS EQUAL TO</span><span class="w">
+</span><span class="n">df</span><span class="o">$</span><span class="n">female_v1</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="s1">'female'</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="c1"># != --&gt; NOT EQUAL TO</span><span class="w">
 
 </span><span class="c1">## v.2</span><span class="w">
 </span><span class="n">df</span><span class="o">$</span><span class="n">female_v2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">'female'</span><span class="p">,</span><span class="w"> </span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="m">0</span><span class="p">)</span><span class="w">
@@ -231,8 +289,17 @@ new variable gets a 1; if <code class="highlighter-rouge">FALSE</code>, it gets 
 </span><span class="n">identical</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">female_v1</span><span class="p">,</span><span class="w"> </span><span class="n">df</span><span class="o">$</span><span class="n">female_v2</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
+
+<p><strong>Important Note</strong> The code above assumes that <code class="highlighter-rouge">bysex</code> has only two
+outcomes, <code class="highlighter-rouge">male</code> and <code class="highlighter-rouge">female</code>. But since <code class="highlighter-rouge">bysex</code> has missing values,
+which are coded with other string names, the code above could be
+misinterpreted in later analyses. Though when <code class="highlighter-rouge">female ==     1</code> it will
+always be true that <code class="highlighter-rouge">bysex == 'female'</code>, when <code class="highlighter-rouge">female     == 0</code>, <code class="highlighter-rouge">bysex</code>
+could be <code class="highlighter-rouge">male</code> or one of the other other string values that indicates
+missing values. We will leave it as is for now, but will return to
+missing values later.</p>
 
 <blockquote>
   <h4 id="quick-exercise-1">Quick exercise</h4>
@@ -247,12 +314,17 @@ it on both sides of the arrow.)</p>
 <p>You can also use brackets to conditionally drop rows, such as those with
 missing values.</p>
 
+<p>In this data set, each student’s date of birth, <code class="highlighter-rouge">bydob_p</code>, is coded as
+the four-digit year plus two-digit month run together: January 1983
+becomes 198301. If the value is missing, it is given a negative number.
+We can use the less than operator (<code class="highlighter-rouge">&lt;</code>) to filter.</p>
+
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## assign as NA if &lt; 0</span><span class="w">
 </span><span class="n">df</span><span class="o">$</span><span class="n">bydob_p</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bydob_p</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NA</span><span class="w">
 </span><span class="n">nrow</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 16160
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 16160
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## drop if NA</span><span class="w">
@@ -260,15 +332,15 @@ missing values.</p>
 </span><span class="n">nrow</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 15183
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 15183
 </code></pre></div></div>
 
 <blockquote>
   <h4 id="quick-exercise-2">Quick exercise</h4>
 
-  <p>The variable <code class="highlighter-rouge">byrace</code> also uses negative values to represent missing
+  <p>The variable <code class="highlighter-rouge">bynels2m</code> also uses negative values to represent missing
 values. Reassign <code class="highlighter-rouge">NA</code>s to values that are less than zero. Next drop
-observations from the data set if they are missing <code class="highlighter-rouge">byrace</code> values.
+observations from the data set if they are missing <code class="highlighter-rouge">bynels2m</code> values.
 (HINT 1: Pay attention to your commas each time!) (HINT 2: Before
 dropping observations, save your data set object, <code class="highlighter-rouge">df</code> in another
 object, <code class="highlighter-rouge">df_hold</code>, just in case things don’t go well the first time…)</p>
@@ -279,20 +351,20 @@ object, <code class="highlighter-rouge">df_hold</code>, just in case things don�
 <p>Sort the data frame using the <code class="highlighter-rouge">order()</code> function as a condition.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show first few rows of student and base year math scores</span><span class="w">
-</span><span class="n">df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'stu_id'</span><span class="p">,</span><span class="s1">'bydob_p'</span><span class="p">)]</span><span class="w">
+</span><span class="n">df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'stu_id'</span><span class="p">,</span><span class="s1">'bydob_p'</span><span class="p">)]</span><span class="w">         </span><span class="c1"># subset columns using c() + names</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##    stu_id bydob_p
-## 1  101101  198512
-## 2  101102  198605
-## 3  101104  198601
-## 4  101105  198607
-## 5  101106  198511
-## 6  101107  198510
-## 7  101108  198607
-## 8  101109  198512
-## 9  101110  198505
-## 10 101111  198507
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   stu_id bydob_p
+1  101101  198512
+2  101102  198605
+3  101104  198601
+4  101105  198607
+5  101106  198511
+6  101107  198510
+7  101108  198607
+8  101109  198512
+9  101110  198505
+10 101111  198507
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## since a data frame has two dims, notice the comma in the brackets</span><span class="w">
@@ -302,17 +374,17 @@ object, <code class="highlighter-rouge">df_hold</code>, just in case things don�
 </span><span class="n">df</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">,</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'stu_id'</span><span class="p">,</span><span class="s1">'bydob_p'</span><span class="p">)]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##       stu_id bydob_p
-## 1589  133211  198300
-## 4286  195210  198300
-## 4288  195213  198300
-## 5578  225203  198300
-## 7528  268219  198300
-## 7532  268225  198300
-## 7782  274222  198300
-## 8055  280215  198300
-## 10046 324119  198300
-## 10203 327128  198300
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>      stu_id bydob_p
+1589  133211  198300
+4286  195210  198300
+4288  195213  198300
+5578  225203  198300
+7528  268219  198300
+7532  268225  198300
+7782  274222  198300
+8055  280215  198300
+10046 324119  198300
+10203 327128  198300
 </code></pre></div></div>
 
 <blockquote>
@@ -325,29 +397,37 @@ and the argument you might need to do that.</p>
 
 <h2 id="aggregate">Aggregate</h2>
 
-<p>To collapse the data, generating some summary statistic in the process,
-use the <code class="highlighter-rouge">aggregate(x, by, FUN)</code>, where <code class="highlighter-rouge">x</code> is the data frame, <code class="highlighter-rouge">by</code> is
-the grouping variable in a <code class="highlighter-rouge">list()</code>, and <code class="highlighter-rouge">FUN</code> is the function that you
-want to use. These can be base R functions or one you create yourself.
-Let’s get the average math score within each school.</p>
+<p>To collapse the data, generating a summary statistic in the process, use
+the <code class="highlighter-rouge">aggregate(x, by, FUN)</code>, where <code class="highlighter-rouge">x</code> is the data frame, <code class="highlighter-rouge">by</code> is the
+grouping variable in a <code class="highlighter-rouge">list()</code>, and <code class="highlighter-rouge">FUN</code> is the function that you want
+to use. The function you use can be a base R function or one you create
+yourself. Let’s get the average math score within each school.</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## first, make test score values &lt; 0 == NA</span><span class="w">
+<p><strong>Quick Note</strong> Because <code class="highlighter-rouge">mean()</code> cannot compute a mean when missing
+values are present (try it and see what you get), we can add the
+<code class="highlighter-rouge">na.rm = TRUE</code> argument, which tells the function to drop <code class="highlighter-rouge">NA</code> values.
+Normally, the argument needs to be inside the <code class="highlighter-rouge">mean()</code> function’s
+parentheses. The <code class="highlighter-rouge">aggregate()</code> function and others like are special in
+that they will let you just tack on any arguments to the <code class="highlighter-rouge">FUN</code> function
+at the end, separated by commas.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## first, make test score values &lt; 0 ==&gt; NA (if you didn't already)</span><span class="w">
 </span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">[</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="kc">NA</span><span class="w">
 
-</span><span class="c1">## create new data frame</span><span class="w">
+</span><span class="c1">## create new data frame with mean math scores, dropping NAs</span><span class="w">
 </span><span class="n">sch_m</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">aggregate</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">sch_id</span><span class="p">),</span><span class="w"> </span><span class="n">FUN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">T</span><span class="p">)</span><span class="w">
 
 </span><span class="c1">## show</span><span class="w">
 </span><span class="n">head</span><span class="p">(</span><span class="n">sch_m</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##   Group.1        x
-## 1    1011 45.26387
-## 2    1012 43.30400
-## 3    1021 28.91529
-## 4    1022 38.60290
-## 5    1031 40.01636
-## 6    1032 35.34429
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Group.1        x
+1    1011 45.26387
+2    1012 43.30400
+3    1021 28.91529
+4    1022 38.60290
+5    1031 40.01636
+6    1032 35.34429
 </code></pre></div></div>
 
 <blockquote>
@@ -362,8 +442,8 @@ different object. Don’t forget to account for missing values.</p>
 <p>Since you can have multiple data frames in memory (as objects) at the
 same time in R, you may not find yourself merging data sets as often you
 would in another language (like Stata, where you have to). That said, it
-still needs to happen. Use the <code class="highlighter-rouge">merge()</code> function. Let’s merge the
-aggregated test score data back into the data set.</p>
+still needs to happen. Use the <code class="highlighter-rouge">merge()</code> function to do so. Let’s merge
+the aggregated test score data back into the data set.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## first fix names from aggregated data set</span><span class="w">
 </span><span class="nf">names</span><span class="p">(</span><span class="n">sch_m</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'sch_id'</span><span class="p">,</span><span class="w"> </span><span class="s1">'sch_bynels2m'</span><span class="p">)</span><span class="w">
@@ -375,63 +455,72 @@ aggregated test score data back into the data set.</p>
 </span><span class="n">head</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##   sch_id stu_id strat_id   psu f1sch_id  bystuwt  bysex
-## 1   1011 101126      101 psu 1     1011  28.2951 female
-## 2   1011 101105      101 psu 1     1011 235.7822 female
-## 3   1011 101106      101 psu 1     1011 178.9513 female
-## 4   1011 101132      101 psu 1       -8 192.4304   male
-## 5   1011 101116      101 psu 1     1011  30.2245   male
-## 6   1011 101131      101 psu 1     1011 620.1837   male
-##                                     byrace bydob_p
-## 1 asian, hawaii/pac. islander,non-hispanic  198410
-## 2  black or african american, non-hispanic  198607
-## 3              hispanic, no race specified  198511
-## 4              hispanic, no race specified  198611
-## 5 asian, hawaii/pac. islander,non-hispanic  198612
-## 6                      white, non-hispanic  198610
-##                                   bypared
-## 1              did not finish high school
-## 2       graduated from high school or ged
-## 3              did not finish high school
-## 4       graduated from high school or ged
-## 5 completed master^s degree or equivalent
-## 6            graduated from 2-year school
-##                                  bymothed
-## 1              did not finish high school
-## 2       graduated from high school or ged
-## 3              did not finish high school
-## 4       graduated from high school or ged
-## 5 completed master^s degree or equivalent
-## 6       attended 2-year school, no degree
-##                            byfathed          byincome byses1 byses2
-## 1        did not finish high school   $25,001-$35,000  -0.64  -0.67
-## 2 graduated from high school or ged    $1,000 or less  -0.80  -0.89
-## 3        did not finish high school   $15,001-$20,000  -1.41  -1.28
-## 4 graduated from high school or ged   $50,001-$75,000  -0.16  -0.24
-## 5 attended 2-year school, no degree $100,001-$200,000   0.99   0.88
-## 6      graduated from 2-year school   $35,001-$50,000   0.48   0.67
-##                                    bystexp bynels2m bynels2r    f1qwt
-## 1 obtain phd, md, or other advanced degree    66.73    16.65  25.3577
-## 2                    graduate from college    35.33    27.86 199.7193
-## 3                    graduate from college    29.97    13.07 152.9769
-## 4                    graduate from college    41.28    17.34   0.0000
-## 5 obtain phd, md, or other advanced degree    69.08    45.74  26.0130
-## 6                    graduate from college    57.19    28.60 736.6029
-##                          f1psepln                                f2ps1sec
-## 1 four-year college or university                          Public, 2-year
-## 2      two-year community college                          Public, 2-year
-## 3 four-year college or university                          Public, 2-year
-## 4                 {nonrespondent}               {Item legitimate skip/NA}
-## 5 four-year college or university Private not-for-profit, 4-year or above
-## 6      two-year community college                          Public, 2-year
-##   ones sum_test female_v1 female_v2 sch_bynels2m
-## 1    1    83.38         1         1     45.26387
-## 2    1    63.19         1         1     45.26387
-## 3    1    43.04         1         1     45.26387
-## 4    1    58.62         0         0     45.26387
-## 5    1   114.82         0         0     45.26387
-## 6    1    85.79         0         0     45.26387
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  sch_id stu_id strat_id   psu f1sch_id  bystuwt  bysex
+1   1011 101126      101 psu 1     1011  28.2951 female
+2   1011 101105      101 psu 1     1011 235.7822 female
+3   1011 101106      101 psu 1     1011 178.9513 female
+4   1011 101132      101 psu 1       -8 192.4304   male
+5   1011 101116      101 psu 1     1011  30.2245   male
+6   1011 101131      101 psu 1     1011 620.1837   male
+                                    byrace bydob_p
+1 asian, hawaii/pac. islander,non-hispanic  198410
+2  black or african american, non-hispanic  198607
+3              hispanic, no race specified  198511
+4              hispanic, no race specified  198611
+5 asian, hawaii/pac. islander,non-hispanic  198612
+6                      white, non-hispanic  198610
+                                  bypared
+1              did not finish high school
+2       graduated from high school or ged
+3              did not finish high school
+4       graduated from high school or ged
+5 completed master^s degree or equivalent
+6            graduated from 2-year school
+                                 bymothed
+1              did not finish high school
+2       graduated from high school or ged
+3              did not finish high school
+4       graduated from high school or ged
+5 completed master^s degree or equivalent
+6       attended 2-year school, no degree
+                           byfathed          byincome byses1 byses2
+1        did not finish high school   $25,001-$35,000  -0.64  -0.67
+2 graduated from high school or ged    $1,000 or less  -0.80  -0.89
+3        did not finish high school   $15,001-$20,000  -1.41  -1.28
+4 graduated from high school or ged   $50,001-$75,000  -0.16  -0.24
+5 attended 2-year school, no degree $100,001-$200,000   0.99   0.88
+6      graduated from 2-year school   $35,001-$50,000   0.48   0.67
+                                   bystexp bynels2m bynels2r    f1qwt
+1 obtain phd, md, or other advanced degree    66.73    16.65  25.3577
+2                    graduate from college    35.33    27.86 199.7193
+3                    graduate from college    29.97    13.07 152.9769
+4                    graduate from college    41.28    17.34   0.0000
+5 obtain phd, md, or other advanced degree    69.08    45.74  26.0130
+6                    graduate from college    57.19    28.60 736.6029
+                         f1psepln                                f2ps1sec
+1 four-year college or university                          Public, 2-year
+2      two-year community college                          Public, 2-year
+3 four-year college or university                          Public, 2-year
+4                 {nonrespondent}               {Item legitimate skip/NA}
+5 four-year college or university Private not-for-profit, 4-year or above
+6      two-year community college                          Public, 2-year
+  ones sum_test female_v1 female_v2 sch_bynels2m
+1    1    83.38         1         1     45.26387
+2    1    63.19         1         1     45.26387
+3    1    43.04         1         1     45.26387
+4    1    58.62         0         0     45.26387
+5    1   114.82         0         0     45.26387
+6    1    85.79         0         0     45.26387
 </code></pre></div></div>
+
+<p>We’ll talk more about joins (another word for merge) in the next module,
+but know now that by default, the <code class="highlighter-rouge">merge()</code> function only keeps rows in
+the <code class="highlighter-rouge">x</code> and <code class="highlighter-rouge">y</code> data sets (<code class="highlighter-rouge">df</code> and <code class="highlighter-rouge">sch_m</code>, respectively, in our case)
+that can be matched. If you want to keep unmatched rows from the <code class="highlighter-rouge">x</code> or
+<code class="highlighter-rouge">y</code> data frame, you need to use <code class="highlighter-rouge">all.x = TRUE</code> and/or <code class="highlighter-rouge">all.y = TRUE</code>
+arguments as needed. See the
+<a href="https://www.rdocumentation.org/packages/base/versions/3.4.3/topics/merge"><code class="highlighter-rouge">merge()</code></a>
+help file for more information.</p>
 
 <blockquote>
   <h4 id="quick-exercise-5">Quick exercise</h4>
@@ -445,6 +534,11 @@ the full data set.</p>
 <p>Finally we can write our new data set to disk. We can save it as an R
 data file type, but since we may want to share with non-R users, we’ll
 save it as a csv file again.</p>
+
+<p>It’s not strictly necessary but good practice nonetheless to change the
+name of the modified file. That way, we still have the untouched raw
+data in case we need to change how we wrangle new data sets in the
+future.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">write.csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="s1">'../data/els_plans_mod.csv'</span><span class="p">,</span><span class="w"> </span><span class="n">row.names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>

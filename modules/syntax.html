@@ -122,12 +122,10 @@ symbol, <code class="highlighter-rouge">&lt;</code>, followed by a hyphen, <code
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
 </code></pre></div></div>
 
-<p>You can also assign using a single equals sign, <code class="highlighter-rouge">=</code>, but note that
-functions also use single equal signs to associate values with
-arguments.</p>
+<p>You can also assign using a single equals sign, <code class="highlighter-rouge">=</code>:</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## assign value to object y using =</span><span class="w">
 </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'a'</span><span class="w">
@@ -136,14 +134,18 @@ arguments.</p>
 </span><span class="n">y</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "a"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "a"
 </code></pre></div></div>
+
+<p>Keep in mind, however, that since <code class="highlighter-rouge">=</code> sometimes has other meanings in R
+(it’s how functions set argument options), it may be clearer to use
+<code class="highlighter-rouge">&lt;-</code>.</p>
 
 <blockquote>
   <h4 id="quick-exercise-1">Quick exercise</h4>
 
-  <p>Assign the output of <code class="highlighter-rouge">1+1</code> to <code class="highlighter-rouge">x</code>. Next subtract 1 from <code class="highlighter-rouge">x</code> and
-reassign the result to <code class="highlighter-rouge">x</code>.</p>
+  <p>Using the arrow, assign the output of <code class="highlighter-rouge">1 + 1</code> to <code class="highlighter-rouge">x</code>. Next subtract 1
+from <code class="highlighter-rouge">x</code> and reassign the result to <code class="highlighter-rouge">x</code>.</p>
 </blockquote>
 
 <h1 id="data-types-and-structures">Data types and structures</h1>
@@ -160,8 +162,8 @@ reassign the result to <code class="highlighter-rouge">x</code>.</p>
 <h3 id="logical">Logical</h3>
 
 <p>Logical vectors can be <code class="highlighter-rouge">TRUE</code>, <code class="highlighter-rouge">FALSE</code>, or <code class="highlighter-rouge">NA</code>. They can be assigned to
-objects or returned by logical operators, which makes them useful for
-control flow in loops and functions.</p>
+objects or returned by logical operators (<em>e.g.</em>, <code class="highlighter-rouge">==</code>, <code class="highlighter-rouge">!=</code>, <code class="highlighter-rouge">&lt;</code>, <code class="highlighter-rouge">&gt;</code>,
+etc), which makes them useful for control flow in loops and functions.</p>
 
 <p><strong>NB</strong> In R, you can shorten <code class="highlighter-rouge">TRUE</code> to <code class="highlighter-rouge">T</code> and <code class="highlighter-rouge">FALSE</code> to <code class="highlighter-rouge">F</code>, but both
 the short and long versions must be capitalized.</p>
@@ -171,28 +173,28 @@ the short and long versions must be capitalized.</p>
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ! == NOT</span><span class="w">
 </span><span class="o">!</span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] FALSE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] FALSE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check</span><span class="w">
 </span><span class="nf">is.logical</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## evaluate</span><span class="w">
 </span><span class="m">1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">2</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <h3 id="numeric-integer-and-double">Numeric: Integer and Double</h3>
@@ -202,12 +204,18 @@ point values, or just <strong>doubles</strong>. R automatically converts between
 two data types for you, so knowing the difference between the two isn’t
 really important for most analyses.</p>
 
+<p>If you want to use an integer, place a capital <code class="highlighter-rouge">L</code> after the number like
+<code class="highlighter-rouge">1L</code>. If a number is stored as an integer, some R output will place an
+<code class="highlighter-rouge">L</code> behind the digits to let you know that. Mostly, R defaults to using
+doubles, but if you see a number with an <code class="highlighter-rouge">L</code> behind it, know that it’s
+still a number.</p>
+
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## use 'L' after digit to store as integer</span><span class="w">
 </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1L</span><span class="w">
 </span><span class="nf">is.integer</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## R stores as double by default</span><span class="w">
@@ -215,35 +223,37 @@ really important for most analyses.</p>
 </span><span class="nf">is.double</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## both are numeric</span><span class="w">
 </span><span class="nf">is.numeric</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">is.numeric</span><span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <h3 id="character">Character</h3>
 
-<p>Character values are stored as strings. Numeric values can also be
-stored as strings (sometimes useful if you must store leading zeroes),
-but they have to coverted back to numbers before you can perform numeric
-operations on them.</p>
+<p>Character values are stored as strings, which means you need to place
+either single <code class="highlighter-rouge">'</code> or double <code class="highlighter-rouge">"</code> quotes around them. Numeric values can
+also be stored as strings (sometimes useful if you must store leading
+zeroes), but they have to be converted back to numbers before you can
+perform numeric operations on them (like adding or subtracting) or use
+them in a statistical model.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## store a string using quotation marks</span><span class="w">
 </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="s1">'The quick brown fox jumps over the lazy dog.'</span><span class="w">
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "The quick brown fox jumps over the lazy dog."
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "The quick brown fox jumps over the lazy dog."
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## store a number with leading zeros</span><span class="w">
@@ -251,7 +261,7 @@ operations on them.</p>
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "00001"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "00001"
 </code></pre></div></div>
 
 <blockquote>
@@ -277,9 +287,12 @@ convert the string version on the fly so that the equation works?
 <h3 id="vector">Vector</h3>
 
 <p>A vector in R is just a collection of the data types discussed. In fact,
-a single value is a vector of one. Vectors do not have diminsions
-(<code class="highlighter-rouge">dim()</code>), but do have <code class="highlighter-rouge">length()</code>. You combine values using the
-concatenate (<code class="highlighter-rouge">c()</code>) function.</p>
+a single value is a vector of one. Vectors do not have dimensions
+(<code class="highlighter-rouge">dim()</code>), but do have <code class="highlighter-rouge">length()</code>, which is good to remember when
+inspecting your data or writing loops and functions.</p>
+
+<p>You combine multiple values using the concatenate, <code class="highlighter-rouge">c()</code>, function. We
+will use <code class="highlighter-rouge">c()</code> a lot.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create vector</span><span class="w">
 </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
@@ -288,38 +301,46 @@ concatenate (<code class="highlighter-rouge">c()</code>) function.</p>
 </span><span class="n">is.vector</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## add to vector (can do so recursively)</span><span class="w">
-</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">,</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## add to vector (can do so recursively meaning old x can help make new x)</span><span class="w">
+</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="m">5</span><span class="p">,</span><span class="w"> </span><span class="m">8</span><span class="p">)</span><span class="w">
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1 2 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1 5 8
 </code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## no dim, but length</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## no dim...</span><span class="w">
 </span><span class="nf">dim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## NULL
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NULL
 </code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...but length</span><span class="w">
+</span><span class="nf">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 3
 </code></pre></div></div>
 
 <p>You can access the elements of a vector using brackets, <code class="highlighter-rouge">[]</code>, after the
-object name.</p>
+object name. If you think of each element in the vector as having an
+address, that is, a way to access it specifically, then its address is
+its position number in the vector. This position number is called its
+index, and in R, the index always starts with <code class="highlighter-rouge">1</code>.</p>
+
+<p>In our current vector, we have three items, <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">5</code>, and <code class="highlighter-rouge">8</code>, which in
+turn have indices of <code class="highlighter-rouge">1</code>, <code class="highlighter-rouge">2</code>, and <code class="highlighter-rouge">3</code>. To access <code class="highlighter-rouge">5</code> specifically, we
+can call it using the brackets and its index: <code class="highlighter-rouge">x[2]</code>.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## get the second element</span><span class="w">
 </span><span class="n">x</span><span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 2
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 5
 </code></pre></div></div>
 
 <blockquote>
@@ -338,7 +359,7 @@ to least ambiguous type. We can check this with <code class="highlighter-rouge">
 </span><span class="nf">class</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "numeric"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "numeric"
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## add character</span><span class="w">
@@ -346,14 +367,14 @@ to least ambiguous type. We can check this with <code class="highlighter-rouge">
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "1" "2" "3" "a"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "1" "5" "8" "a"
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check class</span><span class="w">
 </span><span class="nf">class</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "character"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "character"
 </code></pre></div></div>
 
 <h3 id="matrix">Matrix</h3>
@@ -366,10 +387,10 @@ dimensions. Like vectors, all data elements must be of the same type.</p>
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##      [,1] [,2] [,3]
-## [1,]    1    4    7
-## [2,]    2    5    8
-## [3,]    3    6    9
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     [,1] [,2] [,3]
+[1,]    1    4    7
+[2,]    2    5    8
+[3,]    3    6    9
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...fill by row this time</span><span class="w">
@@ -377,64 +398,87 @@ dimensions. Like vectors, all data elements must be of the same type.</p>
 </span><span class="n">y</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##      [,1] [,2] [,3]
-## [1,]    1    2    3
-## [2,]    4    5    6
-## [3,]    7    8    9
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6
+[3,]    7    8    9
 </code></pre></div></div>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## has dimension</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## a matrix has dimension</span><span class="w">
 </span><span class="nf">dim</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 3 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 3 3
 </code></pre></div></div>
+
+<p>Use <code class="highlighter-rouge">nrow()</code> and <code class="highlighter-rouge">ncol()</code> to get the number of rows and columns,
+respectively.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## # of rows</span><span class="w">
 </span><span class="n">nrow</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 3
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## # of columns</span><span class="w">
 </span><span class="n">ncol</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 3
 </code></pre></div></div>
 
 <p>Like a vector, you can access parts of a matrix. Since it has two
 dimensions, use a comma in the bracket to separate row indices from
 column indices.</p>
 
+<p>When using brackets with objects that have two dimensions, a good rule
+of thumb is to add your comma first: <code class="highlighter-rouge">x[ , ]</code>. Numbers or objects you
+put between the first bracket and the comma will affect the rows;
+numbers between the comma and the closing bracket will affect the
+columns.</p>
+
+<p>If you don’t put anything in either of those spaces (a blank space
+doesn’t count), R will assume you want all rows or columns, depending on
+which side of the comma is blank.</p>
+
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the values in the first row</span><span class="w">
-</span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">,]</span><span class="w">
+</span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1 4 7
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1 4 7
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the values in the third column</span><span class="w">
-</span><span class="n">x</span><span class="p">[,</span><span class="m">3</span><span class="p">]</span><span class="w">
+</span><span class="n">x</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="m">3</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 7 8 9
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 7 8 9
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## this is the same as just calling x by itself</span><span class="w">
+</span><span class="n">x</span><span class="p">[</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>     [,1] [,2] [,3]
+[1,]    1    4    7
+[2,]    2    5    8
+[3,]    3    6    9
 </code></pre></div></div>
 
 <blockquote>
   <h4 id="quick-exercise-4">Quick exercise</h4>
 
-  <p>Return the middle value of the x matrix. Next assign the middle value
-the character value ‘a’. What happens to the rest of the values in the
-matrix?</p>
+  <p>Return the middle value of the <code class="highlighter-rouge">x</code> matrix. Next assign the middle
+value the character value ‘a’. What happens to the rest of the values
+in the matrix?</p>
 </blockquote>
 
 <h3 id="list">List</h3>
 
-<p>Lists are a catch all data vectors that can hold an assortment of
-objects. They can be flat, meaning that all values are at the same
-level, or nested, with lists holding other lists.</p>
+<p>Lists are a catch all objects that can hold an assortment of other
+objects of different data types. They can be flat, meaning that all
+values are at the same level, or nested, with lists holding other lists.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create single-level list</span><span class="w">
 </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="s1">'a'</span><span class="p">,</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
@@ -443,46 +487,71 @@ level, or nested, with lists holding other lists.</p>
 </span><span class="n">x</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [[1]]
-## [1] 1
-## 
-## [[2]]
-## [1] "a"
-## 
-## [[3]]
-## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[1]]
+[1] 1
+
+[[2]]
+[1] "a"
+
+[[3]]
+[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check</span><span class="w">
 </span><span class="nf">is.list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create blank list</span><span class="w">
 </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">()</span><span class="w">
 
 </span><span class="c1">## add to first list, creating nested list</span><span class="w">
-</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
+</span><span class="n">z</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w">
 
 </span><span class="c1">## show</span><span class="w">
-</span><span class="n">x</span><span class="w">
+</span><span class="n">z</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [[1]]
-## [[1]][[1]]
-## [1] 1
-## 
-## [[1]][[2]]
-## [1] "a"
-## 
-## [[1]][[3]]
-## [1] TRUE
-## 
-## 
-## [[2]]
-## list()
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[1]]
+[[1]][[1]]
+[1] 1
+
+[[1]][[2]]
+[1] "a"
+
+[[1]][[3]]
+[1] TRUE
+
+
+[[2]]
+list()
+</code></pre></div></div>
+
+<p>You access items in lists like you do vectors and matrices. You may,
+however, need to use double brackets, <code class="highlighter-rouge">[[]]</code>, and multiple pairs,
+<code class="highlighter-rouge">[[]][[]]</code>, to reach the item you need.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## the first item in list z is list x</span><span class="w">
+</span><span class="n">z</span><span class="p">[[</span><span class="m">1</span><span class="p">]]</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[[1]]
+[1] 1
+
+[[2]]
+[1] "a"
+
+[[3]]
+[1] TRUE
+</code></pre></div></div>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## to get to 'a' in list x, need to add more brackets</span><span class="w">
+</span><span class="n">z</span><span class="p">[[</span><span class="m">1</span><span class="p">]][[</span><span class="m">2</span><span class="p">]]</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "a"
 </code></pre></div></div>
 
 <h3 id="data-frame">Data frame</h3>
@@ -495,7 +564,7 @@ work.</p>
 <p>Most of the time, you will be reading in data frames, but you can also
 create them.</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create data frame</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create data frame where col_* are the column (variable) names</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">col_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">3</span><span class="p">),</span><span class="w">
                  </span><span class="n">col_b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="m">5</span><span class="p">,</span><span class="m">6</span><span class="p">),</span><span class="w">
                  </span><span class="n">col_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">7</span><span class="p">,</span><span class="m">8</span><span class="p">,</span><span class="m">9</span><span class="p">))</span><span class="w">
@@ -504,17 +573,17 @@ create them.</p>
 </span><span class="n">df</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##   col_a col_b col_c
-## 1     1     4     7
-## 2     2     5     8
-## 3     3     6     9
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  col_a col_b col_c
+1     1     4     7
+2     2     5     8
+3     3     6     9
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## check</span><span class="w">
 </span><span class="n">is.data.frame</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
 </code></pre></div></div>
 
 <p>Like matrices, data frames have a <code class="highlighter-rouge">dim()</code> and the number of rows and
@@ -526,7 +595,7 @@ accessed using <code class="highlighter-rouge">names()</code>.</p>
 </span><span class="nf">names</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "col_a" "col_b" "col_c"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "col_a" "col_b" "col_c"
 </code></pre></div></div>
 
 <p>To access a column, you need to give R the data frame’s name followed by
@@ -536,17 +605,17 @@ a <code class="highlighter-rouge">$</code> and then the variable name.</p>
 </span><span class="n">df</span><span class="o">$</span><span class="n">col_a</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1 2 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1 2 3
 </code></pre></div></div>
 
-<p>You can also use the <code class="highlighter-rouge">df[['&lt;var name&gt;']]</code> contruction, which comes in
+<p>You can also use the <code class="highlighter-rouge">df[['&lt;var name&gt;']]</code> construction, which comes in
 handy in loops and functions.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## get col_a (note the quotation marks this time)</span><span class="w">
 </span><span class="n">df</span><span class="p">[[</span><span class="s1">'col_a'</span><span class="p">]]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1 2 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1 2 3
 </code></pre></div></div>
 
 <blockquote>
@@ -559,8 +628,8 @@ about how you changed vector and matrix values before).</p>
 
 <h1 id="packages">Packages</h1>
 
-<p>Like I said above, user-submitted packages are a huge part of what makes
-R great. Most of your scripts will make use of one or more packages.</p>
+<p>User-submitted packages are a huge part of what makes R great. Most of
+your scripts will make use of one or more packages.</p>
 
 <h2 id="installation">Installation</h2>
 
@@ -580,9 +649,9 @@ how you installed R and download the right operating system file type.</p>
 <blockquote>
   <h4 id="quick-exercise-6">Quick exercise</h4>
 
-  <p>Install the
-<a href="http://biostat.mc.vanderbilt.edu/wiki/Main/Hmisc"><code class="highlighter-rouge">Hmisc</code></a> package,
-which has a lot of useful functions.</p>
+  <p>Install the <a href="https://CRAN.R-project.org/package=survey"><code class="highlighter-rouge">survey</code></a>
+package, which we will use in a later module. Don’t forget to use
+single or double quotation marks around the package name.</p>
 </blockquote>
 
 <h3 id="github">GitHub</h3>
@@ -612,7 +681,9 @@ Typically, they are placed at the top of the script file.</p>
 <blockquote>
   <h4 id="quick-exercise-7">Quick exercise</h4>
 
-  <p>Load the <code class="highlighter-rouge">tidyverse</code> package, which you should have already installed.</p>
+  <p>Load the <code class="highlighter-rouge">tidyverse</code> package, which you should have already installed.
+This will be a good test of the installation since we will use
+tidyverse libraries throughout the rest of the workshop.</p>
 </blockquote>
 
 <h1 id="help">Help</h1>
@@ -645,7 +716,7 @@ foolhardy!) enough to ask about it in a forum like
 <a href="https://stackoverflow.com">CrossValidated</a>, or <a href="https://stat.ethz.ch/mailman/listinfo/r-help">R-help mailing
 list</a>. Google it!</p>
 
-<h1 id="other-notes-about-r">Other notes about R</h1>
+<h1 id="miscellaneous-notes-about-r">Miscellaneous notes about R</h1>
 
 <h2 id="compared-to-other-statistical-languages">Compared to other statistical languages</h2>
 
@@ -657,7 +728,7 @@ scripting languages, like
 <a href="https://www.python.org">Python</a>, and
 <a href="https://www.stata.com">Stata</a>.<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup></p>
 
-<p>I came to R after learning Stata first, which is common for many
+<p>I came to R after learning Stata first, which I think is common for many
 researchers trained in econometric methods. For me and others who’ve
 made the same Stata-to-R transition, I think the root of many problems
 is the fundamental difference between how Stata and R operate. Whereas
@@ -676,8 +747,8 @@ on the other hand, R functions are often nouns: <code class="highlighter-rouge">
 <code class="highlighter-rouge">lm</code> (for linear model). And so, common problems in the R to Stata
 switch such as</p>
 <ul>
-  <li><em>I ran a model and didn’t get any output</em></li>
-  <li><em>How do I create local/global macros in R</em></li>
+  <li><em>I ran a model and didn’t get any output…</em></li>
+  <li><em>How do I create local/global macros in R?</em></li>
   <li><em>Which of these data objects is the actual data?</em></li>
   <li><em>Why isn’t R <strong>doing</strong> anything?</em></li>
 </ul>

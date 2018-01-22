@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="chrome=1">
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" href="/rworkshop/assets/css/style.css">
+<link rel="stylesheet" href="/rworkshop/assets/css/syntax_default.css">
+<link rel="stylesheet" href="/rworkshop/assets/leaflet/leaflet.css" />
+<script defer src="/rworkshop/assets/js/fontawesome-all.js"></script>
+<!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
+	      <i class="fab fa-github fa-xs"></i></a></h1>
+	<h2 class="thin">January 2018</h2>
+	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
+	
+        <p>
+	  <a href="https://curry.virginia.edu/faculty-research/centers-labs-projects/edpolicyworks">
+	    <img src="https://curry.virginia.edu/sites/default/files/uploads/epw/EdPolicyWork%20horz%20logo%20high%20res.png" style="width:100%;">
+	  </a>
+	</p>
+	<h2 class="thin">
+	  <a href="/rworkshop/">Overview</a></br>
+	  <a href="/rworkshop/schedule/">Schedule</a></br>
+	  <a href="/rworkshop/start/">Getting started</a></br>
+	  <a href="/rworkshop/modules/">Modules</a></br>
+	  <a href="/rworkshop/data/">Data</a></br>
+	</h2>
+      </header>
+
+      <section>
+
+      <h1>Reshaping data</h1>
+
+
+<p>
+  <a href="/rworkshop/scripts/reshape.R"
+     class="iconlink" download title="Get script">
+    <i class="fas fa-code fa-2x"></i>
+  </a>
+  &nbsp;&nbsp;
+  
+</p>
+
+
+<p>Reshaping data is a common data wrangling task. Whether going from <a href="https://en.wikipedia.org/wiki/Wide_and_narrow_data">wide
+to long format or long to
+wide</a>, this can be a
+painful process. Though you can reshape data frames using base R
+commands, the best way I know to reshape data in R is by using functions
+in the <a href="http://tidyr.tidyverse.org">tidyr</a> library.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## library</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
+
+✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+✔ tibble  1.4.1     ✔ dplyr   0.7.4
+✔ tidyr   0.7.2     ✔ stringr 1.2.0
+✔ readr   1.1.1     ✔ forcats 0.2.0
+
+── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+</code></pre></div></div>
+
+<h1 id="create-toy-data">Create toy data</h1>
+
+<p>For clarity, we’ll use toy data for this example. Let’s say these data
+represent average school-wide test scores on three tests, math, reading,
+and science, for four schools (A, B, C, and D), in 2013.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">schid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span><span class="s1">'B'</span><span class="p">,</span><span class="s1">'C'</span><span class="p">,</span><span class="s1">'D'</span><span class="p">),</span><span class="w">
+                 </span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2013</span><span class="p">,</span><span class="w">
+                 </span><span class="n">math</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">500</span><span class="p">,</span><span class="w"> </span><span class="m">10</span><span class="p">)),</span><span class="w">
+                 </span><span class="n">read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">300</span><span class="p">,</span><span class="w"> </span><span class="m">20</span><span class="p">)),</span><span class="w">
+                 </span><span class="n">science</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="m">4</span><span class="p">,</span><span class="w"> </span><span class="m">800</span><span class="p">,</span><span class="w"> </span><span class="m">15</span><span class="p">)),</span><span class="w">
+                 </span><span class="n">stringsAsFactors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">tbl_df</span><span class="p">()</span><span class="w">
+</span></code></pre></div></div>
+
+<p>This data structure should be wide and look like this:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">schid</th>
+      <th style="text-align: center">year</th>
+      <th style="text-align: center">math</th>
+      <th style="text-align: center">read</th>
+      <th style="text-align: center">science</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center"><code class="highlighter-rouge">502</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">276</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">792</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center"><code class="highlighter-rouge">506</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">353</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">810</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center"><code class="highlighter-rouge">511</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">264</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">806</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">D</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center"><code class="highlighter-rouge">510</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">309</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">813</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## confirm that it is wide</span><span class="w">
+</span><span class="n">df</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 4 x 5
+  schid  year  math  read science
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 A      2013   502   276     792
+2 B      2013   506   353     810
+3 C      2013   511   264     806
+4 D      2013   510   309     813
+</code></pre></div></div>
+
+<h2 id="wide--long">Wide –&gt; long</h2>
+
+<p>To start, the data are wide. While this setup can be efficient for
+storage, it’s not always the best for analysis or even just browsing.
+What we want is for the data to be long. Instead of each test having its
+own column, there should be one column for the test subject (<strong>test</strong>)
+and another column that gives the value (<strong>score</strong>). It should look like
+this:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">schid</th>
+      <th style="text-align: center">year</th>
+      <th style="text-align: center">test</th>
+      <th style="text-align: center">score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">502</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">276</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">792</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">506</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">353</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">810</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">511</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">264</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">806</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">D</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">510</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">D</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">309</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">D</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">813</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>To go from wide to long format, use the <code class="highlighter-rouge">gather(key, value)</code> function,
+where <code class="highlighter-rouge">key</code> is a new column that will hold all the variable names that
+were columns in the wide data frame and <code class="highlighter-rouge">value</code> is a new column that
+will hold their values. In our case, the key will be <code class="highlighter-rouge">test</code> (we can call
+it what we want), because that’s what we’re gathering in. The value will
+be <code class="highlighter-rouge">score</code> and will hold the test score values.</p>
+
+<p>We don’t want to gather every column, though. Since we want the
+<strong>schid</strong> and <strong>year</strong> columns to remain associated with their rows, we
+ignore them (<code class="highlighter-rouge">-c(...)</code>). By ignoring them, <code class="highlighter-rouge">gather()</code> will repeat their
+values down the rows as necessary.</p>
+
+<p>Finally, to tidy up, we <code class="highlighter-rouge">arrange()</code> the data by school ID and the
+variable name.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_long</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">gather</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">schid</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">arrange</span><span class="p">(</span><span class="n">schid</span><span class="p">,</span><span class="w"> </span><span class="n">test</span><span class="p">)</span><span class="w">
+
+</span><span class="c1">## show</span><span class="w">
+</span><span class="n">df_long</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 12 x 4
+   schid  year test    score
+   &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;
+ 1 A      2013 math      502
+ 2 A      2013 read      276
+ 3 A      2013 science   792
+ 4 B      2013 math      506
+ 5 B      2013 read      353
+ 6 B      2013 science   810
+ 7 C      2013 math      511
+ 8 C      2013 read      264
+ 9 C      2013 science   806
+10 D      2013 math      510
+11 D      2013 read      309
+12 D      2013 science   813
+</code></pre></div></div>
+
+<blockquote>
+  <h4 id="quick-exercise">Quick exercise</h4>
+
+  <p>What happens if you don’t include <code class="highlighter-rouge">-c(schid, year)</code> in the <code class="highlighter-rouge">gather()</code>
+function? Try it.</p>
+</blockquote>
+
+<h2 id="long--wide">Long –&gt; wide</h2>
+
+<p>To go in the opposite direction, use the <code class="highlighter-rouge">spread(var, value)</code> function,
+which makes columns for every unique <code class="highlighter-rouge">var</code> and assigns the <code class="highlighter-rouge">value</code> that
+was in the <code class="highlighter-rouge">var</code>’s row. In our case, these are <strong>test</strong> and <strong>score</strong>,
+respectively. Unlike <code class="highlighter-rouge">gather()</code>, we don’t have explicitly say to ignore
+columns that want to ignore.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df_long</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">spread</span><span class="p">(</span><span class="n">test</span><span class="p">,</span><span class="w"> </span><span class="n">score</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
+    </span><span class="n">arrange</span><span class="p">(</span><span class="n">schid</span><span class="p">)</span><span class="w">
+
+</span><span class="c1">## show</span><span class="w">
+</span><span class="n">df_wide</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 4 x 5
+  schid  year  math  read science
+  &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1 A      2013   502   276     792
+2 B      2013   506   353     810
+3 C      2013   511   264     806
+4 D      2013   510   309     813
+</code></pre></div></div>
+
+<p>In theory, our new <code class="highlighter-rouge">df_wide</code> data frame should be the same as the one we
+started with. Let’s check:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## confirm that df_wide == df</span><span class="w">
+</span><span class="n">identical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">df_wide</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] TRUE
+</code></pre></div></div>
+
+<p>Success!</p>
+
+<blockquote>
+  <h4 id="quick-exercise-1">Quick exercise</h4>
+
+  <p>Reshape this long data frame wide and then back:</p>
+
+  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>df &lt;- data.frame(id = rep(c('A','B','C','D'), each = 4),
+                 year = paste0('y', rep(2000:2003, 4)),
+                 score = rnorm(16),
+                 stringsAsFactors = FALSE) %&gt;%
+      tbl_df()
+</code></pre></div>  </div>
+</blockquote>
+
+<h1 id="notes">Notes</h1>
+
+
+
+      </section>
+      <footer>
+        <p>
+  Benjamin Skinner</br>  
+  Research Assistant Professor of Education</br>  
+  University of Virginia</br>  
+  <a href="https://www.btskinner.me" class="iconlink">
+    <i class="fas fa-home fa-lg"></i></a> | 
+  <a href="https://github.com/btskinner" class="iconlink">
+    <i class="fab fa-github fa-lg"></i></a> | 
+  <a href="mailto:btskinner@virginia.edu" class="iconlink">
+    <i class="far fa-envelope fa-lg"></i></a> | 
+  <a href="https://twitter.com/btskinner" class="iconlink">
+    <i class="fab fa-twitter fa-lg"></i></a>
+</p>
+<p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+
+      </footer>
+    </div>
+    <script src="/rworkshop/assets/js/scale.fix.js"></script>
+
+    
+    
+    
+    
+
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-63981025-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+  
+  </body>
+</html>

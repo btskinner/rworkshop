@@ -51,21 +51,21 @@
 </p>
 
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## libraries</span><span class="w">
-</span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
 <p>This short module is meant to introduce you to some of R programming
 features. In the first section, we’ll go through some common control
 flow functions. In the second section, we’ll go over building our own R
 functions.</p>
 
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## libraries</span><span class="w">
+</span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
 <h1 id="control-flow">Control flow</h1>
 
 <p>By control flow, I just mean the functions that help you change how your
 script is read. Scripts in R are read from top to bottom unless specific
-commands tell R to skip some lines if some condition is false or repeat
-a set of commands while some condition is true.</p>
+commands tell R to skip some lines or repeat a set of commands if
+certain conditions are met.</p>
 
 <p>Repeating commands often involves a loop. Loops have a bad reputation in
 R, mostly for being slow, but they aren’t <em>that</em> slow and they are easy
@@ -79,8 +79,8 @@ use <code class="highlighter-rouge">for()</code>, but its construction is the sa
 
 <p>Reading it backwards, the <code class="highlighter-rouge">sequence</code> is just the set of numbers or
 objects that we’re going to work through. The <code class="highlighter-rouge">variable</code> is a new
-variable that will temporarily hold a value in each run through the
-loop. When the <code class="highlighter-rouge">sequence</code> is finished, so is the loop.</p>
+variable that will temporarily hold a value from the sequence in each
+run through the loop. When the <code class="highlighter-rouge">sequence</code> is finished, so is the loop.</p>
 
 <p>First, let’s loop through a sequence of 10 numbers, printing each one at
 a time as we work through the loop.</p>
@@ -94,45 +94,48 @@ a time as we work through the loop.</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] 5
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
 </code></pre></div></div>
 
 <p>Notice the braces <code class="highlighter-rouge">{}</code> that come after <code class="highlighter-rouge">for()</code>. This is the code in the
-loop that will be repeated as long as the loop is run.</p>
+loop that will be repeated as long as the loop is run. With each loop,
+<code class="highlighter-rouge">i</code> takes on the next value in the <code class="highlighter-rouge">num_sequence</code>. This is why we see 1
+through 10 printed to the console.</p>
 
-<p>Let’s do it again with characters.</p>
+<p>Let’s do it again, but this time with characters.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## character vector using letters object from R base</span><span class="w">
 </span><span class="n">chr_sequence</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nb">letters</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">]</span><span class="w">
 
+</span><span class="c1">## loop through, printing each chr_sequence value, one at a time</span><span class="w">
 </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">chr_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
     </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "a"
-## [1] "b"
-## [1] "c"
-## [1] "d"
-## [1] "e"
-## [1] "f"
-## [1] "g"
-## [1] "h"
-## [1] "i"
-## [1] "j"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "a"
+[1] "b"
+[1] "c"
+[1] "d"
+[1] "e"
+[1] "f"
+[1] "g"
+[1] "h"
+[1] "i"
+[1] "j"
 </code></pre></div></div>
 
-<p>With each loop, the <code class="highlighter-rouge">variable</code> <code class="highlighter-rouge">i</code> takes on each <code class="highlighter-rouge">chr_sequence</code> value in
-turn.</p>
+<p>Once more, with each loop, <code class="highlighter-rouge">i</code> takes on each <code class="highlighter-rouge">chr_sequence</code> value in
+turn and <code class="highlighter-rouge">print()</code> prints it to the console.</p>
 
 <blockquote>
   <h4 id="quick-exercise">Quick exercise</h4>
@@ -142,7 +145,27 @@ turn.</p>
 you combine the two sequences?)</p>
 </blockquote>
 
-<p>Another way to make a for loop is work through a vector by its indices.</p>
+<p>Another way to make a for loop is work through a vector by its indices.
+Let’s break the code into pieces to make it clearer.</p>
+
+<p>Inside the <code class="highlighter-rouge">for()</code> parentheses, we have <code class="highlighter-rouge">i in 1:length(chr_sequence)</code>.
+We know what <code class="highlighter-rouge">i in</code> means since it’s like what we’ve seen before. What’s
+<code class="highlighter-rouge">1:length(chr_sequence)</code>? Starting at the end, we know that <code class="highlighter-rouge">length()</code>
+will return the number of items in the vector. Since we know that there
+are ten letters in <code class="highlighter-rouge">chr_sequence</code>, then we know that
+<code class="highlighter-rouge">length(chr_sequence) == 10</code>. That means that <code class="highlighter-rouge">1:length(chr_sequence)</code>
+is the same thing as saying <code class="highlighter-rouge">1:10</code>, which is what we’ve seen before.
+It’s just another, more flexible way, to get the end number of our
+sequence.</p>
+
+<p>Inside the braces (<code class="highlighter-rouge">{}</code>), we have <code class="highlighter-rouge">print(chr_sequence[i])</code>. From the
+first module, we know that brackets (<code class="highlighter-rouge">[]</code>) are way of pulling out
+specific values from a vector. We’ve only used numbers before, but we
+can also use variables that represent numbers. Since we know that <code class="highlighter-rouge">i</code> is
+going to take on values 1 through 10 in the loop, that means the
+<code class="highlighter-rouge">print()</code> function will get <code class="highlighter-rouge">chr_sequence[1]</code>, <code class="highlighter-rouge">chr_sequence[2]</code>, and so
+on. Because of the brackets, these will turn into…<code class="highlighter-rouge">a</code>, <code class="highlighter-rouge">b</code>, and so on.
+We should get the same thing as before!</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## for loop by indices</span><span class="w">
 </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">chr_sequence</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w">
@@ -150,21 +173,24 @@ you combine the two sequences?)</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "a"
-## [1] "b"
-## [1] "c"
-## [1] "d"
-## [1] "e"
-## [1] "f"
-## [1] "g"
-## [1] "h"
-## [1] "i"
-## [1] "j"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "a"
+[1] "b"
+[1] "c"
+[1] "d"
+[1] "e"
+[1] "f"
+[1] "g"
+[1] "h"
+[1] "i"
+[1] "j"
 </code></pre></div></div>
 
-<p>The result is the same as before, but instead of the values of
-<code class="highlighter-rouge">chr_sequence</code>, <code class="highlighter-rouge">i</code> takes on the values 1 through 10 (the length of the
-vector)</p>
+<p>And we do!</p>
+
+<p>Whether you decide to loop using actual values from the sequence or
+indices will usually depend on the code you want to run in the loop.
+Sometimes one way works better and other times the other. Just do
+whatever works best for you at that time.</p>
 
 <blockquote>
   <h4 id="quick-exercise-1">Quick exercise</h4>
@@ -180,6 +206,10 @@ a predetermined stopping point. As long the expression inside the
 parentheses is <code class="highlighter-rouge">TRUE</code>, the loop will keep going. Only when it becomes
 <code class="highlighter-rouge">FALSE</code> will it stop.</p>
 
+<p>One way to use a <code class="highlighter-rouge">while()</code> loop is to set up a counter. When the counter
+reaches some value, the expression inside the <code class="highlighter-rouge">while()</code> parentheses is
+no longer true and the loop stops.</p>
+
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## set up a counter</span><span class="w">
 </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="m">1</span><span class="w">
 
@@ -190,22 +220,38 @@ parentheses is <code class="highlighter-rouge">TRUE</code>, the loop will keep g
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] 5
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
 </code></pre></div></div>
 
-<p>You have to careful with <code class="highlighter-rouge">while()</code> loops. If you forget to increment the
-counter (like I did the first time I set up this example), the loop
-won’t ever stop because <code class="highlighter-rouge">i</code> will never get larger and will always be
-less than 11!</p>
+<p>Using a <code class="highlighter-rouge">while()</code> loop with a counter is often the same as using a
+<code class="highlighter-rouge">for()</code> loop with a sequence. If that’s the case, it’s probably better
+just to use a <code class="highlighter-rouge">for()</code> loop.</p>
+
+<p><code class="highlighter-rouge">while()</code> loops are most useful when it’s not clear, from the start,
+when the loop should stop. Imagine you have an algorithm that should
+only stop when a certain number is reached. If the time it takes to
+reach the number changes depending on the input, then a <code class="highlighter-rouge">for()</code> loop
+probably won’t work, but a <code class="highlighter-rouge">while()</code> loop will.</p>
+
+<p>You have to careful, however, with <code class="highlighter-rouge">while()</code> loops. If you forget to
+increment the counter (like I did the first time I set up this example),
+the loop won’t ever stop because <code class="highlighter-rouge">i</code> will never get larger and will
+always be less than 11! If your <code class="highlighter-rouge">while()</code> loop will only stop when a
+certain condition is met, it’s still a good idea to build in a
+pre-specified number of trials. If your loop has tried, let’s say 1000
+times to meet the condition and still hasn’t done so, it should stop
+with an error or return what it has so far (depending on your needs).</p>
+
+<p>You have been warned!</p>
 
 <h2 id="if">if</h2>
 
@@ -221,15 +267,15 @@ sometimes.</p>
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
 </code></pre></div></div>
 
 <p>Notice how <code class="highlighter-rouge">5</code> wasn’t printed to the console. It worked!</p>
@@ -240,29 +286,31 @@ sometimes.</p>
   <p>Change the condition to print only numbers below 3 and above 7.</p>
 </blockquote>
 
-<p>We can add one or more <code class="highlighter-rouge">else()</code> partners to <code class="highlighter-rouge">if()</code> if we need, for
-example, option <strong>B</strong> to happen if option <strong>A</strong> does not.</p>
+<p>We can add one or more <code class="highlighter-rouge">else if() / else()</code> partners to <code class="highlighter-rouge">if()</code> if we
+need, for example, option <strong>B</strong> to happen if option <strong>A</strong> does not.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## if/else loop</span><span class="w">
 </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">num_sequence</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
-    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="m">5</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="w">
+    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="m">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="n">print</span><span class="p">(</span><span class="s1">'three'</span><span class="p">)</span><span class="w">
     </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
         </span><span class="n">print</span><span class="p">(</span><span class="s1">'five'</span><span class="p">)</span><span class="w">
     </span><span class="p">}</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] "five"
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
+[1] 2
+[1] "three"
+[1] 4
+[1] "five"
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
 </code></pre></div></div>
 
 <h1 id="writing-functions">Writing functions</h1>
@@ -273,7 +321,7 @@ want a function to do one thing really well.</p>
 
 <p>To make a function, you use the <code class="highlighter-rouge">function()</code> function. Put the code that
 you want your function to run in the braces <code class="highlighter-rouge">{}</code>. Any arguments that you
-want you argument to take should be in the parentheses <code class="highlighter-rouge">()</code> right after
+want your function to take should be in the parentheses <code class="highlighter-rouge">()</code> right after
 the word <code class="highlighter-rouge">function</code>. The name of your function is the name of the object
 you assign it to.</p>
 
@@ -291,7 +339,7 @@ parentheses.</p>
 </span><span class="n">my_function</span><span class="p">()</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] "Hi!"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] "Hi!"
 </code></pre></div></div>
 
 <p>Let’s make another one with an argument so that it’s more flexible. This
@@ -316,16 +364,16 @@ passed through to the code inside. Now <code class="highlighter-rouge">for()</co
 </span><span class="n">print_nums</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 1
-## [1] 2
-## [1] 3
-## [1] 4
-## [1] 5
-## [1] 6
-## [1] 7
-## [1] 8
-## [1] 9
-## [1] 10
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 1
+[1] 2
+[1] 3
+[1] 4
+[1] 5
+[1] 6
+[1] 7
+[1] 8
+[1] 9
+[1] 10
 </code></pre></div></div>
 
 <blockquote>
@@ -365,20 +413,20 @@ everything will work the same.</p>
 </span><span class="n">df</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 100 x 4
-##       id   age sibage parage
-##    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-##  1     1  20.0   5.00   54.0
-##  2     2  18.0   6.00   45.0
-##  3     3  11.0  11.0   -99.0
-##  4     4  12.0   8.00   47.0
-##  5     5  15.0   6.00   53.0
-##  6     6  20.0  11.0    52.0
-##  7     7  18.0 -98.0    51.0
-##  8     8 -97.0   8.00   54.0
-##  9     9 -97.0   5.00   49.0
-## 10    10  12.0 -98.0    51.0
-## # ... with 90 more rows
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 100 x 4
+      id   age sibage parage
+   &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+ 1     1  18.0  12.0    54.0
+ 2     2  13.0   5.00   49.0
+ 3     3  19.0   5.00   54.0
+ 4     4  15.0   5.00   52.0
+ 5     5  12.0  10.0    45.0
+ 6     6  15.0   6.00   47.0
+ 7     7 -97.0   9.00   50.0
+ 8     8  11.0   8.00  -99.0
+ 9     9  13.0   5.00   51.0
+10    10  14.0   5.00  -99.0
+# ... with 90 more rows
 </code></pre></div></div>
 
 <p>We could fix these manually like we have been, but it would be nice have
@@ -408,9 +456,8 @@ can change it each time we call the function. Let’s try it out.</p>
 </span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
-## -97  11  12  13  14  15  16  17  18  19  20 
-##   6  15   7  11  10   9   6   5  14  11   6
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-97  11  12  13  14  15  16  17  18  19  20 
+ 11  10   9   8   4  15   9   6  10  10   8 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## missing values in age are coded as -97</span><span class="w">
@@ -420,10 +467,12 @@ can change it each time we call the function. Let’s try it out.</p>
 </span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## 
-##   11   12   13   14   15   16   17   18   19   20 &lt;NA&gt; 
-##   15    7   11   10    9    6    5   14   11    6    6
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  11   12   13   14   15   16   17   18   19   20 &lt;NA&gt; 
+  10    9    8    4   15    9    6   10   10    8   11 
 </code></pre></div></div>
+
+<p>It worked! All the values that were -97 before, are now in the <code class="highlighter-rouge">NA</code>
+table column. Importantly, none of the other values changed.</p>
 
 <blockquote>
   <h4 id="quick-exercise-4">Quick exercise</h4>
@@ -438,7 +487,7 @@ command. (HINT: look back at a past module if you need to)</p>
 <div class="footnotes">
   <ol>
     <li id="fn:1">
-      <p>If you want to use more idimatic R, check out the
+      <p>If you want to use more idiomatic R, check out the
 <a href="https://www.r-bloggers.com/r-tutorial-on-the-apply-family-of-functions/">apply</a>
 functions. If want to go really fast, check out
 <a href="http://www.rcpp.org">Rcpp</a> which incorporates C/C++ libraries and

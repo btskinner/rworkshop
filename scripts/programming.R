@@ -32,6 +32,7 @@ for (i in num_sequence) {
 ## character vector using letters object from R base
 chr_sequence <- letters[1:10]
 
+## loop through, printing each chr_sequence value, one at a time
 for (i in chr_sequence) {
     print(i)
 }
@@ -67,8 +68,10 @@ for (i in num_sequence) {
 
 ## if/else loop
 for (i in num_sequence) {
-    if (i != 5) {
+    if (i != 3 & i != 5) {
         print(i)
+    } else if (i == 3) {
+        print('three')
     } else {
         print('five')
     }

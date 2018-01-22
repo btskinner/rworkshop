@@ -57,12 +57,12 @@
 
 
 <p>R has undergone a transformation in the past few years and this may
-change how you choose to approach data wrangling. While the core R
-functions for data manipulation haven’t really changed<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>, a new suite
-of packages, the <a href="https://www.tidyverse.org">tidyverse</a> (formerly known
-as the “Hadleyverse” after their key creater, <a href="http://hadley.nz">Hadley
-Wickham</a>), has really changed the way many people
-approach using R.</p>
+affect how you choose to approach data wrangling. While the core R
+functions for data manipulation are still the same, a new suite of
+packages, the <a href="https://www.tidyverse.org">tidyverse</a> (formerly known as
+the “Hadleyverse” after their key creator, <a href="http://hadley.nz">Hadley
+Wickham</a>), has really changed the way many people use
+R.</p>
 
 <p>In this module, I’m going to show you how to wrangle data the tidyverse
 way. The sequence is almost the same as those in the last module. In the
@@ -106,19 +106,25 @@ when working with large data sets.</p>
 <a href="https://www.fine-arts-museum.be/uploads/exhibitions/images/magritte_la_trahison_des_images_large@2x.jpg"><img src="https://www.rstudio.com/wp-content/uploads/2014/04/magrittr.png" alt="badge" /></a>
 </span></p>
 
-<p>Pipes take values/output from the left side and pipe it to the input of
-the right side. So <code class="highlighter-rouge">sum(x)</code> can be rewritten as <code class="highlighter-rouge">x %&gt;% sum</code>. This is a
-silly example (why would you do that?), but pipes are powerful because
-they can be chained together. Nested layers of functions that would be
-difficult to read from the inside out can be made clearer. Let’s use
-<a href="https://twitter.com/_inundata/status/557980236130689024">Hadley’s canonical
+<p>Pipes take output from the left side and pipe it to the input of the
+right side. So <code class="highlighter-rouge">sum(x)</code> can be rewritten as <code class="highlighter-rouge">x %&gt;% sum</code>: <code class="highlighter-rouge">x</code> outputs
+itself and the pipe, <code class="highlighter-rouge">%&gt;%</code>, makes it the input for <code class="highlighter-rouge">sum()</code>.</p>
+
+<p>This is a silly example (why would you do that?), but pipes are powerful
+because they can be chained together. Functions can be nested in R, but
+after too many, the code becomes difficult to parse since it has to be
+read from the inside out. Pipes allow functions to come one after
+another in the order of the work being done.</p>
+
+<p>Let’s use <a href="https://twitter.com/_inundata/status/557980236130689024">Hadley’s canonical
 example</a> to
-make it clearer:</p>
+make the readability comparison between nested functions and piped
+functions clearer:</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## foo_foo is an instance of a little bunny</span><span class="w">
 </span><span class="n">foo_foo</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">little_bunny</span><span class="p">()</span><span class="w">
 
-</span><span class="c1">## adventures in base R</span><span class="w">
+</span><span class="c1">## adventures in base R must be read from the middle up and backwards</span><span class="w">
 </span><span class="n">bop_on</span><span class="p">(</span><span class="w">
     </span><span class="n">scoop_up</span><span class="p">(</span><span class="w">
         </span><span class="n">hop_through</span><span class="p">(</span><span class="n">foo_foo</span><span class="p">,</span><span class="w"> </span><span class="n">forest</span><span class="p">),</span><span class="w">
@@ -127,7 +133,7 @@ make it clearer:</p>
     </span><span class="n">head</span><span class="w">
 </span><span class="p">)</span><span class="w">
 
-</span><span class="c1">## adventures w/ pipes</span><span class="w">
+</span><span class="c1">## adventures w/ pipes start at the top and work down</span><span class="w">
 </span><span class="n">foo_foo</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
     </span><span class="n">hop_through</span><span class="p">(</span><span class="n">forest</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
     </span><span class="n">scoop_up</span><span class="p">(</span><span class="n">field_mouse</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
@@ -140,16 +146,16 @@ make it clearer:</p>
 </span><span class="n">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
-## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-## ✔ tibble  1.4.1     ✔ dplyr   0.7.4
-## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
-## ✔ readr   1.1.1     ✔ forcats 0.2.0
+✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+✔ tibble  1.4.1     ✔ dplyr   0.7.4
+✔ tidyr   0.7.2     ✔ stringr 1.2.0
+✔ readr   1.1.1     ✔ forcats 0.2.0
 
-## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()
+── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
 </code></pre></div></div>
 
 <p>Let’s reread the original data. Like <code class="highlighter-rouge">read.table()</code>, <code class="highlighter-rouge">read_delim()</code> is
@@ -160,33 +166,54 @@ character. You could also just use <code class="highlighter-rouge">read_csv()</c
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">read_delim</span><span class="p">(</span><span class="s1">'../data/els_plans.csv'</span><span class="p">,</span><span class="w"> </span><span class="n">delim</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">','</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## Parsed with column specification:
-## cols(
-##   .default = col_character(),
-##   stu_id = col_integer(),
-##   sch_id = col_integer(),
-##   strat_id = col_integer(),
-##   f1sch_id = col_integer(),
-##   bystuwt = col_double(),
-##   bydob_p = col_integer(),
-##   byses1 = col_double(),
-##   byses2 = col_double(),
-##   bynels2m = col_double(),
-##   bynels2r = col_double(),
-##   f1qwt = col_double(),
-##   f1pnlwt = col_double()
-## )
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Parsed with column specification:
+cols(
+  .default = col_character(),
+  stu_id = col_integer(),
+  sch_id = col_integer(),
+  strat_id = col_integer(),
+  f1sch_id = col_integer(),
+  bystuwt = col_double(),
+  bydob_p = col_integer(),
+  byses1 = col_double(),
+  byses2 = col_double(),
+  bynels2m = col_double(),
+  bynels2r = col_double(),
+  f1qwt = col_double(),
+  f1pnlwt = col_double()
+)
 
-## See spec(...) for full column specifications.
+See spec(...) for full column specifications.
 </code></pre></div></div>
+
+<p>Unlike the base R <code class="highlighter-rouge">read.table()</code> function, <code class="highlighter-rouge">read_delim()</code> prints out
+information about how the data were read in. Nothing is wrong! The
+<code class="highlighter-rouge">read_delim()</code> function, like many other functions in the tidyverse,
+assumes you’d rather have more rather than less information and so acts
+accordingly.</p>
+
+<p>We can see which columns were read in as doubles (<code class="highlighter-rouge">col_double()</code>) and
+which as integers (<code class="highlighter-rouge">col_integer()</code>). If the column name isn’t in the
+list, then it was read in as the <code class="highlighter-rouge">.default</code>, which was as a character
+column (<code class="highlighter-rouge">col_character()</code>).</p>
 
 <h2 id="mutate">Mutate</h2>
 
-<p>To add variables and change existing ones, use the <code class="highlighter-rouge">mutate()</code>.</p>
+<p>To add variables and change existing ones, use the <code class="highlighter-rouge">mutate()</code> function.</p>
 
-<p>Note that with this (and the following) tidyverse functions, you don’t
-need to use the data frame name with the dollar sign construction and
-you don’t need to put quotation marks around the column names.</p>
+<p>Most if not all of the primary tidyverse functions take the data object
+as the first argument. So the <code class="highlighter-rouge">mutate()</code> function would be
+<code class="highlighter-rouge">mutate(df, ...)</code> where <code class="highlighter-rouge">...</code> is the stuff we want to do. Because we’re
+using the <code class="highlighter-rouge">%&gt;%</code>, however, we start with the data by itself and pipe it
+into the <code class="highlighter-rouge">mutate()</code> function. We’ll do this with the rest of the
+tidyverse functions. While not necessary, I think it helps reading
+through the code: <em>Starting with the data (<code class="highlighter-rouge">df</code>), we next create new
+variables with the <code class="highlighter-rouge">mutate()</code> function…</em> and so on.</p>
+
+<p>Note that with tidyverse functions, you usually don’t need to use the
+data frame name with the dollar sign construction (<code class="highlighter-rouge">df$&lt;var_name&gt;</code>) and
+you don’t need to put quotation marks around the column names. There are
+some rare cases where you do, but we won’t get into those.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## assign values inside function using = sign (not &lt;-)</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
@@ -215,8 +242,33 @@ inside the <code class="highlighter-rouge">mutate()</code> function.</p>
 <h2 id="select">Select</h2>
 
 <p>To choose variables, either when making a new data frame or dropping
-them, use <code class="highlighter-rouge">select()</code>. To drop them, use a negative sign (<code class="highlighter-rouge">-</code>) in front
-of the variable name.</p>
+them, use <code class="highlighter-rouge">select()</code>. Without assignment (because we would change our
+data object and we don’t want to), let’s use <code class="highlighter-rouge">select()</code> to view the
+first few rows of the student and school ids.</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## just view first few rows of stu_id and sch_id (no assignment)</span><span class="w">
+</span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">stu_id</span><span class="p">,</span><span class="w"> </span><span class="n">sch_id</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 16,160 x 2
+   stu_id sch_id
+    &lt;int&gt;  &lt;int&gt;
+ 1 101101   1011
+ 2 101102   1011
+ 3 101104   1011
+ 4 101105   1011
+ 5 101106   1011
+ 6 101107   1011
+ 7 101108   1011
+ 8 101109   1011
+ 9 101110   1011
+10 101111   1011
+# ... with 16,150 more rows
+</code></pre></div></div>
+
+<p>To drop variables, use a negative sign (<code class="highlighter-rouge">-</code>) in front of the variable
+name. This time, we will reassign the results to <code class="highlighter-rouge">df</code>, which means that
+the column <code class="highlighter-rouge">f1pnlwt</code> will be dropped from the data frame.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## drop follow up one panel weight</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="o">-</span><span class="n">f</span><span class="m">1</span><span class="n">pnlwt</span><span class="p">)</span><span class="w">
@@ -225,10 +277,10 @@ of the variable name.</p>
 </span><span class="nf">names</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>##  [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-##  [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-## [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-## [19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+ [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+[13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+[19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"  
 </code></pre></div></div>
 
 <blockquote>
@@ -249,7 +301,7 @@ than zero as <code class="highlighter-rouge">NA</code>. Let’s drop those.</p>
 </span><span class="n">nrow</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 16160
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 16160
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## keep if not (!) missing</span><span class="w">
@@ -257,7 +309,7 @@ than zero as <code class="highlighter-rouge">NA</code>. Let’s drop those.</p>
 </span><span class="n">nrow</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] 15183
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 15183
 </code></pre></div></div>
 
 <blockquote>
@@ -277,19 +329,19 @@ then <code class="highlighter-rouge">filter()</code>ing out missing values, or i
 </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">stu_id</span><span class="p">,</span><span class="w"> </span><span class="n">bydob_p</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">10</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 10 x 2
-##    stu_id bydob_p
-##     &lt;int&gt;   &lt;int&gt;
-##  1 101101  198512
-##  2 101102  198605
-##  3 101104  198601
-##  4 101105  198607
-##  5 101106  198511
-##  6 101107  198510
-##  7 101108  198607
-##  8 101109  198512
-##  9 101110  198505
-## 10 101111  198507
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 10 x 2
+   stu_id bydob_p
+    &lt;int&gt;   &lt;int&gt;
+ 1 101101  198512
+ 2 101102  198605
+ 3 101104  198601
+ 4 101105  198607
+ 5 101106  198511
+ 6 101107  198510
+ 7 101108  198607
+ 8 101109  198512
+ 9 101110  198505
+10 101111  198507
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## arrange</span><span class="w">
@@ -299,25 +351,25 @@ then <code class="highlighter-rouge">filter()</code>ing out missing values, or i
 </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">select</span><span class="p">(</span><span class="n">stu_id</span><span class="p">,</span><span class="w"> </span><span class="n">bydob_p</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w"> </span><span class="n">head</span><span class="p">(</span><span class="m">10</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 10 x 2
-##    stu_id bydob_p
-##     &lt;int&gt;   &lt;int&gt;
-##  1 133211  198300
-##  2 195210  198300
-##  3 195213  198300
-##  4 225203  198300
-##  5 268219  198300
-##  6 268225  198300
-##  7 274222  198300
-##  8 280215  198300
-##  9 324119  198300
-## 10 327128  198300
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 10 x 2
+   stu_id bydob_p
+    &lt;int&gt;   &lt;int&gt;
+ 1 133211  198300
+ 2 195210  198300
+ 3 195213  198300
+ 4 225203  198300
+ 5 268219  198300
+ 6 268225  198300
+ 7 274222  198300
+ 8 280215  198300
+ 9 324119  198300
+10 327128  198300
 </code></pre></div></div>
 
 <blockquote>
   <h4 id="quick-exercise-3">Quick exercise</h4>
 
-  <p><code class="highlighter-rouge">Arrange()</code> by <code class="highlighter-rouge">bydob_p</code> again, but this time in reverse order. Google
+  <p><code class="highlighter-rouge">arrange()</code> by <code class="highlighter-rouge">bydob_p</code> again, but this time in reverse order. Google
 “dplyr arrange” to find information about the function and see if can
 figure out how to sort in descending order.</p>
 </blockquote>
@@ -325,39 +377,46 @@ figure out how to sort in descending order.</p>
 <h2 id="summarize">Summarize</h2>
 
 <p>Aggregate data using the <code class="highlighter-rouge">summarise()</code> or <code class="highlighter-rouge">summarize()</code> function
-(they’re the same, just playing nice with by offering both spellings).
-Unlike the <code class="highlighter-rouge">aggregate()</code> function, you first need to set the grouping
-variable using the <code class="highlighter-rouge">group_by()</code> function. Since we need to replace
-negative values before we summarize, we’ll chain a few functions
-together into one command.</p>
+(they’re the same, just playing nice by offering both spellings). Unlike
+the <code class="highlighter-rouge">aggregate()</code> function, you first need to set the grouping variable
+using the <code class="highlighter-rouge">group_by()</code> function. Since we need to replace negative
+values before we summarize, we’ll chain a few functions together into
+one command.</p>
+
+<p>Notice how we can include comment rows between each piped command.
+Adding a comment before each function that explains the step in a
+human-friendly manner can be particularly helpful when chaining multiple
+functions together. Or you can work the other way, writing
+<a href="https://en.wikipedia.org/wiki/Pseudocode">pseudocode</a> first and then
+adding the R code afterwards.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create new data frame</span><span class="w">
 </span><span class="n">sch_m</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="c1">## first, make test score values &lt; 0 == NA</span><span class="w">
+    </span><span class="c1">## (1) make test score values &lt; 0 into NAs</span><span class="w">
     </span><span class="n">mutate</span><span class="p">(</span><span class="n">bynels2m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifelse</span><span class="p">(</span><span class="n">bynels2m</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="m">0</span><span class="p">,</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span><span class="w"> </span><span class="n">bynels2m</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="c1">## group by school ID</span><span class="w">
+    </span><span class="c1">## (2) group by school ID</span><span class="w">
     </span><span class="n">group_by</span><span class="p">(</span><span class="n">sch_id</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="c1">## summarize</span><span class="w">
+    </span><span class="c1">## (3) get the average math score, removing missing values</span><span class="w">
     </span><span class="n">summarise</span><span class="p">(</span><span class="n">sch_bynels2m</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mean</span><span class="p">(</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">))</span><span class="w">
 
 </span><span class="c1">## show</span><span class="w">
 </span><span class="n">sch_m</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 751 x 2
-##    sch_id sch_bynels2m
-##     &lt;int&gt;        &lt;dbl&gt;
-##  1   1011         45.3
-##  2   1012         43.3
-##  3   1021         28.9
-##  4   1022         38.6
-##  5   1031         40.0
-##  6   1032         35.3
-##  7   1033         42.2
-##  8   1041         44.9
-##  9   1042         52.2
-## 10   1051         45.9
-## # ... with 741 more rows
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 751 x 2
+   sch_id sch_bynels2m
+    &lt;int&gt;        &lt;dbl&gt;
+ 1   1011         45.3
+ 2   1012         43.3
+ 3   1021         28.9
+ 4   1022         38.6
+ 5   1031         40.0
+ 6   1032         35.3
+ 7   1033         42.2
+ 8   1041         44.9
+ 9   1042         52.2
+10   1051         45.9
+# ... with 741 more rows
 </code></pre></div></div>
 
 <blockquote>
@@ -404,150 +463,14 @@ data object.</p>
 
 <p>The readr library can also write delimited flat files. Instead of
 <code class="highlighter-rouge">write_delim()</code>, we’ll use the wrapper function <code class="highlighter-rouge">write_csv()</code> to save a
-csv file.</p>
+csv file. Again, it’s a good habit to save any modified data using a
+different name so that your raw data stays untouched. We’ll add
+<code class="highlighter-rouge">_mod_tv</code> to the data name so that we don’t overwrite raw data or the
+modified data set we made in the last module.</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">write_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="s1">'../data/els_plans_mod_tv.csv'</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## write flat file</span><span class="w">
+</span><span class="n">write_csv</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="s1">'../data/els_plans_mod_tv.csv'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
-
-<h1 id="reshaping-data">Reshaping data</h1>
-
-<p>Reshaping data is a common data wrangling task. Whether going from wide
-to long format or the reverse, this can be a painful process. The best
-way I know to reshape data in R is by using the <strong>tidyr</strong> library.</p>
-
-<h2 id="create-toy-data">Create toy data</h2>
-
-<p>For clarity, we’ll use toy data for this example. It will be wide to
-start.</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">data.frame</span><span class="p">(</span><span class="n">schid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'A'</span><span class="p">,</span><span class="s1">'B'</span><span class="p">,</span><span class="s1">'C'</span><span class="p">,</span><span class="s1">'D'</span><span class="p">),</span><span class="w">
-                 </span><span class="n">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2013</span><span class="p">,</span><span class="w">
-                 </span><span class="n">var_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">,</span><span class="w">
-                 </span><span class="n">var_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span><span class="o">:</span><span class="m">8</span><span class="p">,</span><span class="w">
-                 </span><span class="n">var_z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">9</span><span class="o">:</span><span class="m">12</span><span class="p">,</span><span class="w">
-                 </span><span class="n">stringsAsFactors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="n">tbl_df</span><span class="p">()</span><span class="w">
-
-</span><span class="c1">## show</span><span class="w">
-</span><span class="n">df</span><span class="w">
-</span></code></pre></div></div>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 4 x 5
-##   schid  year var_x var_y var_z
-##   &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1 A      2013     1     5     9
-## 2 B      2013     2     6    10
-## 3 C      2013     3     7    11
-## 4 D      2013     4     8    12
-</code></pre></div></div>
-
-<h2 id="wide--long">Wide –&gt; long</h2>
-
-<p>To go from wide to long format, use the <code class="highlighter-rouge">gather(key, value)</code> function,
-where the <code class="highlighter-rouge">key</code> is the variable that will made long (the stub in Stata)
-and the <code class="highlighter-rouge">value</code> is the column of associated values that will be created.
-Since we want the <strong>schid</strong> and <strong>year</strong> columns to remain associated
-with their rows, we ignore them (<code class="highlighter-rouge">-c(...)</code>) so they will be repeated as
-necessary.</p>
-
-<p>Finally we <code class="highlighter-rouge">arrange()</code> the data by school ID and the variable name.</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_long</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="n">gather</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="n">schid</span><span class="p">,</span><span class="w"> </span><span class="n">year</span><span class="p">))</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="n">arrange</span><span class="p">(</span><span class="n">schid</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">)</span><span class="w">
-
-</span><span class="c1">## show</span><span class="w">
-</span><span class="n">df_long</span><span class="w">
-</span></code></pre></div></div>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 12 x 4
-##    schid  year var   value
-##    &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt; &lt;int&gt;
-##  1 A      2013 var_x     1
-##  2 A      2013 var_y     5
-##  3 A      2013 var_z     9
-##  4 B      2013 var_x     2
-##  5 B      2013 var_y     6
-##  6 B      2013 var_z    10
-##  7 C      2013 var_x     3
-##  8 C      2013 var_y     7
-##  9 C      2013 var_z    11
-## 10 D      2013 var_x     4
-## 11 D      2013 var_y     8
-## 12 D      2013 var_z    12
-</code></pre></div></div>
-
-<blockquote>
-  <h4 id="quick-exercise-6">Quick exercise</h4>
-
-  <p>What happens if you don’t include <code class="highlighter-rouge">-c(schid, year)</code> in the <code class="highlighter-rouge">gather()</code>
-function? Try it.</p>
-</blockquote>
-
-<h2 id="long--wide">Long –&gt; wide</h2>
-
-<p>To go in the opposite direction, use the <code class="highlighter-rouge">spread(var, value)</code> function,
-which makes columns for every unique <code class="highlighter-rouge">var</code> and assigns the <code class="highlighter-rouge">value</code> that
-was in the <code class="highlighter-rouge">var</code>s row. Unlike <code class="highlighter-rouge">gather()</code>, we don’t have explicily say to
-ignore columns that want to ignore.</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">df_wide</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">df_long</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="n">spread</span><span class="p">(</span><span class="n">var</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
-    </span><span class="n">arrange</span><span class="p">(</span><span class="n">schid</span><span class="p">)</span><span class="w">
-
-</span><span class="c1">## show</span><span class="w">
-</span><span class="n">df_wide</span><span class="w">
-</span></code></pre></div></div>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## # A tibble: 4 x 5
-##   schid  year var_x var_y var_z
-##   &lt;chr&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
-## 1 A      2013     1     5     9
-## 2 B      2013     2     6    10
-## 3 C      2013     3     7    11
-## 4 D      2013     4     8    12
-</code></pre></div></div>
-
-<p>In theory, our new <code class="highlighter-rouge">df_wide</code> data frame should be the same as the one we
-started with. Let’s check:</p>
-
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## confirm that df_wide == df</span><span class="w">
-</span><span class="n">identical</span><span class="p">(</span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">df_wide</span><span class="p">)</span><span class="w">
-</span></code></pre></div></div>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>## [1] TRUE
-</code></pre></div></div>
-
-<p>Success!<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup></p>
-
-<blockquote>
-  <h4 id="quick-exercise-7">Quick exercise</h4>
-
-  <p>Reshape this long data frame wide and then back:</p>
-
-  <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>df &lt;- data.frame(id = rep(c('A','B','C','D'), each = 4),
-                 year = paste0('y', rep(2000:2003, 4)),
-                 test_score = rnorm(16),
-                 stringsAsFactors = FALSE) %&gt;%
-      tbl_df()
-</code></pre></div>  </div>
-</blockquote>
-
-<h1 id="notes">Notes</h1>
-
-<div class="footnotes">
-  <ol>
-    <li id="fn:1">
-      <p>Except maybe under the hood in a few cases.&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:2">
-      <p>For a slightly more complicated version that uses <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html">regular
-expressions</a>
-to adjust the variable names and values after each reshape, see this
-<a href="https://gist.github.com/btskinner/a1f5bc5c1c32b48d4f45b05d2531e423">gist</a>&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
 
 
 
