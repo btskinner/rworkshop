@@ -143,7 +143,7 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
 fit_pred <- predict(fit, se.fit = TRUE)
 
 ## show options
-name(fit_pred)
+names(fit_pred)
 head(fit_pred$fit)
 head(fit_pred$se.fit)
 
@@ -157,7 +157,7 @@ head(mm)
 mm <- mm[,-1]
 head(mm)
 
-## (3) convert to data frame
+## (3) convert to data frame so we can use $ notation in next step
 mm <- as.data.frame(mm)
 
 ## (4) new data frame of means where only lowinc changes
@@ -170,7 +170,7 @@ new_df <- data.frame(byses1 = mean(mm$byses1),
 ## see new data
 new_df
 
-## predit margins
+## predict margins
 predict(fit, newdata = new_df, se.fit = TRUE)
 
 

@@ -1,7 +1,7 @@
 ---
 layout: module
 title: Modeling
-date: 2018-01-01 00:00:07
+date: 2018-01-01 00:00:08
 category: module
 links:
   script: modeling.R
@@ -12,12 +12,6 @@ output:
     preserve_yaml: true
 ---
 
-``` r
-## libraries
-library(tidyverse)
-library(haven)
-```
-
 After your data have been wrangled from raw values to an analysis data
 set and you’ve explored it with summary statistics and graphics, you are
 ready to model it and make inferences. As one should expect from a
@@ -27,7 +21,14 @@ and econometric models.
 In this module we’ll still use the ELS plans data set, but we’ll use one
 that has been tidied up a bit. Since the point of this module is to show
 the structure of running, say, an OLS regression in R, little weight
-should be given to the results. With that caveat, we’ll load the data!
+should be given to the results. With that caveat, let’s load the
+libraries and data!
+
+``` r
+## libraries
+library(tidyverse)
+library(haven)
+```
 
 ``` r
 ## read in data
@@ -77,6 +78,9 @@ Unlike above, where we just let the `t.test()` output print to the
 console, we can and will store the output in an object.
 
 First, let’s compute the same t-test but in a regression framework.
+Because we assumed equal variances between the distributions in the
+t-test above (`var.equal = TRUE`), we should get the same results as we
+did before.
 
 ``` r
 ## compute same test as above, but in a linear model
@@ -94,7 +98,7 @@ fit
 
 The output is a little thin: just the coefficients. To see the full
 range of information you want from regression output, use the
-`summary()` function.
+`summary()` function wrapped around the `fit` object.
 
 ``` r
 ## use summary to see more information about regression
@@ -130,7 +134,7 @@ Multiple regression
 
 To fit a multiple regression, use the same formula framework that we’ve
 use before with the addition of all the terms you want on right-hand
-side of the equation separated by plus `+` signs.
+side of the equation separated by plus (`+`) signs.
 
 ``` r
 ## linear model with more than one covariate on the RHS
@@ -188,8 +192,8 @@ nobs(fit)
 
     [1] 15236
 
-The `fit` object also holds a lot of other information that is useful
-sometimes.
+The `fit` object also holds a lot of other information that is sometimes
+useful.
 
 ``` r
 ## see what fit object holds
@@ -251,8 +255,8 @@ you are sharing the part of the data used to estimate it.
 Using categorical variables or factors
 --------------------------------------
 
-It’s not necessary to preconstruct dummy variables if you want to use a
-categorical variable in your model. Insead you can use the categorical
+It’s not necessary to pre-construct dummy variables if you want to use a
+categorical variable in your model. Instead you can use the categorical
 variable wrapped in the `factor()` function. This tells R that the
 underlying variable shouldn’t be treated as a continuous value, but
 should be discrete groups. R will make the dummy variables on the fly
@@ -298,10 +302,13 @@ summary(fit)
     Multiple R-squared:  0.2613,    Adjusted R-squared:  0.2608 
     F-statistic: 489.6 on 11 and 15224 DF,  p-value: < 2.2e-16
 
-If you’re using labelled data like we, you can use the `as_factor()`
-function from the [haven
+If you’re using labeled data like we have been for the past couple of
+modules, you can use the `as_factor()` function from the [haven
 library](https://www.rdocumentation.org/packages/haven/versions/1.1.0/topics/as_factor)
-in place of the base `factor()` function.
+in place of the base `factor()` function. You’ll still see the
+`as_factor(<var>)` prefix on each coefficient, but now you’ll have
+labels instead of the underlying values, which should make parsing the
+output a little easier.
 
 ``` r
 ## same model, but use as_factor() instead of factor() to use labels
@@ -387,9 +394,11 @@ head(model.matrix(fit))
 Interactions
 ------------
 
-Add interactions to a regression using an asterisks, `*`, between the
-terms you want to interact. This will add both the main terms and the
-interaction to the model.
+Add interactions to a regression using an asterisks (`*`) between the
+terms you want to interact. This will add both main terms and the
+interaction(s) between the two to the model. Any interaction terms will
+be labeled using the base name or factor name of each term joined by a
+colon (`:`).
 
 ``` r
 ## add interactions
@@ -441,7 +450,7 @@ To add quadratic and other polynomial terms to the model, use the `I()`
 function, which lets you raise the term to the power you want in the
 regression using the caret (`^`) operator.
 
-In the model below, we add both quadractic and cubic versions of the
+In the model below, we add both quadratic and cubic versions of the
 reading score to the right-hand side.
 
 ``` r
@@ -475,17 +484,17 @@ summary(fit)
 
 > #### Quick exercise
 >
-> Fit a linear model with both interations and a polynomial term. Then
+> Fit a linear model with both interactions and a polynomial term. Then
 > look at the model matrix to see what R did under the hood.
 
 Generalized linear model
 ========================
 
 To fit a model with binary outcomes, switch to the `glm()` function. It
-is set up just like `lm()`, but it has an extra argument, `family`. Set
-the argument to `binomial()` when your dependent variable is binary. By
-default, the `link` function is a
-[logit](https://en.wikipedia.org/wiki/Logit).
+is set up just like `lm()`, but it has an extra argument, `family`.[^1]
+Set the argument to `binomial()` when your dependent variable is binary.
+By default, the `link` function is a
+[logit](https://en.wikipedia.org/wiki/Logit) link.
 
 ``` r
 ## logit
@@ -594,8 +603,17 @@ to do it first, store it in an object, and then use that object in the
 `syvglm()`.
 
 ELS has a complex sampling design that we won’t get into, but the
-appropriate columns from `df`, our data frame, are set to the proper
-arguments in `svydesign()`. Notice the `~` before each column name.
+appropriate columns from our data frame, `df`, are set to the proper
+arguments in `svydesign()`:
+
+-   `ids` are the primary sampling units or `psu`s  
+-   `strata` are indicated by the `strat_id`s  
+-   `weight` is the base-year student weight or `bystuwt`
+-   `data` is our data frame object, `df`
+-   `nest = TRUE` because the `psu`s are nested in `strat_id`s
+
+Finally, notice the `~` before each column name, which is necessary in
+this function.
 
 ``` r
 ## set svy design data
@@ -641,19 +659,21 @@ summary(svyfit)
 
     Number of Fisher Scoring iterations: 2
 
-The survey library has a ton of features and is worth diving into if you
-regularly work with survey data.
+The resulting estimates are survey weighted. The survey library has a
+ton of features and is worth diving into if you regularly work with
+survey data.
 
 Predictions
 -----------
 
 Being able to generate predictions from new data can be a powerful tool.
 Above, we were able to return the predicted values from the fit object.
-We can also use the `predict()` function, however, to both return the
-standard error of the prediction and to make predictions for new values.
+We can also use the `predict()` function, however, to return the
+standard error of the prediction as well as make predictions for new
+observations.
 
 First, we’ll get predicted values using the original data along with
-their standard error.
+their standard errors.
 
 ``` r
 ## predict from first model
@@ -664,10 +684,10 @@ fit <- lm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
 fit_pred <- predict(fit, se.fit = TRUE)
 
 ## show options
-name(fit_pred)
+names(fit_pred)
 ```
 
-    Error in name(fit_pred): could not find function "name"
+    [1] "fit"            "se.fit"         "df"             "residual.scale"
 
 ``` r
 head(fit_pred$fit)
@@ -682,16 +702,59 @@ head(fit_pred$se.fit)
 
     [1] 0.1755431 0.2587681 0.2314676 0.2396327 0.2737971 0.2721818
 
-Ideally, we would have a new data with which to make new predictions. If
-we don’t have new data, however, we can create a nonce data set that is
-useful for making predictions on the margin.
+Ideally, we would have a new observations with which to make
+predictions. Then we could test our modeling choices by seeing how well
+they predicted new observations.
 
-For example, we might want make a prediction of the marginal “effect” of
-having a low income holding all else constant. We therefore make a new
-data set with only two rows. For `lowinc`, each row takes a different
-value, 0 and 1. All other columns in both rows take the average of the
-values in the model matrix. The code below goes step-by-step to make
-this new data frame.
+With discrete outcomes (like binary 0/1 data), for example, we could use
+our model and right-hand side variables from new observations to predict
+whether the new observation should have a 0 or 1 outcome. Then, we could
+compare those predictions to the actual observed outcomes by making a 2
+by 2 [confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix)
+that counted the numbers of true positives and negatives (correct
+predictions) and false positives and negatives (incorrect predictions).
+
+In the absence of new data, we instead could have separated our data
+into two data sets, a [training set and test
+set](https://en.wikipedia.org/wiki/Training,_test,_and_validation_sets).
+After fitting our model to the training data, we could have tested it by
+following the above procedure with the testing data. Setting a rule for
+ourselves, we could evaluate how well we did, that is, how well our
+training data model classified test data outcomes, and perhaps decide to
+adjust our modeling assumptions.
+
+Whether making making predictions for new observations or working within
+a training/testing data framework, the `predict()` function is a very
+useful tool.
+
+Margins
+-------
+
+Using the `predict()` function alongside some other skills we have
+practiced, we can also make predictions on the margin a la Stata’s
+[`-margins-` suite of commands](https://www.stata.com/help.cgi?margins).
+
+For example, after fitting our multiple regression, we might ask
+ourselves, what is the marginal “effect” of having a low income on math
+scores, holding all other terms in our model constant? Thinking about
+the situation more abstractly, what we are trying to imagine is two
+worlds in which the same student lived, identical in all ways except
+that in one world the student had a family income below $25,000 a year
+and in the other did not. If we can make predictions based on these two
+students, any difference in predicted math score should be attributed to
+the marginal “effect” of having a low family income.[^2]
+
+To do this, we need to make a “new” data set with only two rows. For
+`lowinc`, each row takes one of the two potential values, 0 and 1. All
+other columns in both rows take a consistent value. Usually, this is the
+average of the other columns in the model matrix. Though we could use
+the full data frame to generate the averages of the other variables,
+they may represent different data from what was used to fit the model if
+there were missing values that `lm()` dropped. For consistency, I think
+it’s easier to use the design matrix that’s retrieved from
+`model.matrix()`.
+
+The code below goes step-by-step to make this new data frame.
 
 ``` r
 ## create new data that has two rows, with averages and one marginal change
@@ -724,7 +787,7 @@ head(mm)
     6  -1.07      0       0       0      0
 
 ``` r
-## (3) convert to data frame
+## (3) convert to data frame so we can use $ notation in next step
 mm <- as.data.frame(mm)
 
 ## (4) new data frame of means where only lowinc changes
@@ -742,8 +805,16 @@ new_df
     1 0.04210423 0.5027566 0.2743502 0.3195064      0
     2 0.04210423 0.5027566 0.2743502 0.3195064      1
 
+Notice how the new data frame has the same terms that were used in the
+original model, but has only two rows. In the `lowinc` column, the
+values switch from 0 to 1. All the other rows are averages of the data
+used to fit the model.
+
+To generate the prediction, we use the same function call as before, but
+use our `new_df` object with the `newdata` argument.
+
 ``` r
-## predit margins
+## predict margins
 predict(fit, newdata = new_df, se.fit = TRUE)
 ```
 
@@ -760,3 +831,22 @@ predict(fit, newdata = new_df, se.fit = TRUE)
 
     $residual.scale
     [1] 12.24278
+
+Our results show that compared to otherwise similar students, those with
+a family income less than $25,000 a year are predicted to score about
+two points lower on their math test.
+
+Notes
+=====
+
+[^1]: The `lm()` function is just a shorthand convenience function for
+    `glm()` in which `family` is set to `gaussian(link = 'identity')`.
+
+[^2]: Broadly, this thought experiment falls under the [potential
+    outcomes framework or Rubin causal
+    model](https://en.wikipedia.org/wiki/Rubin_causal_model). Unless our
+    research design is experimental or quasi-experimental, however
+    (which ours in this example was not), it is highly unlikely that our
+    result will be strictly causal. Since the word *effect* is usually
+    reserved to describe causal results, I use scare quotes around it to
+    indicate that it shouldn’t be interpreted causally here.
