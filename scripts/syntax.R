@@ -97,12 +97,14 @@ x <- 1
 ## check
 is.vector(x)
 
-## add to vector (can do so recursively)
-x <- c(x, 2, 3)
+## add to vector (can do so recursively meaning old x can help make new x)
+x <- c(x, 5, 8)
 x
 
-## no dim, but length
+## no dim...
 dim(x)
+
+## ...but length
 length(x)
 
 ## get the second element
@@ -130,7 +132,7 @@ x
 y <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
 y
 
-## has dimension
+## a matrix has dimension
 dim(x)
 
 ## # of rows
@@ -140,10 +142,13 @@ nrow(x)
 ncol(x)
 
 ## show the values in the first row
-x[1,]
+x[1, ]
 
 ## show the values in the third column
-x[,3]
+x[ ,3]
+
+## this is the same as just calling x by itself
+x[ , ]
 
 ## ------------
 ## list
@@ -162,16 +167,22 @@ is.list(x)
 y <- list()
 
 ## add to first list, creating nested list
-x <- list(x, y)
+z <- list(x, y)
 
 ## show
-x
+z
+
+## the first item in list z is list x
+z[[1]]
+
+## to get to 'a' in list x, need to add more brackets
+z[[1]][[2]]
 
 ## ------------
 ## data frame
 ## ------------
 
-## create data frame
+## create data frame where col_* are the column (variable) names
 df <- data.frame(col_a = c(1,2,3),
                  col_b = c(4,5,6),
                  col_c = c(7,8,9))
