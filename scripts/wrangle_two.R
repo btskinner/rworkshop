@@ -39,6 +39,9 @@ df <- df %>%
 ## select
 ## ---------------------------
 
+## just view first few rows of stu_id and sch_id (no assignment)
+df %>% select(stu_id, sch_id)
+
 ## drop follow up one panel weight
 df <- df %>% select(-f1pnlwt)
 
@@ -46,7 +49,7 @@ df <- df %>% select(-f1pnlwt)
 names(df)
 
 ## ---------------------------
-## select
+## filter
 ## ---------------------------
 
 ## show number of rows
@@ -75,11 +78,11 @@ df %>% select(stu_id, bydob_p) %>% head(10)
 
 ## create new data frame
 sch_m <- df %>%
-    ## first, make test score values < 0 == NA
+    ## (1) make test score values < 0 into NAs
     mutate(bynels2m = ifelse(bynels2m < 0, NA, bynels2m)) %>%
-    ## group by school ID
+    ## (2) group by school ID
     group_by(sch_id) %>%
-    ## summarize
+    ## (3) get the average math score, removing missing values
     summarise(sch_bynels2m = mean(bynels2m, na.rm = TRUE))
 
 ## show
@@ -96,62 +99,9 @@ df <- df %>% left_join(sch_m, by = 'sch_id')
 ## write
 ## ---------------------------
 
+## ## write flat file
 ## write_csv(df, '../data/els_plans_mod_tv.csv')
 ## 
-## -----------------------------------------------------------------------------
-## Reshaping data
-## -----------------------------------------------------------------------------
-
-## ---------------------------
-## Create toy data
-## ---------------------------
-
-df <- data.frame(schid = c('A','B','C','D'),
-                 year = 2013,
-                 var_x = 1:4,
-                 var_y = 5:8,
-                 var_z = 9:12,
-                 stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-## show
-df
-
-## ---------------------------
-## wide --> long
-## ---------------------------
-
-df_long <- df %>%
-    gather(var, value, -c(schid, year)) %>%
-    arrange(schid, var)
-
-## show
-df_long
-
-## ---------------------------
-## long --> wide
-## ---------------------------
-
-df_wide <- df_long %>%
-    spread(var, value) %>%
-    arrange(schid)
-
-## show
-df_wide
-
-## confirm that df_wide == df
-identical(df, df_wide)
-
-## ---------------------------
-## QUICK EXERCISE
-## ---------------------------
-
-## reshape to wide and then back
-df <- data.frame(id = rep(c('A','B','C','D'), each = 4),
-                 year = paste0('y', rep(2000:2003, 4)),
-                 test_score = rnorm(16),
-                 stringsAsFactors = FALSE) %>%
-    tbl_df()
 
 ## =============================================================================
 ## END SCRIPT

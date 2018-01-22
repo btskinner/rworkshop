@@ -145,6 +145,17 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
 
     See spec(...) for full column specifications.
 
+Unlike the base R `read.table()` function, `read_delim()` prints out
+information about how the data were read in. Nothing is wrong! The
+`read_delim()` function, like many other functions in the tidyverse,
+assumes you’d rather have more rather than less information and so acts
+accordingly.
+
+We can see which columns were read in as doubles (`col_double()`) and
+which as integers (`col_integer()`). If the column name isn’t in the
+list, then it was read in as the `.default`, which was as a character
+column (`col_character()`).
+
 Mutate
 ------
 
@@ -192,8 +203,33 @@ Select
 ------
 
 To choose variables, either when making a new data frame or dropping
-them, use `select()`. To drop them, use a negative sign (`-`) in front
-of the variable name.
+them, use `select()`. Without assignment (because we would change our
+data object and we don’t want to), let’s use `select()` to view the
+first few rows of the student and school ids.
+
+``` r
+## just view first few rows of stu_id and sch_id (no assignment)
+df %>% select(stu_id, sch_id)
+```
+
+    # A tibble: 16,160 x 2
+       stu_id sch_id
+        <int>  <int>
+     1 101101   1011
+     2 101102   1011
+     3 101104   1011
+     4 101105   1011
+     5 101106   1011
+     6 101107   1011
+     7 101108   1011
+     8 101109   1011
+     9 101110   1011
+    10 101111   1011
+    # ... with 16,150 more rows
+
+To drop variables, use a negative sign (`-`) in front of the variable
+name. This time, we will reassign the results to `df`, which means that
+the column `f1pnlwt` will be dropped from the data frame.
 
 ``` r
 ## drop follow up one panel weight
@@ -291,7 +327,7 @@ df %>% select(stu_id, bydob_p) %>% head(10)
 
 > #### Quick exercise
 >
-> `Arrange()` by `bydob_p` again, but this time in reverse order. Google
+> `arrange()` by `bydob_p` again, but this time in reverse order. Google
 > “dplyr arrange” to find information about the function and see if can
 > figure out how to sort in descending order.
 
@@ -299,20 +335,27 @@ Summarize
 ---------
 
 Aggregate data using the `summarise()` or `summarize()` function
-(they’re the same, just playing nice with by offering both spellings).
-Unlike the `aggregate()` function, you first need to set the grouping
-variable using the `group_by()` function. Since we need to replace
-negative values before we summarize, we’ll chain a few functions
-together into one command.
+(they’re the same, just playing nice by offering both spellings). Unlike
+the `aggregate()` function, you first need to set the grouping variable
+using the `group_by()` function. Since we need to replace negative
+values before we summarize, we’ll chain a few functions together into
+one command.
+
+Notice how we can include comment rows between each piped command.
+Adding a comment before each function that explains the step in a
+human-friendly manner can be particularly helpful when chaining multiple
+functions together. Or you can work the other way, writing
+[pseudocode](https://en.wikipedia.org/wiki/Pseudocode) first and then
+adding the R code afterwards.
 
 ``` r
 ## create new data frame
 sch_m <- df %>%
-    ## first, make test score values < 0 == NA
+    ## (1) make test score values < 0 into NAs
     mutate(bynels2m = ifelse(bynels2m < 0, NA, bynels2m)) %>%
-    ## group by school ID
+    ## (2) group by school ID
     group_by(sch_id) %>%
-    ## summarize
+    ## (3) get the average math score, removing missing values
     summarise(sch_bynels2m = mean(bynels2m, na.rm = TRUE))
 
 ## show
@@ -375,139 +418,12 @@ Write
 
 The readr library can also write delimited flat files. Instead of
 `write_delim()`, we’ll use the wrapper function `write_csv()` to save a
-csv file.
+csv file. Again, it’s a good habit to save any modified data using a
+different name so that your raw data stays untouched. We’ll add
+`_mod_tv` to the data name so that we don’t overwrite raw data or the
+modified data set we made in the last module.
 
 ``` r
+## write flat file
 write_csv(df, '../data/els_plans_mod_tv.csv')
 ```
-
-Reshaping data
-==============
-
-Reshaping data is a common data wrangling task. Whether going from wide
-to long format or the reverse, this can be a painful process. The best
-way I know to reshape data in R is by using the **tidyr** library.
-
-Create toy data
----------------
-
-For clarity, we’ll use toy data for this example. It will be wide to
-start.
-
-``` r
-df <- data.frame(schid = c('A','B','C','D'),
-                 year = 2013,
-                 var_x = 1:4,
-                 var_y = 5:8,
-                 var_z = 9:12,
-                 stringsAsFactors = FALSE) %>%
-    tbl_df()
-
-## show
-df
-```
-
-    # A tibble: 4 x 5
-      schid  year var_x var_y var_z
-      <chr> <dbl> <int> <int> <int>
-    1 A      2013     1     5     9
-    2 B      2013     2     6    10
-    3 C      2013     3     7    11
-    4 D      2013     4     8    12
-
-Wide –\> long
--------------
-
-To go from wide to long format, use the `gather(key, value)` function,
-where the `key` is the variable that will made long (the stub in Stata)
-and the `value` is the column of associated values that will be created.
-Since we want the **schid** and **year** columns to remain associated
-with their rows, we ignore them (`-c(...)`) so they will be repeated as
-necessary.
-
-Finally we `arrange()` the data by school ID and the variable name.
-
-``` r
-df_long <- df %>%
-    gather(var, value, -c(schid, year)) %>%
-    arrange(schid, var)
-
-## show
-df_long
-```
-
-    # A tibble: 12 x 4
-       schid  year var   value
-       <chr> <dbl> <chr> <int>
-     1 A      2013 var_x     1
-     2 A      2013 var_y     5
-     3 A      2013 var_z     9
-     4 B      2013 var_x     2
-     5 B      2013 var_y     6
-     6 B      2013 var_z    10
-     7 C      2013 var_x     3
-     8 C      2013 var_y     7
-     9 C      2013 var_z    11
-    10 D      2013 var_x     4
-    11 D      2013 var_y     8
-    12 D      2013 var_z    12
-
-> #### Quick exercise
->
-> What happens if you don’t include `-c(schid, year)` in the `gather()`
-> function? Try it.
-
-Long –\> wide
--------------
-
-To go in the opposite direction, use the `spread(var, value)` function,
-which makes columns for every unique `var` and assigns the `value` that
-was in the `var`s row. Unlike `gather()`, we don’t have explicitly say
-to ignore columns that want to ignore.
-
-``` r
-df_wide <- df_long %>%
-    spread(var, value) %>%
-    arrange(schid)
-
-## show
-df_wide
-```
-
-    # A tibble: 4 x 5
-      schid  year var_x var_y var_z
-      <chr> <dbl> <int> <int> <int>
-    1 A      2013     1     5     9
-    2 B      2013     2     6    10
-    3 C      2013     3     7    11
-    4 D      2013     4     8    12
-
-In theory, our new `df_wide` data frame should be the same as the one we
-started with. Let’s check:
-
-``` r
-## confirm that df_wide == df
-identical(df, df_wide)
-```
-
-    [1] TRUE
-
-Success![^1]
-
-> #### Quick exercise
->
-> Reshape this long data frame wide and then back:
->
->     df <- data.frame(id = rep(c('A','B','C','D'), each = 4),
->                      year = paste0('y', rep(2000:2003, 4)),
->                      test_score = rnorm(16),
->                      stringsAsFactors = FALSE) %>%
->           tbl_df()
-
-Notes
-=====
-
-[^1]: For a slightly more complicated version that uses [regular
-    expressions](https://stat.ethz.ch/R-manual/R-devel/library/base/html/regex.html)
-    to adjust the variable names and values after each reshape, see this
-    [gist](https://gist.github.com/btskinner/a1f5bc5c1c32b48d4f45b05d2531e423)
