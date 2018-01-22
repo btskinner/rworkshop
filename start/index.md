@@ -33,14 +33,13 @@ This workshop uses the following packages:
 - [tidyverse](https://CRAN.R-project.org/package=tidyverse)
 - [labelled](https://CRAN.R-project.org/package=labelled)
 - [plotly](https://CRAN.R-project.org/package=plotly)
-- [RColorBrewer](https://CRAN.R-project.org/package=RColorBrewer)
-- [xtable](https://CRAN.R-project.org/package=xtable)
+- [survey](https://CRAN.R-project.org/package=survey)
 
 Once you've installed R and RStudio, open RStudio (or the base R app)
 and run the following code:
 
 ```r
-pkgs <- c('tidyverse','labelled','plotly','RColorBrewer','xtable')
+pkgs <- c('tidyverse','labelled','plotly','survey')
 install.packages(pkgs)
 ```
 
