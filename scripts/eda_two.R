@@ -33,6 +33,9 @@ hist(df$bynels2m)
 ## density
 ## ---------------------------
 
+## density plot of math scores with hist() function
+hist(df$bynels2m, freq = FALSE)
+
 ## density plot of math scores
 plot(density(df$bynels2m, na.rm = TRUE))
 
@@ -87,6 +90,7 @@ p <- ggplot(data = df, mapping = aes(x = bynels2m)) +
                    fill = 'white') +
     geom_density(fill = 'red', alpha = 0.2)
 p
+
 ## ---------------------------
 ## two way plot
 ## ---------------------------
@@ -166,7 +170,7 @@ p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_smooth(method = lm, formula = y ~ poly(x,2))
 p
 
-## add fitted line with lowess
+## add fitted line with loess
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad)), alpha = 0.5) +
     geom_smooth(method = loess)
@@ -179,14 +183,25 @@ p
 ## load plotly library
 library(plotly)
 
+## create an interactive plot with the last figure
+p <- ggplotly(p)
+p
+
 ## redo last figure with addition of text in aes()
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad),
-                             text = paste0('stu_id: ', stu_id)), alpha = 0.5) +
+                             text = paste0('stu_id: ', stu_id,
+                                           '<br>',
+                                           'college?: ', plan_col_grad,
+                                           '<br>',
+                                           'math: ', round(bynels2m, 2),
+                                           '<br>',
+                                           'read: ', round(bynels2r, 2))),
+               alpha = 0.5) +
     geom_smooth(method = loess)
 
-## create an interactive plot with the last figure
-p <- ggplotly(p)
+## create an interactive plot, and limit tooltip to text argument above
+p <- ggplotly(p, tooltip = 'text')
 p
 
 ## =============================================================================

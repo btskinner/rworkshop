@@ -1,7 +1,7 @@
 ---
 layout: module
 title: Exploratory data analysis II
-date: 2018-01-01 00:00:06
+date: 2018-01-01 00:00:07
 category: module
 links: 
   script: eda_two.R
@@ -46,17 +46,20 @@ library(labelled)
 Another key part of exploratory data analysis is making plots that let
 you visually inspect the data. This module will focus on graphics. 
 
-R has three major graphing systems: the [base system](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/00Index.html),
-[lattice](http://lattice.r-forge.r-project.org), and
-[ggplot2](http://ggplot2.tidyverse.org). Each system has its benefits
-and drawbacks. Each system is also very versatile with many, many
-options for creating and adjusting plots. 
+R has three major graphing systems:
+the
+[base system](https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/00Index.html),
+[lattice](http://lattice.r-forge.r-project.org),
+and [ggplot2](http://ggplot2.tidyverse.org). Each system has its
+benefits and drawbacks and each is also very versatile with many, many
+options for creating and adjusting plots.
 
-Unfortunately, there isn't enough time to go through each
-system. After describing a few base R graphing functions, this module
-will focus on ggplot2 since it allows users to build plots using the
-[grammar of
-graphics](http://vita.had.co.nz/papers/layered-grammar.html) and
+Unfortunately, there isn't enough time to go through all three
+graphing systems. After describing a few base R graphing functions,
+this module will focus on ggplot2 since it allows users to build plots
+using
+the
+[grammar of graphics](http://vita.had.co.nz/papers/layered-grammar.html) and
 integrates well with the tidyverse.
 
 We'll use the same ELS plans data we've been using, again in Stata
@@ -118,10 +121,22 @@ hist(df$bynels2m)
 ```
 
 Density plots are also really helpful. R doesn't have single density
-plot function, but you can `plot()` the `density()` of a continuous
+plot function, but you can get a density plot in one of two ways, each
+of which will give a slightly different result.
+
+First, you can adjust the `hist()` function to add the `freq = FALSE`
+argument. It looks like the first histogram above, but notice that the
+y-axis now represents density rather than counts.
+
+```{r eda_base_hist_density}
+## density plot of math scores with hist() function
+hist(df$bynels2m, freq = FALSE)
+
+```
+
+Second, you can `plot()` the `density()` of a continuous
 variable. Unlike `hist()`, however, `density()` doesn't automatically
-ignore missing values, so like some other commands, we have to tell it
-to remove `NA`s.
+ignore missing values, so we have to tell it to remove `NA`s.
 
 ```{r eda_base_density}
 ## density plot of math scores
@@ -142,13 +157,16 @@ plot(density(df$bynels2m, na.rm = TRUE))
 ```
 
 Call a box plot using the `boxplot()` function. This one is a little
-tricker because it uses the [R
-formula](https://www.statmethods.net/graphs/boxplot.html) to set the
-continuous variable against the group. (We'll talk more about formulas
-in the module on modeling.) The formula uses a tilde, `~`, and should
-be constructed like this:
+trickier because it uses
+the [R formula](https://www.statmethods.net/graphs/boxplot.html)
+construction to set the continuous variable against the group. (We'll
+talk more about formulas in the module on modeling.) The formula uses
+a tilde, `~`, and should be constructed like this:
 
 * `<var> ~ <group var>`
+
+Notice how we can use the `data` argument instead of adding `df$` in
+front of the variable names.
 
 ```{r eda_base_box}
 ## box plot of math scores against student expectations
@@ -171,7 +189,10 @@ using `plot()`:
 * `plot(x, y)`
 * `plot(y ~ x)`
 
-We'll use the first.
+With both, `x` is the variable that will go on the x-axis and `y` the
+one that will go on the y-axis. It's really a matter of which makes
+sense to you. We'll use the first.
+
 ```{r eda_base_scatter}
 ## scatter plot of math against reading scores
 plot(df$bynels2m, df$bynels2r)
@@ -179,8 +200,11 @@ plot(df$bynels2m, df$bynels2r)
 ```
 
 > #### Quick exercise
-> Plot math scores against reading scores using the other formula
-> method. 
+> Rerun the above plot, but this time store it in an object. Next,
+> plot reading scores against math scores using the second formula
+> method and store it in another object. Visually compare the two, but
+> for a more formal test, use `identical(plot_1, plot_2)` on the two
+> plot objects to prove they are the same.
 
 # Plots using ggplot2
 ```{r, echo = FALSE, purl = TRUE}
@@ -192,11 +216,12 @@ plot(df$bynels2m, df$bynels2r)
 
 The first few times I tried to use ggplot2, I didn't quite get
 it. But once I did (and it doesn't take too long!), I really started
-to like it and it's now my go to system for making plots.
+to like it. It's now my go-to system for making plots.
 
-The ggplot2 system is too involved to fully cover, but that's kind of
-the point of the grammar of graphics: once you see how it's put
-together, you can anticipate the commands you need to build your plot.
+The [ggplot2 system](http://ggplot2.tidyverse.org/reference/) is too
+involved to cover in all of its details, but that's kind of the point
+of the grammar of graphics: once you see how it's put together, you
+can anticipate the commands you need to build your plot.
 
 We'll start by covering the same plots as above.
 
@@ -214,13 +239,15 @@ ggplot2 plots need three things:
 * data
 * how variables in the data map onto the plot (*e.g.*, what's on the
   x-axis? what's on the y-axis)
-* what kind of figure you want to make or add to the plot
+* what kind of figure you want to make (*e.g.*, what do you want to
+  **do** with those data and mappings?)
 
-Depending on the plot you want to make, these pieces may come in
-different points in the command structure, which is usually made up of
-linked functions like other tidyverse libraries. The key difference
-between the two is that while dplyr uses the pipe (`%>%`) to connect
-different functions, ggplot2 uses a plus sign (`+`).
+Depending on the plot you want to make, each of these pieces may be
+called at different points in the command structure, which is usually
+made up of linked functions like other tidyverse libraries. The key
+difference between ggplot2 and dplyr, for example, is that while dplyr
+uses the pipe (`%>%`) to connect different functions, ggplot2 uses a
+plus sign (`+`).
 
 We'll start by making a histogram again. To help make these pieces
 clearer, I'll use the argument names when possible. The first
@@ -266,10 +293,11 @@ Success!
 
 Unlike the base R graphics system, ggplot2 does have a density
 plotting command, `geom_density()`. We'll go ahead and chain it to the
-first command and print. Notice how the function chain is the mostly
-the same as above, but (1) written in a single linked chain and (2)
-using a different `geom_*()` command at the end to indicate that we
-want something different.
+first command and print. 
+
+Notice how the function chain is the mostly the same as above, but (1)
+written in a single linked chain and (2) using a different `geom_*()`
+command at the end to indicate that we want something different.
 
 ```{r eda_plot_density, warning = F, message = F}
 ## density
@@ -287,7 +315,8 @@ the histogram is made. This way, the histogram and the density will be
 on the same scale.
 
 The change happens in the `geom_histogram()` function, where we add a
-new mapping: `aes(y = ..density..)`.
+new mapping: `aes(y = ..density..)`. (NOTE: this is similar to what we
+did above in base R to make a histogram on a density scale.)
 
 ```{r eda_plot_histdens, warning = F, message = F}
 ## histogram with density plot overlapping
@@ -314,12 +343,15 @@ p <- ggplot(data = df, mapping = aes(x = bynels2m)) +
                    fill = 'white') +
     geom_density(fill = 'red', alpha = 0.2)
 p
+
 ```
 
 > #### Quick exercise
 > Try changing some of the arguments in the last plot. What happens
-> when you change `alpha`? What does the `color` argument change? And
-> `fill`? 
+> when you change `alpha` (keep the value between 0 and 1)? What does
+> the `color` argument change? And `fill`? What happens if you switch
+> the `geom_*()` functions, call `geom_histogram()` after you call
+> `geom_density()`?
 
 ## Two-way
 ```{r, echo = FALSE, purl = TRUE}
@@ -354,7 +386,7 @@ give it, then the new indicator `pared_coll` will be 1; if not, 0.
 
 The `ggplot()` function doesn't need to use our full data. In fact,
 our data needs to be set up a bit differently to make this plot. We'll
-make a new temporary data object that only has what we need.
+make a new temporary data object that only has the data we need.
 
 
 ```{r}
@@ -378,7 +410,7 @@ knows that it's a group, we wrap it in the `factor()`
 function. 
 
 Finally, we add some changes to the `geom_histogram()` function so that
-each group is on the same scale.
+each group is on the same scale. 
 
 ```{r eda_plot_histogram_double, warning = F, message = F}
 ## two way histogram
@@ -402,12 +434,12 @@ p
 
 ```
 
-By this point, you're hopefully seeing the pattern in how ggplot
+By this point, you're hopefully seeing the pattern in how ggplot2
 figures are put together. To make a box plot, we need to add a `y`
 mapping to the `aes()` in addition to the `x` mapping. We don't have
-to, but we've also added the same variable to `fill` as we did to `x`
-so that in addition to having different box and whisker plots along
-the x-axis, each plot is given its own color.
+to, but we've also added the same variable to `fill` as we did to `x`.
+We do this so that in addition to having different box and whisker
+plots along the x-axis, each plot is given its own color.
 
 ```{r eda_plot_box, warning = F, message = F}
 ## box plot using both factor() and as_factor()
@@ -434,7 +466,8 @@ p
 
 To make a scatter plot, make sure that the `aes()` has mappings for
 the `x` axis and `y` axis and then use `geom_point()` to plot. To make
-things easier to see, we'll first reduce the data to 10% of the full sample.
+things easier to see, we'll first reduce the data to 10% of the full
+sample using `sample_frac()` from dplyr.
 
 ```{r eda_plot_scatter_1, warning = F, message = F}
 ## sample 10% to make figure clearer
@@ -448,19 +481,19 @@ p
 ```
 
 Now that we have our scatter plot, let's say that we want to add a
-third dimension. Specifically, we want to change the point color based
-on whether a student plans to earn a Bachelor's degree or
+third dimension. Specifically, we want to change the color of each
+point based on whether a student plans to earn a Bachelor's degree or
 higher. That means we need a new dummy variable that is 1 for those
 with BA/BS plans and 0 for others.
 
-We can look at the student base year expectations with `table()`
+We can look at the student base year expectations with `table()`...
 
 ```{r}
 ## see student base year plans
 table(df$bystexp)
 
 ```
-But those numbers don't tell us much. Since we read in a Stata data
+...but those numbers don't tell us much. Since we read in a Stata data
 file with labelled values, though, we can use the `val_labels()`
 function to see our options.
 
@@ -509,7 +542,8 @@ the `geom_smooth()` function.
 
 ### Linear fit
 
-Setting `method = lm` in `geom_smooth()` will fit a simple straight line.
+Setting `method = lm` in `geom_smooth()` will fit a simple straight
+line with 95% confidence interval shaded around it.
 
 ```{r eda_plot_scatter_3, warning = F, message = F}
 ## add fitted line with linear fit
@@ -548,7 +582,7 @@ Finally, we can skip trying to adjust a linear line and just fit a
 [loess](https://en.wikipedia.org/wiki/Local_regression). 
 
 ```{r eda_plot_scatter_5, warning = F, message = F}
-## add fitted line with lowess
+## add fitted line with loess
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad)), alpha = 0.5) +
     geom_smooth(method = loess)
@@ -557,6 +591,13 @@ p
 ```
 
 # Plotly
+
+As a final example, we'll turn our last plot into an interactive
+plotly figure. [Plotly](https://plot.ly/d3-js-for-r-and-shiny-charts/)
+works with a number of languages, but it integrates really well with
+ggplot. In fact, once the plot is made, we only have to use the
+`ggplotly()` function to make it interactive. 
+
 ```{r, echo = FALSE, purl = TRUE}
 ## ---------------------------------------------------------
 ## Interactive plot with plotly
@@ -569,25 +610,17 @@ library(plotly)
 
 ```
 
-As a final example, we'll turn our last plot into an interactive
-plotly figure. [Plotly](https://plot.ly/d3-js-for-r-and-shiny-charts/)
-works with a number of languages, but it integrates really well with
-ggplot. In fact, once the plot is made, we only have to use the
-`ggplotly()` function to make it interactive. We'll add a small bit to
-the `aes()`, though, to make it easier to identify outliers when we
-hover over them.
-
-
 ```{r eda_plot_histogram_double_ptly, message = F, warning = F}
-## redo last figure with addition of text in aes()
-p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
-    geom_point(mapping = aes(color = factor(plan_col_grad),
-                             text = paste0('stu_id: ', stu_id)), alpha = 0.5) +
-    geom_smooth(method = loess)
-
 ## create an interactive plot with the last figure
 p <- ggplotly(p)
 p
+
+```
+
+```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
+## note to self: had to do this b/c no other good way to save
+htmltools::save_html(p, './plotly/ptly_one.html', libdir = './plotly/lib')
+htmltools::tags$iframe(src = './plotly/plotly/ptly_one.html')
 ```
 
 Other than the neat! factor, the plotly figure is great for
@@ -595,11 +628,48 @@ pinpointing outliers. Looking at the figure, hover over markers that
 seem outside the expected value. Clearly, this can be a great tool for
 inspecting your data.
 
+Hovering over each point, however, it's not immediately clear which
+observation is being considered. Sure, we could record the math and
+reading scores along with the `plan_col_grad` value and then search
+for them in the data, but it would be much easier if we could change
+the tooltip to give us a unique identifier, like the student ID.
+
+Luckily, plotly will let us do this. We'll remake the last plot in
+ggplot2, but add a small bit to the `aes()` in the form of a `text`
+argument. Instead of using the default tooltip values, we'll
+`paste0()` our own together, using friendly variable names and rounded
+values (`round()`). So that the information looks neat, we'll use HTML
+break line commands, `<br>`, to separate each line. Finally, when we
+call `ggplotly()` this time, we'll change the `tooltip` argument from
+the default `'all'` to `'text'` so it only includes our nicely
+formatted text.
+
+```{r eda_plot_histogram_double_ptly_2, message = F, warning = F}
+## redo last figure with addition of text in aes()
+p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
+    geom_point(mapping = aes(color = factor(plan_col_grad),
+                             text = paste0('stu_id: ', stu_id,
+                                           '<br>',
+                                           'college?: ', plan_col_grad,
+                                           '<br>',
+                                           'math: ', round(bynels2m, 2),
+                                           '<br>',
+                                           'read: ', round(bynels2r, 2))),
+               alpha = 0.5) +
+    geom_smooth(method = loess)
+
+## create an interactive plot, and limit tooltip to text argument above
+p <- ggplotly(p, tooltip = 'text')
+p
+```
+
 ```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
 ## note to self: had to do this b/c no other good way to save
-htmltools::save_html(p, './plotly/ptly_one.html', libdir = './plotly/lib')
-htmltools::tags$iframe(src = './plotly/plotly/ptly_one.html')
+htmltools::save_html(p, './plotly/ptly_two.html', libdir = './plotly/lib')
+htmltools::tags$iframe(src = './plotly/plotly/ptly_two.html')
 ```
+
+Now it's really easy to find outliers!
 
 > #### Quick exercise
 > Use the plotly figure to inspect your data, particularly outliers. 
