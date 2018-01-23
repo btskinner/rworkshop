@@ -10,7 +10,7 @@ custom_js:
 
 # Synopsis
 
-This two-day short course introduces participants to the R statistical language. After a general overview of R syntax, workshop modules cover how to:   
+This two-day short course introduces participants to the R statistical language. After a general overview of R syntax, workshop [modules]({{ site.baseurl }}/modules/) cover how to:   
 
 * wrangle data using both base R and tidyverse functions,
 * reshape data frames,
