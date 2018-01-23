@@ -668,9 +668,8 @@ Predictions
 
 Being able to generate predictions from new data can be a powerful tool.
 Above, we were able to return the predicted values from the fit object.
-We can also use the `predict()` function, however, to return the
-standard error of the prediction as well as make predictions for new
-observations.
+We can also use the `predict()` function to return the standard error of
+the prediction in addition to the predicted values for new observations.
 
 First, we’ll get predicted values using the original data along with
 their standard errors.
@@ -702,30 +701,37 @@ head(fit_pred$se.fit)
 
     [1] 0.1755431 0.2587681 0.2314676 0.2396327 0.2737971 0.2721818
 
+### Predictions with new data
+
 Ideally, we would have a new observations with which to make
 predictions. Then we could test our modeling choices by seeing how well
-they predicted new observations.
+they predicted the outcomes of the new observations.
 
 With discrete outcomes (like binary 0/1 data), for example, we could use
 our model and right-hand side variables from new observations to predict
-whether the new observation should have a 0 or 1 outcome. Then, we could
+whether the new observation should have a 0 or 1 outcome. Then we could
 compare those predictions to the actual observed outcomes by making a 2
 by 2 [confusion matrix](https://en.wikipedia.org/wiki/Confusion_matrix)
 that counted the numbers of true positives and negatives (correct
 predictions) and false positives and negatives (incorrect predictions).
 
+With continuous outcomes, we could follow the same procedure as above,
+but rather than using a confusion matrix, instead assess our model
+performance by measuring the error between our predictions and the
+observed outcomes. Depending on our problem and model, we might care
+about minimizing the root mean square error, the mean absolute error, or
+some other metric of the error.
+
+### Predictions using training and testing data
+
 In the absence of new data, we instead could have separated our data
 into two data sets, a [training set and test
 set](https://en.wikipedia.org/wiki/Training,_test,_and_validation_sets).
 After fitting our model to the training data, we could have tested it by
-following the above procedure with the testing data. Setting a rule for
-ourselves, we could evaluate how well we did, that is, how well our
-training data model classified test data outcomes, and perhaps decide to
-adjust our modeling assumptions.
-
-Whether making making predictions for new observations or working within
-a training/testing data framework, the `predict()` function is a very
-useful tool.
+following either above procedure with the testing data (depending on the
+outcome type). Setting a rule for ourselves, we could evaluate how well
+we did, that is, how well our training data model classified test data
+outcomes, and perhaps decide to adjust our modeling assumptions.
 
 Margins
 -------
@@ -735,26 +741,32 @@ practiced, we can also make predictions on the margin a la Stata’s
 [`-margins-` suite of commands](https://www.stata.com/help.cgi?margins).
 
 For example, after fitting our multiple regression, we might ask
-ourselves, what is the marginal “effect” of having a low income on math
-scores, holding all other terms in our model constant? Thinking about
-the situation more abstractly, what we are trying to imagine is two
-worlds in which the same student lived, identical in all ways except
-that in one world the student had a family income below $25,000 a year
-and in the other did not. If we can make predictions based on these two
-students, any difference in predicted math score should be attributed to
-the marginal “effect” of having a low family income.[^2]
+ourselves, what is the marginal “effect” of having a low family income
+on math scores, holding all other terms in our model constant?[^2]
 
-To do this, we need to make a “new” data set with only two rows. For
-`lowinc`, each row takes one of the two potential values, 0 and 1. All
-other columns in both rows take a consistent value. Usually, this is the
-average of the other columns in the model matrix. Though we could use
-the full data frame to generate the averages of the other variables,
-they may represent different data from what was used to fit the model if
-there were missing values that `lm()` dropped. For consistency, I think
-it’s easier to use the design matrix that’s retrieved from
-`model.matrix()`.
+To answer this question, we first need to make a “new” data frame with a
+column each for the variables used in the model and rows that equal the
+number of predictive margins that we want to create. In our example,
+that means making a data frame with two rows and five columns.
 
-The code below goes step-by-step to make this new data frame.
+With `lowinc`, the variable that we want to make marginal predictions
+for, we have two potential values: 0 and 1. This is the reason our “new”
+data frame has two rows. If `lowinc` took on four values, for example,
+then our “new” data frame would have four rows, one for each potential
+value. But since we have two, `lowinc` in our “new” data frame will
+equal `0` in one row and `1` in the other row.
+
+All other columns in the “new” data frame should have consistent values
+down their rows. Often, each column’s repeated value is the variable’s
+average in the data. Though we could use the original data frame (`df`)
+to generate these averages, the resulting values may summarize different
+data from what was used to fit the model if there were observations that
+`lm()` dropped due to missing values. That happened with our model. We
+could try to use the original data frame and account for dropped
+observations, but I think it’s easier to use the design matrix that’s
+retrieved from `model.matrix()`.
+
+The code below goes step-by-step to make the “new” data frame.
 
 ``` r
 ## create new data that has two rows, with averages and one marginal change
@@ -807,8 +819,8 @@ new_df
 
 Notice how the new data frame has the same terms that were used in the
 original model, but has only two rows. In the `lowinc` column, the
-values switch from 0 to 1. All the other rows are averages of the data
-used to fit the model.
+values switch from `0` to `1`. All the other rows are averages of the
+data used to fit the model.
 
 To generate the prediction, we use the same function call as before, but
 use our `new_df` object with the `newdata` argument.
@@ -836,17 +848,22 @@ Our results show that compared to otherwise similar students, those with
 a family income less than $25,000 a year are predicted to score about
 two points lower on their math test.
 
+In this example, we held the other covariates at their means. We could
+have chosen other values (*e.g.* `fath_ba == 1` or `female == 1`),
+however, meaning that we could use the same procedure to produce
+predictions for low-income status (or other model covariates) across a
+range of margins.
+
 Notes
 =====
 
 [^1]: The `lm()` function is just a shorthand convenience function for
     `glm()` in which `family` is set to `gaussian(link = 'identity')`.
 
-[^2]: Broadly, this thought experiment falls under the [potential
-    outcomes framework or Rubin causal
-    model](https://en.wikipedia.org/wiki/Rubin_causal_model). Unless our
-    research design is experimental or quasi-experimental, however
-    (which ours in this example was not), it is highly unlikely that our
-    result will be strictly causal. Since the word *effect* is usually
-    reserved to describe causal results, I use scare quotes around it to
-    indicate that it shouldn’t be interpreted causally here.
+[^2]: Our example regression is not based on either an experimental or
+    quasi-experimental design. Unless the underlying research design is
+    experimental or quasi-experimental, it is highly unlikely that the
+    marginal effect obtained from this procedure will be causal. Since
+    the word *effect* is usually reserved to describe causal results, I
+    use scare quotes to indicate that our marginal “effects” shouldn’t
+    be interpreted causally.
