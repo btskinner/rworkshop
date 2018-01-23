@@ -10,19 +10,22 @@ custom_js:
 
 # Synopsis
 
-This two-day short course introduces participants to the R statistical
-language. After a general overview of R syntax, the workshop covers
-how to use R to wrangle data, build statistical models, and report
-results through tables and graphics. Other topics such as web
-scraping, writing functions, and literate programming with R are
-covered. Instruction relies primarily on examples and short practice
+This two-day short course introduces participants to the R statistical language. After a general overview of R syntax, workshop modules cover how to:   
+
+* wrangle data using both base R and tidyverse functions,
+* reshape data frames,
+* explore data using summary statistics and graphics, 
+* build statistical models, and
+* write loops and short functions. 
+
+Instruction relies primarily on examples and short practice
 exercises.
 
 ## Prerequisites 
 
 All participants should have at least some experience writing
 statistical code (e.g., Stata scripting) or working in another
-programming language. A basic understanding of econometric modeling
+programming language. A basic understanding of statistical modeling
 (e.g., OLS regression) is also required.
 
 ## Computer Requirement 
