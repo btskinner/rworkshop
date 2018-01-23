@@ -55,10 +55,10 @@ This data structure should be wide and look like this:
 
 | schid | year |  math |  read | science |
 |:-----:|:----:|:-----:|:-----:|:-------:|
-|   A   | 2013 | `499` | `301` |  `780`  |
-|   B   | 2013 | `497` | `330` |  `800`  |
-|   C   | 2013 | `512` | `277` |  `815`  |
-|   D   | 2013 | `513` | `304` |  `787`  |
+|   A   | 2013 | `493` | `316` |  `797`  |
+|   B   | 2013 | `506` | `314` |  `803`  |
+|   C   | 2013 | `492` | `302` |  `785`  |
+|   D   | 2013 | `503` | `308` |  `807`  |
 
 ``` r
 ## confirm that it is wide
@@ -68,10 +68,10 @@ df
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A      2013   499   301     780
-    2 B      2013   497   330     800
-    3 C      2013   512   277     815
-    4 D      2013   513   304     787
+    1 A      2013   493   316     797
+    2 B      2013   506   314     803
+    3 C      2013   492   302     785
+    4 D      2013   503   308     807
 
 Wide –\> long
 -------------
@@ -85,18 +85,18 @@ this:
 
 | schid | year |   test  | score |
 |:-----:|:----:|:-------:|:-----:|
-|   A   | 2013 |   math  | `499` |
-|   A   | 2013 |   read  | `301` |
-|   A   | 2013 | science | `780` |
-|   B   | 2013 |   math  | `497` |
-|   B   | 2013 |   read  | `330` |
-|   B   | 2013 | science | `800` |
-|   C   | 2013 |   math  | `512` |
-|   C   | 2013 |   read  | `277` |
-|   C   | 2013 | science | `815` |
-|   D   | 2013 |   math  | `513` |
-|   D   | 2013 |   read  | `304` |
-|   D   | 2013 | science | `787` |
+|   A   | 2013 |   math  | `493` |
+|   A   | 2013 |   read  | `316` |
+|   A   | 2013 | science | `797` |
+|   B   | 2013 |   math  | `506` |
+|   B   | 2013 |   read  | `314` |
+|   B   | 2013 | science | `803` |
+|   C   | 2013 |   math  | `492` |
+|   C   | 2013 |   read  | `302` |
+|   C   | 2013 | science | `785` |
+|   D   | 2013 |   math  | `503` |
+|   D   | 2013 |   read  | `308` |
+|   D   | 2013 | science | `807` |
 
 To go from wide to long format, use the `gather(key, value)` function,
 where `key` is a new column that will hold all the variable names that
@@ -125,18 +125,18 @@ df_long
     # A tibble: 12 x 4
        schid  year test    score
        <chr> <dbl> <chr>   <dbl>
-     1 A      2013 math      499
-     2 A      2013 read      301
-     3 A      2013 science   780
-     4 B      2013 math      497
-     5 B      2013 read      330
-     6 B      2013 science   800
-     7 C      2013 math      512
-     8 C      2013 read      277
-     9 C      2013 science   815
-    10 D      2013 math      513
-    11 D      2013 read      304
-    12 D      2013 science   787
+     1 A      2013 math      493
+     2 A      2013 read      316
+     3 A      2013 science   797
+     4 B      2013 math      506
+     5 B      2013 read      314
+     6 B      2013 science   803
+     7 C      2013 math      492
+     8 C      2013 read      302
+     9 C      2013 science   785
+    10 D      2013 math      503
+    11 D      2013 read      308
+    12 D      2013 science   807
 
 > #### Quick exercise
 >
@@ -164,10 +164,10 @@ df_wide
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A      2013   499   301     780
-    2 B      2013   497   330     800
-    3 C      2013   512   277     815
-    4 D      2013   513   304     787
+    1 A      2013   493   316     797
+    2 B      2013   506   314     803
+    3 C      2013   492   302     785
+    4 D      2013   503   308     807
 
 In theory, our new `df_wide` data frame should be the same as the one we
 started with. Let’s check:
