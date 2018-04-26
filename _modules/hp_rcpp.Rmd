@@ -1,0 +1,662 @@
+---
+layout: module
+title: High Performance R with Rcpp
+date: 2018-01-01 00:00:14
+category: module
+links:
+  script: hp_rcpp.R
+  data: hp_rcpp.Rdata
+  extra: dist_func.cpp
+output:
+  md_document:
+    variant: gfm
+    preserve_yaml: true
+---
+
+```{r, include = FALSE, purl = FALSE}
+source('knit_setup.R')
+```
+```{r, include = FALSE, purl = TRUE}
+################################################################################
+##
+## <PROJ> R Workshop
+## <FILE> hp_rcpp.R 
+## <INIT> 25 April 2018
+## <AUTH> Benjamin Skinner (GitHub/Twitter: @btskinner)
+##
+################################################################################
+
+## clear memory
+rm(list = ls())
+
+## libraries
+library(tidyverse)
+library(Rcpp)
+library(microbenchmark)
+
+```
+
+```r
+## libraries
+library(tidyverse)
+library(Rcpp)
+library(microbenchmark)
+
+```
+
+```{r, echo = FALSE, purl = FALSE, warnings = F, messages = F}
+suppressMessages(library(tidyverse))
+suppressMessages(library(Rcpp))
+suppressMessages(library(microbenchmark))
+
+```
+
+```{r}
+## load data
+load('../data/hp_rcpp.Rdata')
+
+```
+## College locations
+```{r}
+## college locations
+col_df
+
+```
+## Census block group locations
+```{r}
+## census block group locations
+cbg_df
+
+```
+
+# Compute great circle distance with Haversine
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Function to compute great circle distance
+## ---------------------------------------------------------
+
+```
+
+```{r}
+## convert degrees to radians
+deg_to_rad <- function(degree) {
+    m_pi <- 3.141592653589793238462643383280
+    return(degree * m_pi / 180)
+}
+
+## compute Haversine distance between two points
+dist_haversine <- function(xlon, xlat, ylon, ylat) {
+
+    ## radius of Earth in meters
+    e_r <- 6378137
+
+    ## return 0 if same point
+    if (xlon == ylon & xlat == xlon) { return(0) }
+
+    ## convert degrees to radians
+    xlon = deg_to_rad(xlon)
+    xlat = deg_to_rad(xlat)
+    ylon = deg_to_rad(ylon)
+    ylat = deg_to_rad(ylat)
+
+    ## haversine distance formula
+    d1 <- sin((ylat - xlat) / 2)
+    d2 <- sin((ylon - xlon) / 2)
+
+    return(2 * e_r * asin(sqrt(d1^2 + cos(xlat) * cos(ylat) * d2^2)))
+}
+
+```
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------
+## GC distance between two points
+## -----------------------------------------------
+
+```
+
+```{r}
+## store first census block group point (x) and first college point (y)
+xlon <- cbg_df[[1, 'lon']]
+xlat <- cbg_df[[1, 'lat']]
+ylon <- col_df[[1, 'lon']]
+ylat <- col_df[[1, 'lat']]
+
+## test single distance function
+d <- dist_haversine(xlon, xlat, ylon, ylat)
+d
+
+```
+
+
+## Many to many distance matrix
+```{r}
+## compute many to many distances and return matrix
+dist_mtom <- function(xlon,         # vector of starting longitudes
+                      xlat,         # vector of starting latitudes
+                      ylon,         # vector of ending longitudes
+                      ylat,         # vector of ending latitudes
+                      x_names,      # vector of starting point names
+                      y_names) {    # vector of ending point names
+
+    ## init output matrix (n X k)
+    n <- length(xlon)
+    k <- length(ylon)
+    mat <- matrix(NA, n, k)
+
+    ## double loop through each set of points to get all combinations
+    for(i in 1:n) {
+        for(j in 1:k) {
+            mat[i,j] <- dist_haversine(xlon[i], xlat[i], ylon[j], ylat[j])
+        }
+    }
+
+    ## add row and column names
+    rownames(mat) <- x_names
+    colnames(mat) <- y_names
+    return(mat)
+}
+
+```
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------
+## GC distance between many points
+## -----------------------------------------------
+
+```
+
+```{r}
+## test matrix (limit to only 10 starting points)
+distmat <- dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                     col_df$lon, col_df$lat,
+                     cbg_df$fips11[1:10], col_df$unitid)
+
+## show
+distmat[1:5,1:5]
+
+```
+
+> #### Quick exercise
+> Can you find the minimum distance for each starting point? What's
+> the name of the nearest end point?
+
+## Nearest end point
+```{r}
+## compute and return minimum distance along with name
+dist_min <- function(xlon,         # vector of starting longitudes
+                     xlat,         # vector of starting latitudes
+                     ylon,         # vector of ending longitudes
+                     ylat,         # vector of ending latitudes
+                     x_names,      # vector of starting point names
+                     y_names) {    # vector of ending point names
+    
+    ## NB: lengths: x coords == x names && y coords == y_names
+    n <- length(xlon)
+    k <- length(ylon)
+    minvec_name <- vector('character', n)
+    minvec_meter <- vector('numeric', n)
+
+    ## init temporary vector for distances between one x and all ys
+    tmp <- vector('numeric', k)
+
+    ## give tmp names of y vector
+    names(tmp) <- y_names
+
+    ## loop through each set of starting points
+    for(i in 1:n) {
+        for(j in 1:k) {
+            tmp[j] <- dist_haversine(xlon[i], xlat[i], ylon[j], ylat[j])
+        }
+
+        ## add to output matrix
+        minvec_name[i] <- names(which.min(tmp))
+        minvec_meter[i] <- min(tmp)
+    }
+
+    return(data.frame('fips11' = x_names,
+                      'unitid' = minvec_name,
+                      'meters' = minvec_meter,
+                      stringsAsFactors = FALSE))
+}
+
+```
+
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------
+## minimum GC distance between many points
+## -----------------------------------------------
+
+```
+```{r}
+## test matrix (limit to only 10 starting points)
+mindf <- dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                  col_df$lon, col_df$lat,
+                  cbg_df$fips11[1:10], col_df$unitid)
+## show
+mindf
+
+```
+
+> #### Quick exercise
+> How long will it take to find the closest college to each census
+> track? Use `system.time()` and extrapolate to make a best guess.
+
+
+# Rcpp
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------------------------------------
+## Source / compile Rcpp file: dist_func.cpp
+## ---------------------------------------------------------
+
+```
+
+```{r}
+## source Rcpp code
+sourceCpp('../scripts/dist_func.cpp', rebuild = TRUE)
+
+```
+
+## Front matter
+
+```{Rcpp, purl = FALSE, eval = FALSE}
+// header files to include
+#include <Rcpp.h>
+
+// preprocessor replacements
+#define e_r 6378137.0		
+#define m_pi 3.141592653589793238462643383280
+
+// use Rcpp namespace to avoid Rcpp::<...> repetition
+using namespace Rcpp;
+``` 
+
+## Utility functions
+
+```{Rcpp, purl = FALSE, eval = FALSE}
+// convert degrees to radians
+// [[Rcpp::export]]
+double deg_to_rad_rcpp(double degree) {
+ return(degree * m_pi / 180.0);
+
+// compute Haversine distance between two points
+// [[Rcpp::export]]
+double dist_haversine_rcpp(double xlon,
+                            double xlat,
+                            double ylon,
+                            double ylat) {
+
+  // return 0 if same point
+  if (xlon == ylon && xlat == xlon) return 0.0;
+
+  // convert degrees to radians
+  xlon = deg_to_rad_rcpp(xlon);
+  xlat = deg_to_rad_rcpp(xlat);
+  ylon = deg_to_rad_rcpp(ylon);
+  ylat = deg_to_rad_rcpp(ylat);
+
+  // haversine distance formula
+  double d1 = sin((ylat - xlat) / 2.0);
+  double d2 = sin((ylon - xlon) / 2.0);
+  return 2.0 * e_r * asin(sqrt(d1*d1 + cos(xlat) * cos(ylat) * d2*d2));
+  return dist;	 
+}
+```
+
+## Many to many distance matrix
+
+```{Rcpp, purl = FALSE, eval = FALSE}
+// compute many to many distances and return matrix
+// [[Rcpp::export]]
+NumericMatrix dist_mtom_rcpp(NumericVector xlon,
+                               NumericVector xlat,
+                               NumericVector ylon,
+                               NumericVector ylat,
+                               CharacterVector x_names,
+                               CharacterVector y_names) {
+
+  // init output matrix (x X y)
+  int n = xlon.size();
+  int k = ylon.size();
+  NumericMatrix distmat(n,k);
+
+  // double loop through each set of points to get all combinations
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < k; j++) {
+      distmat(i,j) = dist_haversine_rcpp(xlon[i],xlat[i],ylon[j],ylat[j]);
+    }
+  }
+  // add row and column names
+  rownames(distmat) = x_names;
+  colnames(distmat) = y_names;
+  return distmat;
+}	
+```
+
+## Nearest end point
+
+```{Rcpp, purl = FALSE, eval = FALSE}
+// compute and return minimum distance along with name
+// [[Rcpp::export]]
+DataFrame dist_min_rcpp(NumericVector xlon,
+                          NumericVector xlat,
+                          NumericVector ylon,
+                          NumericVector ylat,
+                          CharacterVector x_names,
+                          CharacterVector y_names) {
+
+  // init output matrix (x X 3)
+  int n = xlon.size();
+  int k = ylon.size();
+  CharacterVector minvec_name(n);
+  NumericVector minvec_meter(n);
+  NumericVector tmp(k);
+
+  // loop through each set of starting points
+  for(int i = 0; i < n; i++) {
+    for(int j = 0; j < k; j++) {
+      tmp[j] = dist_haversine_rcpp(xlon[i],xlat[i],ylon[j],ylat[j]);
+    }
+    // add to output matrix
+    minvec_name[i] = y_names[which_min(tmp)];
+    minvec_meter[i] = min(tmp);
+  }
+
+  // return created data frame
+  return DataFrame::create(Named("fips11") = x_names,
+                            Named("unitid") = minvec_name,
+                            Named("meters") = minvec_meter,
+                            _["stringsAsFactors"] = false);
+}
+```
+# Quick comparisons 
+## Single distance
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------
+## Comparisons
+## -----------------------------------------------
+## ---------------------------
+## single distance
+## ---------------------------
+
+```
+```{r}
+d_Rcpp <- dist_haversine_rcpp(xlon, xlat, ylon, ylat)
+
+## show
+d_Rcpp
+
+## compare
+identical(d, d_Rcpp)
+
+```
+## Many to many
+
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## many to many
+## ---------------------------
+
+```
+```{r}
+distmat_Rcpp <- dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                               col_df$lon, col_df$lat,
+                               cbg_df$fips11[1:10], col_df$unitid)
+
+## show
+distmat_Rcpp[1:5,1:5]
+
+## compare
+all.equal(distmat, distmat_Rcpp)
+
+```
+## Minimum distances
+```{r}
+mindf_Rcpp <- dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                            col_df$lon, col_df$lat,
+                            cbg_df$fips11[1:10], col_df$unitid)
+
+## show
+mindf_Rcpp
+
+## compare
+all.equal(mindf, mindf_Rcpp)
+
+```
+# Benchmarks
+```{r, echo = FALSE, purl = TRUE}
+## -----------------------------------------------
+## Benchmarks!
+## -----------------------------------------------
+## ---------------------------
+## single distance
+## ---------------------------
+
+```
+```{r}
+tm_single <- microbenchmark(base_R = dist_haversine(xlon, xlat, ylon, ylat),
+                            Rcpp = dist_haversine_rcpp(xlon, xlat, ylon, ylat),
+                            times = 1000)
+## results
+tm_single
+
+## plot
+autoplot(tm_single)
+
+```
+
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## many to many
+## ---------------------------
+
+```
+```{r}
+## time for base R to do many to many with 100 starting points
+system.time(dist_mtom(cbg_df$lon[1:100], cbg_df$lat[1:100],
+                      col_df$lon, col_df$lat,
+                      cbg_df$fips11[1:100], col_df$unitid))
+
+## ...and now Rcpp version
+system.time(dist_mtom_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
+                           col_df$lon, col_df$lat,
+                           cbg_df$fips11[1:100], col_df$unitid))
+
+## compare just 10 many to many
+tm_mtom <- microbenchmark(base_R = dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                                             col_df$lon, col_df$lat,
+                                             cbg_df$fips11[1:10], col_df$unitid),
+                          Rcpp = dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                                                col_df$lon, col_df$lat,
+                                                cbg_df$fips11[1:10], col_df$unitid),
+                          times = 100)
+
+## results
+tm_mtom
+
+## plot
+autoplot(tm_mtom)
+
+```
+
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## minimum distance
+## ---------------------------
+
+```
+```{r}
+## time for base R to do many to many with 100 starting points
+system.time(dist_min(cbg_df$lon[1:100], cbg_df$lat[1:100],
+                     col_df$lon, col_df$lat,
+                     cbg_df$fips11[1:100], col_df$unitid))
+
+## ...and now Rcpp version
+system.time(dist_min_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
+                          col_df$lon, col_df$lat,
+                          cbg_df$fips11[1:100], col_df$unitid))
+
+## compare just 10 min
+tm_min <- microbenchmark(base_R = dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                                           col_df$lon, col_df$lat,
+                                           cbg_df$fips11[1:10], col_df$unitid),
+                         Rcpp = dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
+                                              col_df$lon, col_df$lat,
+                                              cbg_df$fips11[1:10], col_df$unitid),
+                         times = 100)
+## results
+tm_min
+
+## plot
+autoplot(tm_min)
+
+```
+
+# Full run for Rcpp version
+```{r, echo = FALSE, purl = TRUE}
+## ---------------------------
+## full run for Rcpp
+## ---------------------------
+
+```
+```{r}
+## find minimum
+system.time(full_min <- dist_min_rcpp(cbg_df$lon, cbg_df$lat,
+                                      col_df$lon, col_df$lat,
+                                      cbg_df$fips11, col_df$unitid))
+
+## show
+full_min %>% tbl_df()
+```
+
+
+> #### Not-so quick exercise 
+> Below is a function that computes the
+> great circle distance using [Vincenty's
+> formula](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). It's
+> more accurate than the haversine version, but can be much more
+> compuationally intensive. Try to convert the base R function into an
+> Rcpp function. You'll need to start a new script and then use
+> `sourceCpp()` to read it in and test. Once you've got, substitute
+> the respective Vincenty formula functions into the `dist_min_*()`
+> functions and compare times.
+>
+> A few things to keep in mind:  
+> 1. You'll need to declare your variables and types (lot's of
+>    `double`); don't forget that double numbers need a decimal,
+>    otherwise C++ thinks they are integers.  
+> 2. Don't forget your semi-colon line enders!  
+> 3. `abs()` in C++ is `fabs()`  
+> 4. Remember: `a^2 = a * a`  
+
+```{r, purl = FALSE}
+## base R distance function using Vincenty formula
+dist_vincenty <- function(xlon,
+                          xlat,
+                          ylon,
+                          ylat) {
+
+    ## return 0 if same point
+    if (xlon == ylon && xlat == ylat) { return(0) }
+
+    ## convert degrees to radians
+    xlon <- deg_to_rad(xlon)
+    xlat <- deg_to_rad(xlat)
+    ylon <- deg_to_rad(ylon)
+    ylat <- deg_to_rad(ylat)
+
+    ## ---------------------------------------------------
+    ## https:##en.wikipedia.org/wiki/Vincenty%27s_formulae
+    ## ---------------------------------------------------
+
+    ## some constants
+    a <- 6378137
+    f <- 1 / 298.257223563
+    b <- (1 - f) * a
+    U1 <- atan((1 - f) * tan(xlat))
+    U2 <- atan((1 - f) * tan(ylat))
+    sinU1 <- sin(U1)
+    sinU2 <- sin(U2)
+    cosU1 <- cos(U1)
+    cosU2 <- cos(U2)
+    L <- ylon - xlon
+    lambda <- L                         # initial value
+
+    ## set up loop
+    iters <- 100                        # no more than 100 loops
+    tol <- 1.0e-12                      # tolerance level
+    again <- TRUE
+
+    while (again) {
+
+        ## sin sigma
+        sinLambda <- sin(lambda)
+        cosLambda <- cos(lambda)
+        p1 <- cosU2 * sinLambda
+        p2 <- cosU1 * sinU2 - sinU1 * cosU2 * cosLambda
+        sinsig <- sqrt(p1^2 + p2^2)
+
+        ## cos sigma
+        cossig <- sinU1 * sinU2 + cosU1 * cosU2 * cosLambda
+
+        ## plain ol' sigma
+        sigma <- atan2(sinsig, cossig)
+
+        ## sin alpha
+        sina <- cosU1 * cosU2 * sinLambda / sinsig
+
+        ## cos^2 alpha
+        cos2a <- 1 - (sina * sina)
+
+        ## cos 2*sig_m
+        cos2sigm <- cossig - 2 * sinU1 * sinU2 / cos2a
+
+        ## C
+        C <- f / 16 * cos2a * (4 + f * (4 - 3 * cos2a))
+
+        ## store old lambda
+        lambdaOld <- lambda
+
+        ## update lambda
+        lambda <- L + (1 - C) * f * sina *
+            (sigma + C * sinsig * (cos2sigm + C * cossig *
+                                   (-1 + 2 * cos2sigm^2)))
+
+        ## subtract from iteration total
+        iters <- iters - 1
+
+        ## go again if lambda diff is > tolerance and still have iterations
+        again <- (abs(lambda - lambdaOld) > tol && iters > 0)
+    }
+    ## if iteration count runs out, stop and send message
+    if (iters == 0) {
+        stop("Failed to converge!", call. = FALSE)
+    }
+    else {
+
+        ## u^2
+        Usq <- cos2a * (a^2 - b^2) / (b^2)
+
+        ## A
+        A <- 1 + Usq / 16384 * (4096 + Usq * (-768 + Usq * (320 - 175 * Usq)))
+
+        ## B
+        B <- Usq / 1024 * (256 + Usq * (-128 + Usq * (74 - 47 * Usq)))
+
+        ## delta sigma
+        dsigma <- B * sinsig *
+            (cos2sigm + B / 4 *
+             (cossig * (-1 + 2 * cos2sigm^2)
+                 - B / 6 * cos2sigm * (-3 + 4 * sinsig^2)
+                 * (-3 + 4 * cos2sigm^2)))
+
+        ## return the distance
+        return(b * A * (sigma - dsigma))
+  }
+}
+```
+
+```{r, echo = FALSE, purl = TRUE}
+
+## =============================================================================
+## END SCRIPT
+################################################################################
+```

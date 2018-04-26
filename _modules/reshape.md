@@ -7,7 +7,7 @@ links:
   script: reshape.R
 output:
   md_document:
-    variant: markdown_mmd
+    variant: gfm
     preserve_yaml: true
 ---
 
@@ -26,16 +26,15 @@ library(tidyverse)
     ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
     ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-    ✔ tibble  1.4.1     ✔ dplyr   0.7.4
-    ✔ tidyr   0.7.2     ✔ stringr 1.2.0
-    ✔ readr   1.1.1     ✔ forcats 0.2.0
+    ✔ tibble  1.4.2     ✔ dplyr   0.7.4
+    ✔ tidyr   0.8.0     ✔ stringr 1.3.0
+    ✔ readr   1.1.1     ✔ forcats 0.3.0
 
     ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
 
-Create toy data
-===============
+# Create toy data
 
 For clarity, we’ll use toy data for this example. Let’s say these data
 represent average school-wide test scores on three tests, math, reading,
@@ -53,12 +52,12 @@ df <- data.frame(schid = c('A','B','C','D'),
 
 This data structure should be wide and look like this:
 
-| schid | year |  math |  read | science |
-|:-----:|:----:|:-----:|:-----:|:-------:|
-|   A   | 2013 | `493` | `316` |  `797`  |
-|   B   | 2013 | `506` | `314` |  `803`  |
-|   C   | 2013 | `492` | `302` |  `785`  |
-|   D   | 2013 | `503` | `308` |  `807`  |
+| schid | year | math  | read  | science |
+| :---: | :--: | :---: | :---: | :-----: |
+|   A   | 2013 | `499` | `304` |  `792`  |
+|   B   | 2013 | `500` | `305` |  `784`  |
+|   C   | 2013 | `506` | `314` |  `809`  |
+|   D   | 2013 | `521` | `322` |  `802`  |
 
 ``` r
 ## confirm that it is wide
@@ -68,13 +67,12 @@ df
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A      2013   493   316     797
-    2 B      2013   506   314     803
-    3 C      2013   492   302     785
-    4 D      2013   503   308     807
+    1 A     2013.  499.  304.    792.
+    2 B     2013.  500.  305.    784.
+    3 C     2013.  506.  314.    809.
+    4 D     2013.  521.  322.    802.
 
-Wide –\> long
--------------
+## Wide –\> long
 
 To start, the data are wide. While this setup can be efficient for
 storage, it’s not always the best for analysis or even just browsing.
@@ -83,20 +81,20 @@ own column, there should be one column for the test subject (**test**)
 and another column that gives the value (**score**). It should look like
 this:
 
-| schid | year |   test  | score |
-|:-----:|:----:|:-------:|:-----:|
-|   A   | 2013 |   math  | `493` |
-|   A   | 2013 |   read  | `316` |
-|   A   | 2013 | science | `797` |
-|   B   | 2013 |   math  | `506` |
-|   B   | 2013 |   read  | `314` |
-|   B   | 2013 | science | `803` |
-|   C   | 2013 |   math  | `492` |
-|   C   | 2013 |   read  | `302` |
-|   C   | 2013 | science | `785` |
-|   D   | 2013 |   math  | `503` |
-|   D   | 2013 |   read  | `308` |
-|   D   | 2013 | science | `807` |
+| schid | year |  test   | score |
+| :---: | :--: | :-----: | :---: |
+|   A   | 2013 |  math   | `499` |
+|   A   | 2013 |  read   | `304` |
+|   A   | 2013 | science | `792` |
+|   B   | 2013 |  math   | `500` |
+|   B   | 2013 |  read   | `305` |
+|   B   | 2013 | science | `784` |
+|   C   | 2013 |  math   | `506` |
+|   C   | 2013 |  read   | `314` |
+|   C   | 2013 | science | `809` |
+|   D   | 2013 |  math   | `521` |
+|   D   | 2013 |  read   | `322` |
+|   D   | 2013 | science | `802` |
 
 To go from wide to long format, use the `gather(key, value)` function,
 where `key` is a new column that will hold all the variable names that
@@ -125,26 +123,25 @@ df_long
     # A tibble: 12 x 4
        schid  year test    score
        <chr> <dbl> <chr>   <dbl>
-     1 A      2013 math      493
-     2 A      2013 read      316
-     3 A      2013 science   797
-     4 B      2013 math      506
-     5 B      2013 read      314
-     6 B      2013 science   803
-     7 C      2013 math      492
-     8 C      2013 read      302
-     9 C      2013 science   785
-    10 D      2013 math      503
-    11 D      2013 read      308
-    12 D      2013 science   807
+     1 A     2013. math     499.
+     2 A     2013. read     304.
+     3 A     2013. science  792.
+     4 B     2013. math     500.
+     5 B     2013. read     305.
+     6 B     2013. science  784.
+     7 C     2013. math     506.
+     8 C     2013. read     314.
+     9 C     2013. science  809.
+    10 D     2013. math     521.
+    11 D     2013. read     322.
+    12 D     2013. science  802.
 
 > #### Quick exercise
->
+> 
 > What happens if you don’t include `-c(schid, year)` in the `gather()`
 > function? Try it.
 
-Long –\> wide
--------------
+## Long –\> wide
 
 To go in the opposite direction, use the `spread(var, value)` function,
 which makes columns for every unique `var` and assigns the `value` that
@@ -164,10 +161,10 @@ df_wide
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A      2013   493   316     797
-    2 B      2013   506   314     803
-    3 C      2013   492   302     785
-    4 D      2013   503   308     807
+    1 A     2013.  499.  304.    792.
+    2 B     2013.  500.  305.    784.
+    3 C     2013.  506.  314.    809.
+    4 D     2013.  521.  322.    802.
 
 In theory, our new `df_wide` data frame should be the same as the one we
 started with. Let’s check:
@@ -179,12 +176,12 @@ identical(df, df_wide)
 
     [1] TRUE
 
-Success!
+Success\!
 
 > #### Quick exercise
->
+> 
 > Reshape this long data frame wide and then back:
->
+> 
 >     df <- data.frame(id = rep(c('A','B','C','D'), each = 4),
 >                      year = paste0('y', rep(2000:2003, 4)),
 >                      score = rnorm(16),

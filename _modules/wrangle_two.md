@@ -8,7 +8,7 @@ links:
   data: els_plans.csv
 output:
   md_document:
-    variant: markdown_mmd
+    variant: gfm
     preserve_yaml: true
 ---
 
@@ -32,29 +32,27 @@ variables, see the <a href = '{{ site.baseurl
 set using the same name, go ahead and download a fresh copy of the
 original data.
 
-Tidyverse
-=========
+# Tidyverse
 
 The tidyverse is a shorthand for a [number of
 packages](https://www.tidyverse.org/packages/) that work well together
 and can be used in place of base R functions. A few of the tidyverse
 packages that you will often use are:
 
--   [dplyr](http://dplyr.tidyverse.org) for data manipulation  
--   [tidyr](http://tidyr.tidyverse.org) for making data
+  - [dplyr](http://dplyr.tidyverse.org) for data manipulation  
+  - [tidyr](http://tidyr.tidyverse.org) for making data
     [tidy](http://vita.had.co.nz/papers/tidy-data.html)  
--   [readr](http://readr.tidyverse.org) for flat file I/O  
--   [readxl](http://readxl.tidyverse.org) for Excel file I/O  
--   [haven](http://haven.tidyverse.org) for other file format I/O  
--   [ggplot2](http://ggplot2.tidyverse.org) for making graphics
+  - [readr](http://readr.tidyverse.org) for flat file I/O  
+  - [readxl](http://readxl.tidyverse.org) for Excel file I/O  
+  - [haven](http://haven.tidyverse.org) for other file format I/O  
+  - [ggplot2](http://ggplot2.tidyverse.org) for making graphics
 
 There are many others. A lot of R users find functions from these
 libraries to be more intuitive than base R functions. In some cases,
 tidyverse functions are faster than base R, which is an added benefit
 when working with large data sets.
 
-Magrittr and pipes
-------------------
+## Magrittr and pipes
 
 The key feature of the tidyverse is its use of pipes, `%>%`, from the
 [magrittr package](http://magrittr.tidyverse.org).
@@ -98,8 +96,7 @@ foo_foo %>%
     bop_on(head)
 ```
 
-Data wrangling with tidyverse
-=============================
+# Data wrangling with tidyverse
 
 ``` r
 ## library
@@ -109,9 +106,9 @@ library(tidyverse)
     ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
     ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-    ✔ tibble  1.4.1     ✔ dplyr   0.7.4
-    ✔ tidyr   0.7.2     ✔ stringr 1.2.0
-    ✔ readr   1.1.1     ✔ forcats 0.2.0
+    ✔ tibble  1.4.2     ✔ dplyr   0.7.4
+    ✔ tidyr   0.8.0     ✔ stringr 1.3.0
+    ✔ readr   1.1.1     ✔ forcats 0.3.0
 
     ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
@@ -146,7 +143,7 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
     See spec(...) for full column specifications.
 
 Unlike the base R `read.table()` function, `read_delim()` prints out
-information about how the data were read in. Nothing is wrong! The
+information about how the data were read in. Nothing is wrong\! The
 `read_delim()` function, like many other functions in the tidyverse,
 assumes you’d rather have more rather than less information and so acts
 accordingly.
@@ -156,19 +153,18 @@ which as integers (`col_integer()`). If the column name isn’t in the
 list, then it was read in as the `.default`, which was as a character
 column (`col_character()`).
 
-Mutate
-------
+## Mutate
 
 To add variables and change existing ones, use the `mutate()` function.
 
 Most if not all of the primary tidyverse functions take the data object
-as the first argument. So the `mutate()` function would be
-`mutate(df, ...)` where `...` is the stuff we want to do. Because we’re
-using the `%>%`, however, we start with the data by itself and pipe it
-into the `mutate()` function. We’ll do this with the rest of the
-tidyverse functions. While not necessary, I think it helps reading
-through the code: *Starting with the data (`df`), we next create new
-variables with the `mutate()` function…* and so on.
+as the first argument. So the `mutate()` function would be `mutate(df,
+...)` where `...` is the stuff we want to do. Because we’re using the
+`%>%`, however, we start with the data by itself and pipe it into the
+`mutate()` function. We’ll do this with the rest of the tidyverse
+functions. While not necessary, I think it helps reading through the
+code: *Starting with the data (`df`), we next create new variables with
+the `mutate()` function…* and so on.
 
 Note that with tidyverse functions, you usually don’t need to use the
 data frame name with the dollar sign construction (`df$<var_name>`) and
@@ -194,13 +190,12 @@ df <- df %>%
 ```
 
 > #### Quick exercise
->
+> 
 > Create dummy variables for each race/ethnicity category in `byrace`.
 > (Hint: use (`table()`) to see the possible values; adv. hint:
 > `ifelse()` statements can be nested.)
 
-Select
-------
+## Select
 
 To choose variables, either when making a new data frame or dropping
 them, use `select()`. Without assignment (because we would change our
@@ -239,19 +234,20 @@ df <- df %>% select(-f1pnlwt)
 names(df)
 ```
 
-     [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
-     [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
-    [13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
-    [19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"  
+``` 
+ [1] "stu_id"   "sch_id"   "strat_id" "psu"      "f1sch_id" "bystuwt" 
+ [7] "bysex"    "byrace"   "bydob_p"  "bypared"  "bymothed" "byfathed"
+[13] "byincome" "byses1"   "byses2"   "bystexp"  "bynels2m" "bynels2r"
+[19] "f1qwt"    "f1psepln" "f2ps1sec" "ones"     "avg_test" "female"  
+```
 
 > #### Quick exercise
->
+> 
 > Without assigning back to your data frame (no `<-`), see if you can
 > first keep a set of variables and then drop a set of variables. (Hint:
 > consider `c()`)
 
-Filter
-------
+## Filter
 
 Like `select()` works on columns, `filter()` can be used to subset based
 on row conditions. Earlier we properly labeled `bydob_p` values less
@@ -273,16 +269,16 @@ nrow(df)
     [1] 15183
 
 > #### Quick exercise
->
+> 
 > Filter out observations if they are missing `bysex` values. You can do
 > it in two steps, first `mutate()`ing negative values to be `NA` and
 > then `filter()`ing out missing values, or in one step, just
 > `filter()`ing out if `bysex` has a value below zero.
 
-Arrange
--------
+## Arrange
 
-Sort values using the `arrange()` function.
+Sort values using the `arrange()`
+function.
 
 ``` r
 ## show first few rows of student and base year math scores (tidyverse way)
@@ -326,20 +322,19 @@ df %>% select(stu_id, bydob_p) %>% head(10)
     10 327128  198300
 
 > #### Quick exercise
->
+> 
 > `arrange()` by `bydob_p` again, but this time in reverse order. Google
 > “dplyr arrange” to find information about the function and see if can
 > figure out how to sort in descending order.
 
-Summarize
----------
+## Summarize
 
 Aggregate data using the `summarise()` or `summarize()` function
-(they’re the same, just playing nice by offering both spellings). Unlike
-the `aggregate()` function, you first need to set the grouping variable
-using the `group_by()` function. Since we need to replace negative
-values before we summarize, we’ll chain a few functions together into
-one command.
+(they’re the same, just playing nice by offering both spellings).
+Unlike the `aggregate()` function, you first need to set the grouping
+variable using the `group_by()` function. Since we need to replace
+negative values before we summarize, we’ll chain a few functions
+together into one command.
 
 Notice how we can include comment rows between each piped command.
 Adding a comment before each function that explains the step in a
@@ -378,7 +373,7 @@ sch_m
     # ... with 741 more rows
 
 > #### Quick exercise
->
+> 
 > Find the average reading test score for each school and save it in an
 > object.
 
@@ -386,15 +381,14 @@ The `group_by()` and `summarise()` functions are very useful for
 generating summary statistics and exploring your data. We’ll use them
 more in the modules on exploratory data analysis.
 
-Join
-----
+## Join
 
 Rather than saying “merge,” dplyr uses the SQL language of joins:
 
--   `left_join(x, y)`: keep all x, drop unmatched y
--   `right_join(x, y)`: keep all y, drop unmatched x
--   `inner_join(x, y)`: keep only matching
--   `full_join(x, y)`: keep everything
+  - `left_join(x, y)`: keep all x, drop unmatched y
+  - `right_join(x, y)`: keep all y, drop unmatched x
+  - `inner_join(x, y)`: keep only matching
+  - `full_join(x, y)`: keep everything
 
 <img src="{{ site.baseurl }}/images/joins.png" alt="Joins">
 
@@ -409,12 +403,11 @@ df <- df %>% left_join(sch_m, by = 'sch_id')
 ```
 
 > #### Quick exercise
->
+> 
 > Join the average reading test score data frame you made to the main
 > data object.
 
-Write
------
+## Write
 
 The readr library can also write delimited flat files. Instead of
 `write_delim()`, we’ll use the wrapper function `write_csv()` to save a

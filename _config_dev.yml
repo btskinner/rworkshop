@@ -8,10 +8,12 @@ scripts: scripts
 data: data
 
 info:
-  month: January 2018
-  date: 15/16 January 2018
-  building: Bavaro Hall
-  room: Holloway Hall (rm 116)
+  month: May 2018
+  date: 17 May 2018
+  location: University of Virginia
+  building: Ruffner Hall
+  room: LDCC (rm 302)
+  street: 405 Emmet Street South
 
 contact:
   name: Benjamin Skinner

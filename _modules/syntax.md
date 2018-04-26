@@ -7,26 +7,25 @@ links:
   script: syntax.R
 output:
   md_document:
-    variant: markdown_mmd
+    variant: gfm
     preserve_yaml: true
 ---
 
 It’s hard to know where to start when teaching a new programming
 language. This page is meant to give some background about R that
 hopefully  
-1. explains a little about how it is put together, and  
-2. puts it in context with other programming languages you might know.
+1\. explains a little about how it is put together, and  
+2\. puts it in context with other programming languages you might know.
 
 That said, revisiting this page after after working through the other
 modules might be useful.
 
-R: language + environment
-=========================
+# R: language + environment
 
 R is a port of the [S
-language](https://en.wikipedia.org/wiki/S_(programming_language)), which
-was developed at Bell Labs. As a [GNU project](https://www.gnu.org), R
-is open source and free ([as in
+language](https://en.wikipedia.org/wiki/S_\(programming_language\)),
+which was developed at Bell Labs. As a [GNU
+project](https://www.gnu.org), R is open source and free ([as in
 freedom](https://en.wikipedia.org/wiki/Gratis_versus_libre)) to use and
 distribute. It can be installed and used on most major operating
 systems.
@@ -41,14 +40,13 @@ great tool for working interactively with quantitative data.
 
 R is probably best known for its graphing capabilities, but it has
 [continued to grow in popularity among data
-scientists](http://blog.revolutionanalytics.com/2018/01/tiobe-2017.html),[^1]
+scientists](http://blog.revolutionanalytics.com/2018/01/tiobe-2017.html),\[1\]
 who are increasingly [extending R’s functionality through
 user-contributed
-packages](http://blog.revolutionanalytics.com/2017/01/cran-10000.html).[^2]
+packages](http://blog.revolutionanalytics.com/2017/01/cran-10000.html).\[2\]
 We will use a number of packages in this workshop.
 
-Integrated development environment (IDE) for R
-----------------------------------------------
+## Integrated development environment (IDE) for R
 
 ### RStudio
 
@@ -57,13 +55,12 @@ and with little fuss, so it’s a great all-around program for using R. We
 will use it in this workshop.
 
 > #### Quick exercise
->
+> 
 > If you haven’t already, open up RStudio and poke around. First, try
 > entering an equation in the console (like `1 + 1`). Next, open the
 > script associated with this module and run the first line.
 
-Assignment
-==========
+# Assignment
 
 R thinks of things as objects. Objects are like boxes in which we can
 put things: data, functions, and even other objects.
@@ -101,20 +98,18 @@ Keep in mind, however, that since `=` sometimes has other meanings in R
 `<-`.
 
 > #### Quick exercise
->
+> 
 > Using the arrow, assign the output of `1 + 1` to `x`. Next subtract 1
 > from `x` and reassign the result to `x`.
 
-Data types and structures
-=========================
+# Data types and structures
 
-Types
------
+## Types
 
 There are three primary data types in R that you will regularly use:  
-- `logical`  
-- `numeric` (`integer` & `double`)  
-- `character`
+\- `logical`  
+\- `numeric` (`integer` & `double`)  
+\- `character`
 
 ### Logical
 
@@ -222,21 +217,20 @@ x
     [1] "00001"
 
 > #### Quick exercise
->
+> 
 > Try to add a string digit to a numeric value. What happens? Can you
 > convert the string version on the fly so that the equation works?
 > (HINT: in R, you can change a vector type using `as.<type>()`, where
 > `<type>` is the name of what you want.)
 
-Structures
-----------
+## Structures
 
 Building on these data types, R relies on four primary data structures:
 
--   `vector`
--   `matrix`[^3]
--   `list`
--   `dataframe`
+  - `vector`
+  - `matrix`\[3\]
+  - `list`
+  - `dataframe`
 
 ### Vector
 
@@ -298,7 +292,7 @@ x[2]
     [1] 5
 
 > #### Quick exercise
->
+> 
 > Since you know how to access a specific element in a vector and how to
 > assign new values, try to change the 3rd element of the `x` vector to
 > 4.
@@ -340,10 +334,12 @@ x <- matrix(1:9, nrow = 3, ncol = 3)
 x
 ```
 
-         [,1] [,2] [,3]
-    [1,]    1    4    7
-    [2,]    2    5    8
-    [3,]    3    6    9
+``` 
+     [,1] [,2] [,3]
+[1,]    1    4    7
+[2,]    2    5    8
+[3,]    3    6    9
+```
 
 ``` r
 ## ...fill by row this time
@@ -351,10 +347,12 @@ y <- matrix(1:9, nrow = 3, ncol = 3, byrow = TRUE)
 y
 ```
 
-         [,1] [,2] [,3]
-    [1,]    1    2    3
-    [2,]    4    5    6
-    [3,]    7    8    9
+``` 
+     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    5    6
+[3,]    7    8    9
+```
 
 ``` r
 ## a matrix has dimension
@@ -391,8 +389,8 @@ numbers between the comma and the closing bracket will affect the
 columns.
 
 If you don’t put anything in either of those spaces (a blank space
-doesn’t count), R will assume you want all rows or columns, depending on
-which side of the comma is blank.
+doesn’t count), R will assume you want all rows or columns, depending
+on which side of the comma is blank.
 
 ``` r
 ## show the values in the first row
@@ -413,13 +411,15 @@ x[ ,3]
 x[ , ]
 ```
 
-         [,1] [,2] [,3]
-    [1,]    1    4    7
-    [2,]    2    5    8
-    [3,]    3    6    9
+``` 
+     [,1] [,2] [,3]
+[1,]    1    4    7
+[2,]    2    5    8
+[3,]    3    6    9
+```
 
 > #### Quick exercise
->
+> 
 > Return the middle value of the `x` matrix. Next assign the middle
 > value the character value ‘a’. What happens to the rest of the values
 > in the matrix?
@@ -440,10 +440,10 @@ x
 
     [[1]]
     [1] 1
-
+    
     [[2]]
     [1] "a"
-
+    
     [[3]]
     [1] TRUE
 
@@ -468,14 +468,14 @@ z
     [[1]]
     [[1]][[1]]
     [1] 1
-
+    
     [[1]][[2]]
     [1] "a"
-
+    
     [[1]][[3]]
     [1] TRUE
-
-
+    
+    
     [[2]]
     list()
 
@@ -490,10 +490,10 @@ z[[1]]
 
     [[1]]
     [1] 1
-
+    
     [[2]]
     [1] "a"
-
+    
     [[3]]
     [1] TRUE
 
@@ -524,10 +524,12 @@ df <- data.frame(col_a = c(1,2,3),
 df
 ```
 
-      col_a col_b col_c
-    1     1     4     7
-    2     2     5     8
-    3     3     6     9
+``` 
+  col_a col_b col_c
+1     1     4     7
+2     2     5     8
+3     3     6     9
+```
 
 ``` r
 ## check
@@ -569,19 +571,17 @@ df[['col_a']]
     [1] 1 2 3
 
 > #### Quick exercise
->
+> 
 > Create two or three equal length vectors. Next, combine to create a
 > data frame. Finally, change one value in the data frame (HINT: think
 > about how you changed vector and matrix values before).
 
-Packages
-========
+# Packages
 
 User-submitted packages are a huge part of what makes R great. Most of
 your scripts will make use of one or more packages.
 
-Installation
-------------
+## Installation
 
 ### CRAN
 
@@ -598,7 +598,7 @@ package you want may rely on to work properly). By default, R will check
 how you installed R and download the right operating system file type.
 
 > #### Quick exercise
->
+> 
 > Install the [`survey`](https://CRAN.R-project.org/package=survey)
 > package, which we will use in a later module. Don’t forget to use
 > single or double quotation marks around the package name.
@@ -616,11 +616,10 @@ library(devtools)
 install_github('<github handle>/<repo name>')
 ```
 
-Loading package libraries
--------------------------
+## Loading package libraries
 
-Package libraries[^4] can loaded in a number of ways, but the easiest it
-to write:
+Package libraries\[4\] can loaded in a number of ways, but the easiest
+it to write:
 
 ``` r
 library('<library name>')
@@ -631,20 +630,18 @@ need to load these before you can use their functions in your scripts.
 Typically, they are placed at the top of the script file.
 
 > #### Quick exercise
->
+> 
 > Load the `tidyverse` package, which you should have already installed.
 > This will be a good test of the installation since we will use
 > tidyverse libraries throughout the rest of the workshop.
 
-Help
-====
+# Help
 
 Even I don’t have every R function and nuance memorized. With all the
-user-written packages, it would be difficult to keep up if I tried! When
-stuck, there are a few ways to get help.
+user-written packages, it would be difficult to keep up if I tried\!
+When stuck, there are a few ways to get help.
 
-Help files
-----------
+## Help files
 
 In the console, typing a function name immediately after a question mark
 will bring up that function’s help file:
@@ -661,21 +658,18 @@ Two question marks will search for the command name in CRAN packages:
 ??sum
 ```
 
-Google it!
-----------
+## Google it\!
 
 Google is a coder’s best friend. If you are having a problem, odds are a
 1,000 other people have too and at least one of them has been brave (or
-foolhardy!) enough to ask about it in a forum like
+foolhardy\!) enough to ask about it in a forum like
 [StackOverflow](https://stackoverflow.com),
 [CrossValidated](https://stackoverflow.com), or [R-help mailing
-list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it!
+list](https://stat.ethz.ch/mailman/listinfo/r-help). Google it\!
 
-Miscellaneous notes about R
-===========================
+# Miscellaneous notes about R
 
-Compared to other statistical languages
----------------------------------------
+## Compared to other statistical languages
 
 Like all computing languages, R has its own structure and quirks. The
 idiomatic R approach to data analysis can be especially challenging at
@@ -683,7 +677,7 @@ first for those who come to R from other common statistical packages or
 scripting languages, like
 [SPSS](https://www.ibm.com/products/spss-statistics),
 [Python](https://www.python.org), and
-[Stata](https://www.stata.com).[^5]
+[Stata](https://www.stata.com).\[5\]
 
 I came to R after learning Stata first, which I think is common for many
 researchers trained in econometric methods. For me and others who’ve
@@ -694,7 +688,7 @@ language](https://en.wikipedia.org/wiki/Procedural_programming) in which
 commands **do** things in an environment (your data), R is more
 [object-oriented](https://en.wikipedia.org/wiki/Object-oriented_programming)
 in that data and functions are **stored** in variables or objects and
-await instructions that pertain to them.[^6]
+await instructions that pertain to them.\[6\]
 
 As pointed out by my friend and colleague [Richard
 Blissett](https://www.shu.edu/profiles/RichardBlissett.cfm), users can
@@ -703,12 +697,12 @@ Stata commands tend to be verbs: `summarize`, `tabulate`, and `regress`;
 on the other hand, R functions are often nouns: `summary`, `table`, and
 `lm` (for linear model). And so, common problems in the R to Stata
 switch such as  
-- *I ran a model and didn’t get any output…*  
-- *How do I create local/global macros in R?*  
-- *Which of these data objects is the actual data?*  
-- *Why isn’t R **doing** anything?*
+\- *I ran a model and didn’t get any output…*  
+\- *How do I create local/global macros in R?*  
+\- *Which of these data objects is the actual data?*  
+\- *Why isn’t R **doing** anything?*
 
-may be due to misunderstanding this difference.[^7]
+may be due to misunderstanding this difference.\[7\]
 
 Like learning a new spoken language, constantly translating between your
 native tongue and the new language will only get you so far. To that
@@ -718,55 +712,51 @@ document that shows the same analysis done in [Stata and R
 side-by-side](http://rslblissett.com/wp-content/uploads/2016/09/sidebyside_130826.pdf)
 may be useful in the initial transition.
 
-Other options for running R
----------------------------
+## Other options for running R
 
 There are many other ways besides RStudio to run R. Below are just a few
 that, depending on your personal preferences and project needs, may be
 better or worse than RStudio.
 
--   R-app (comes with the R installation)
--   Terminal/shell (R executable needs to be in your path)
--   [Emacs + ESS](https://ess.r-project.org)
--   [Atom](https://atom.io) + [r-exec](https://atom.io/packages/r-exec)
--   [Jupyter](http://jupyter.org) +
+  - R-app (comes with the R installation)
+  - Terminal/shell (R executable needs to be in your path)
+  - [Emacs + ESS](https://ess.r-project.org)
+  - [Atom](https://atom.io) + [r-exec](https://atom.io/packages/r-exec)
+  - [Jupyter](http://jupyter.org) +
     [IRkernel](https://irkernel.github.io)
 
-Miscellanea
------------
+## Miscellanea
 
--   R script files end in `.r` or `.R`
--   1-indexed (indexes start at 1 instead of 0)
--   Base commands usually written in C/C++ under the hood
--   Can be run in batch mode from the terminal/command line
-    -   older: `R CMD BATCH`
-    -   newer: `Rscript`
+  - R script files end in `.r` or `.R`
+  - 1-indexed (indexes start at 1 instead of 0)
+  - Base commands usually written in C/C++ under the hood
+  - Can be run in batch mode from the terminal/command line
+      - older: `R CMD BATCH`
+      - newer: `Rscript`
 
-Notes
-=====
+# Notes
 
-[^1]: The “data scientist” as a person/title, like “big data,” has
+1.  The “data scientist” as a person/title, like “big data,” has
     probably become a little played out, but for lack of a better
     catch-all term, I think everyone knows what I mean.
 
-[^2]: For a little more history on R, particularly its success as an
-    open source project, see [Fox
+2.  For a little more history on R, particularly its success as an open
+    source project, see [Fox
     (2009)](https://journal.r-project.org/archive/2009-2/RJournal_2009-2_Fox.pdf)
 
-[^3]: R also supports arrays, which can take on more than two
-    dimensions.
+3.  R also supports arrays, which can take on more than two dimensions.
 
-[^4]: For clarity, I’ll call them packages when talking about what is
+4.  For clarity, I’ll call them packages when talking about what is
     downloaded and libraries when discussing what is loaded into memory.
     Since the names are the same, it’s really a semantic difference.
 
-[^5]: If you come to R knowing C/C++, Fortran, or Java, see
+5.  If you come to R knowing C/C++, Fortran, or Java, see
     [Rcpp](http://www.rcpp.org), [rFortran](http://www.rfortran.org),
     [rJava](https://www.rforge.net/rJava/index.html) for some cool
     interactivity.
 
-[^6]: Stata has some object-oriented features and R some procedural
+6.  Stata has some object-oriented features and R some procedural
     programming behaviors, so the assigned labels aren’t perfect. They
     are mostly right, though.
 
-[^7]: Full disclosure: all questions I asked when learning R.
+7.  Full disclosure: all questions I asked when learning R.

@@ -8,7 +8,7 @@ links:
   data: els_plans.dta
 output:
   md_document:
-    variant: markdown_mmd
+    variant: gfm
     preserve_yaml: true
 always_allow_html: yes
 ---
@@ -610,11 +610,10 @@ library(plotly)
 
 ```
 
-```{r eda_plot_histogram_double_ptly, message = F, warning = F}
+```{r eda_plot_histogram_double_ptly, message = F, warning = F, results = 'hide'}
 ## create an interactive plot with the last figure
 p <- ggplotly(p)
 p
-
 ```
 
 ```{r, echo = FALSE, purl = FALSE, results = 'asis', warnings = FALSE}
@@ -644,7 +643,7 @@ call `ggplotly()` this time, we'll change the `tooltip` argument from
 the default `'all'` to `'text'` so it only includes our nicely
 formatted text.
 
-```{r eda_plot_histogram_double_ptly_2, message = F, warning = F}
+```{r eda_plot_histogram_double_ptly_2, message = F, warning = F, results = 'hide'}
 ## redo last figure with addition of text in aes()
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad),

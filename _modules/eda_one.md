@@ -8,7 +8,7 @@ links:
   data: els_plans.dta
 output:
   md_document:
-    variant: markdown_mmd
+    variant: gfm
     preserve_yaml: true
 always_allow_html: yes
 ---
@@ -18,8 +18,7 @@ Because building and cleaning a data set is often an iterative process,
 especially in the early stages of a project, some of the techniques
 below could still be considered part of data wrangling.
 
-Using data from another program
-===============================
+# Using data from another program
 
 Doing data analysis often means working in teams, which, in turn, can
 mean working with a variety of programs and file types. When you need to
@@ -27,12 +26,12 @@ use data that aren’t flat files (those ending in `*.txt`, `*.csv`, or
 `*.tsv`, for example) or in an R format, you can use one of the
 following libraries:
 
--   [readxl](http://readxl.tidyverse.org)
-    -   Excel: `read_excel()`
--   [haven](http://haven.tidyverse.org/reference/index.html)
-    -   Stata: `read_dta()`, `write_dta()`
-    -   SAS: `read_sas()`, `write_sas()`
-    -   SPSS: `read_sav()`, `write_sav()`
+  - [readxl](http://readxl.tidyverse.org)
+      - Excel: `read_excel()`
+  - [haven](http://haven.tidyverse.org/reference/index.html)
+      - Stata: `read_dta()`, `write_dta()`
+      - SAS: `read_sas()`, `write_sas()`
+      - SPSS: `read_sav()`, `write_sav()`
 
 For practice, we’ll use the same ELS plans data set as before, but this
 time stored in a Stata `*.dta` file.
@@ -58,8 +57,7 @@ library(labelled)
 df <- read_dta('../data/els_plans.dta')
 ```
 
-Labels
-------
+## Labels
 
 First, let’s take a quick bird’s eye view of our data. In RStudio, you
 can use the `View()` command or just click on the data object in the
@@ -115,13 +113,13 @@ df %>%
 
     $stu_id
     [1] "student id"
-
+    
     $bysex
     [1] "sex-composite"
-
+    
     $bypared
     [1] "parents^ highest level of education"
-
+    
     $bynels2m
     [1] "els-nels 1992 scale equated sophomore math score"
 
@@ -172,7 +170,7 @@ Okay. In this data set, male students are coded as 1 and female students
 are coded as 2.
 
 > #### Quick exercise
->
+> 
 > Use the `var_label()` and `val_labels()` functions to inspect another
 > variable with labels.
 
@@ -187,7 +185,7 @@ head(df$bysex)
 
     <Labelled double>
     [1] 2 2 2 2 2 1
-
+    
     Labels:
      value                                 label
      NA(s) {survey component legitimate skip/na}
@@ -206,18 +204,16 @@ df <- df %>%
 ```
 
 > #### Quick exercise
->
-> Whoops! Our new indicator variable isn’t quite right because it
+> 
+> Whoops\! Our new indicator variable isn’t quite right because it
 > doesn’t account for missing values. Redo the last command so that
 > `female == 1` when `bysex == 2`, `female == 0` when `bysex == 1` and
 > `female == NA` when `bysex` is missing. (HINT: in R, use `is.na(<x>)`
 > to check whether a value is missing.)
 
-Summary statistics
-==================
+# Summary statistics
 
-Continuous values
------------------
+## Continuous values
 
 We can get the mean and standard deviation of continuous variables using
 the `mean()` and `sd()` functions…
@@ -256,7 +252,7 @@ sd(df$bynels2m, na.rm = TRUE)
     [1] 13.53664
 
 > #### Quick exercise
->
+> 
 > Find the mean and standard deviation of reading scores.
 
 You can also compute summary statistics using
@@ -296,11 +292,10 @@ df %>%
     1  45.4  13.5
 
 > #### Quick exercise
->
+> 
 > Modify the above code to summarize reading scores at the same time.
 
-Discrete values
----------------
+## Discrete values
 
 Use the `table()` function for discrete variables. Because we know or
 maybe suspect that there are missing values, we add the `useNA` argument
@@ -311,9 +306,11 @@ with the argument `'ifany'`.
 table(df$bypared, useNA = 'ifany')
 ```
 
+``` 
 
-       1    2    3    4    5    6    7    8 <NA> 
-     942 3044 1663 1597 1758 3466 1785 1049  856 
+   1    2    3    4    5    6    7    8 <NA> 
+ 942 3044 1663 1597 1758 3466 1785 1049  856 
+```
 
 Unfortunately, these numbers don’t mean much without reference to a code
 book. However, because are data are labelled, we can use the
@@ -324,31 +321,33 @@ book. However, because are data are labelled, we can use the
 table(as_factor(df$bypared), useNA = 'ifany')
 ```
 
+``` 
 
-                  did not finish high school 
-                                         942 
-           graduated from high school or ged 
-                                        3044 
-           attended 2-year school, no degree 
-                                        1663 
-                graduated from 2-year school 
-                                        1597 
-          attended college, no 4-year degree 
-                                        1758 
-                      graduated from college 
-                                        3466 
-     completed master^s degree or equivalent 
-                                        1785 
-    completed phd, md, other advanced degree 
-                                        1049 
-                                   {missing} 
-                                           0 
-       {survey component legitimate skip/na} 
-                                           0 
-                             {nonrespondent} 
-                                           0 
-                                        <NA> 
-                                         856 
+              did not finish high school 
+                                     942 
+       graduated from high school or ged 
+                                    3044 
+       attended 2-year school, no degree 
+                                    1663 
+            graduated from 2-year school 
+                                    1597 
+      attended college, no 4-year degree 
+                                    1758 
+                  graduated from college 
+                                    3466 
+ completed master^s degree or equivalent 
+                                    1785 
+completed phd, md, other advanced degree 
+                                    1049 
+                               {missing} 
+                                       0 
+   {survey component legitimate skip/na} 
+                                       0 
+                         {nonrespondent} 
+                                       0 
+                                    <NA> 
+                                     856 
+```
 
 Now we can see what the numbers represent. Why aren’t there any counts
 for the three missing labels, the ones with braces, while there are a
@@ -360,28 +359,30 @@ number of `NA` values? Checking how the labels are assigned using the
 val_labels(df$bypared)
 ```
 
-                                   {missing} 
-                                          NA 
-       {survey component legitimate skip/na} 
-                                          NA 
-                             {nonrespondent} 
-                                          NA 
-                  did not finish high school 
-                                           1 
-           graduated from high school or ged 
-                                           2 
-           attended 2-year school, no degree 
-                                           3 
-                graduated from 2-year school 
-                                           4 
-          attended college, no 4-year degree 
-                                           5 
-                      graduated from college 
-                                           6 
-     completed master^s degree or equivalent 
-                                           7 
-    completed phd, md, other advanced degree 
-                                           8 
+``` 
+                               {missing} 
+                                      NA 
+   {survey component legitimate skip/na} 
+                                      NA 
+                         {nonrespondent} 
+                                      NA 
+              did not finish high school 
+                                       1 
+       graduated from high school or ged 
+                                       2 
+       attended 2-year school, no degree 
+                                       3 
+            graduated from 2-year school 
+                                       4 
+      attended college, no 4-year degree 
+                                       5 
+                  graduated from college 
+                                       6 
+ completed master^s degree or equivalent 
+                                       7 
+completed phd, md, other advanced degree 
+                                       8 
+```
 
 …confirms that when the original data values indicating missingness were
 changed from negative numbers to `.` in Stata, the labels no longer
@@ -390,7 +391,7 @@ we did, would have to find the original Stata data set that retained the
 negative values.
 
 > #### Quick exercise
->
+> 
 > Get counts for base year income levels.
 
 To generate counts using dplyr, use the `count()` function. By chaining
@@ -419,12 +420,11 @@ df %>%
     9 <NA>                                       856
 
 > #### Quick exercise
->
+> 
 > Get counts for base year income levels again, this time using the
 > dplyr method. What do you see if you drop `as_factor()` from the end?
 
-Two-way table
--------------
+## Two-way table
 
 Cross tabulations are also useful. With the `table()` function, instead
 of calling just `table(x)`, that is, `table()` with one column, call
@@ -435,48 +435,50 @@ of calling just `table(x)`, that is, `table()` with one column, call
 table(as_factor(df$bypared), as_factor(df$bysex))
 ```
 
-                                              
-                                               male female
-      did not finish high school                440    502
-      graduated from high school or ged        1496   1548
-      attended 2-year school, no degree         823    840
-      graduated from 2-year school              849    748
-      attended college, no 4-year degree        859    899
-      graduated from college                   1737   1729
-      completed master^s degree or equivalent   911    874
-      completed phd, md, other advanced degree  503    546
-      {missing}                                   0      0
-      {survey component legitimate skip/na}       0      0
-      {nonrespondent}                             0      0
-                                              
-                                               {survey component legitimate skip/na}
-      did not finish high school                                                   0
-      graduated from high school or ged                                            0
-      attended 2-year school, no degree                                            0
-      graduated from 2-year school                                                 0
-      attended college, no 4-year degree                                           0
-      graduated from college                                                       0
-      completed master^s degree or equivalent                                      0
-      completed phd, md, other advanced degree                                     0
-      {missing}                                                                    0
-      {survey component legitimate skip/na}                                        0
-      {nonrespondent}                                                              0
-                                              
-                                               {nonrespondent}
-      did not finish high school                             0
-      graduated from high school or ged                      0
-      attended 2-year school, no degree                      0
-      graduated from 2-year school                           0
-      attended college, no 4-year degree                     0
-      graduated from college                                 0
-      completed master^s degree or equivalent                0
-      completed phd, md, other advanced degree               0
-      {missing}                                              0
-      {survey component legitimate skip/na}                  0
-      {nonrespondent}                                        0
+``` 
+                                          
+                                           male female
+  did not finish high school                440    502
+  graduated from high school or ged        1496   1548
+  attended 2-year school, no degree         823    840
+  graduated from 2-year school              849    748
+  attended college, no 4-year degree        859    899
+  graduated from college                   1737   1729
+  completed master^s degree or equivalent   911    874
+  completed phd, md, other advanced degree  503    546
+  {missing}                                   0      0
+  {survey component legitimate skip/na}       0      0
+  {nonrespondent}                             0      0
+                                          
+                                           {survey component legitimate skip/na}
+  did not finish high school                                                   0
+  graduated from high school or ged                                            0
+  attended 2-year school, no degree                                            0
+  graduated from 2-year school                                                 0
+  attended college, no 4-year degree                                           0
+  graduated from college                                                       0
+  completed master^s degree or equivalent                                      0
+  completed phd, md, other advanced degree                                     0
+  {missing}                                                                    0
+  {survey component legitimate skip/na}                                        0
+  {nonrespondent}                                                              0
+                                          
+                                           {nonrespondent}
+  did not finish high school                             0
+  graduated from high school or ged                      0
+  attended 2-year school, no degree                      0
+  graduated from 2-year school                           0
+  attended college, no 4-year degree                     0
+  graduated from college                                 0
+  completed master^s degree or equivalent                0
+  completed phd, md, other advanced degree               0
+  {missing}                                              0
+  {survey component legitimate skip/na}                  0
+  {nonrespondent}                                        0
+```
 
 > #### Quick exercise
->
+> 
 > What happens when you switch the order of the variables in the
 > `table()` function (*i.e.*, `table(y, x)` instead of `table(x, y)`?
 
@@ -492,7 +494,7 @@ df %>%
 ```
 
     # A tibble: 19 x 3
-    # Groups: bysex [3]
+    # Groups:   bysex [3]
        bysex  bypared                                      n
        <fct>  <fct>                                    <int>
      1 male   did not finish high school                 440
@@ -529,7 +531,7 @@ df %>%
 
     # A tibble: 9 x 4
       bypared                                   male female `<NA>`
-    * <fct>                                    <int>  <int>  <int>
+      <fct>                                    <int>  <int>  <int>
     1 did not finish high school                 440    502     NA
     2 graduated from high school or ged         1496   1548     NA
     3 attended 2-year school, no degree          823    840     NA
@@ -541,37 +543,38 @@ df %>%
     9 <NA>                                        21     16    819
 
 > #### Quick exercise
->
+> 
 > The last table has an ugly `<NA>` column as well as an `NA` row in the
 > `bypared` column. Can you modify the last function chain to remove
 > those?
 
-Conditional mean
-================
+# Conditional mean
 
 Aside from cross tabulations, finding averages of continuous variables
 within groups, sometimes called conditional means, is a common task.
-We’ve already done this in the last couple of modules. With base R, use
-the `aggregate()` function to compute summary statistics of continuous
-values by group.
+We’ve already done this in the last couple of modules. With base R,
+use the `aggregate()` function to compute summary statistics of
+continuous values by group.
 
 ``` r
 ## get average math score by parental education 
 aggregate(df$bynels2m, by = list(df$bypared), mean, na.rm = TRUE)
 ```
 
-      Group.1        x
-    1       1 36.29864
-    2       2 40.52292
-    3       3 42.57740
-    4       4 44.45236
-    5       5 44.65419
-    6       6 48.50667
-    7       7 51.99566
-    8       8 52.88417
+``` 
+  Group.1        x
+1       1 36.29864
+2       2 40.52292
+3       3 42.57740
+4       4 44.45236
+5       5 44.65419
+6       6 48.50667
+7       7 51.99566
+8       8 52.88417
+```
 
 > #### Quick exercise
->
+> 
 > Is there a way to modify the code above to use the parental education
 > levels instead of just the number in the above tables?
 
@@ -588,23 +591,25 @@ df <- df %>%
 aggregate(df$bynels2m, by = list(df$lowinc, df$bypared), mean, na.rm = TRUE)
 ```
 
-       Group.1 Group.2        x
-    1        0       1 36.74020
-    2        1       1 35.88120
-    3        0       2 42.09193
-    4        1       2 37.64148
-    5        0       3 44.01492
-    6        1       3 38.03843
-    7        0       4 45.79327
-    8        1       4 39.06331
-    9        0       5 46.01975
-    10       1       5 38.93340
-    11       0       6 49.33081
-    12       1       6 41.50602
-    13       0       7 52.82858
-    14       1       7 41.42392
-    15       0       8 54.15734
-    16       1       8 38.45988
+``` 
+   Group.1 Group.2        x
+1        0       1 36.74020
+2        1       1 35.88120
+3        0       2 42.09193
+4        1       2 37.64148
+5        0       3 44.01492
+6        1       3 38.03843
+7        0       4 45.79327
+8        1       4 39.06331
+9        0       5 46.01975
+10       1       5 38.93340
+11       0       6 49.33081
+12       1       6 41.50602
+13       0       7 52.82858
+14       1       7 41.42392
+15       0       8 54.15734
+16       1       8 38.45988
+```
 
 The dplyr way of computing a conditional mean is clearer in some ways
 and a little more confusing in others. On one hand, using the
@@ -639,7 +644,8 @@ df %>%
 
 Once you’ve got the format, finding the conditional mean within a cross
 tabulation (group 1 X group 2) is straightforward: just add the variable
-to the `group_by()` function.
+to the `group_by()`
+function.
 
 ``` r
 ## using dplyr to get average math score by income and parental education level
@@ -651,30 +657,30 @@ df %>%
 ```
 
     # A tibble: 18 x 3
-    # Groups: bypared [?]
+    # Groups:   bypared [?]
        bypared                                  lowinc bynels2m
        <fct>                                     <dbl>    <dbl>
-     1 did not finish high school                 0        36.7
-     2 did not finish high school                 1.00     35.9
-     3 graduated from high school or ged          0        42.1
-     4 graduated from high school or ged          1.00     37.6
-     5 attended 2-year school, no degree          0        44.0
-     6 attended 2-year school, no degree          1.00     38.0
-     7 graduated from 2-year school               0        45.8
-     8 graduated from 2-year school               1.00     39.1
-     9 attended college, no 4-year degree         0        46.0
-    10 attended college, no 4-year degree         1.00     38.9
-    11 graduated from college                     0        49.3
-    12 graduated from college                     1.00     41.5
-    13 completed master^s degree or equivalent    0        52.8
-    14 completed master^s degree or equivalent    1.00     41.4
-    15 completed phd, md, other advanced degree   0        54.2
-    16 completed phd, md, other advanced degree   1.00     38.5
-    17 <NA>                                       0        46.2
-    18 <NA>                                       1.00     39.3
+     1 did not finish high school                   0.     36.7
+     2 did not finish high school                   1.     35.9
+     3 graduated from high school or ged            0.     42.1
+     4 graduated from high school or ged            1.     37.6
+     5 attended 2-year school, no degree            0.     44.0
+     6 attended 2-year school, no degree            1.     38.0
+     7 graduated from 2-year school                 0.     45.8
+     8 graduated from 2-year school                 1.     39.1
+     9 attended college, no 4-year degree           0.     46.0
+    10 attended college, no 4-year degree           1.     38.9
+    11 graduated from college                       0.     49.3
+    12 graduated from college                       1.     41.5
+    13 completed master^s degree or equivalent      0.     52.8
+    14 completed master^s degree or equivalent      1.     41.4
+    15 completed phd, md, other advanced degree     0.     54.2
+    16 completed phd, md, other advanced degree     1.     38.5
+    17 <NA>                                         0.     46.2
+    18 <NA>                                         1.     39.3
 
 > #### Quick exercise
->
+> 
 > Modify the above example slightly so that the average reading scores
 > by parental education level are also included. Next, compute the
 > standard deviation in addition to the mean. Finally, see if you can

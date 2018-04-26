@@ -10,7 +10,9 @@ custom_js:
 
 # Synopsis
 
-This two-day short course introduces participants to the R statistical language. After a general overview of R syntax, workshop [modules]({{ site.baseurl }}/modules/) cover how to:   
+This two-day short course introduces participants to the R statistical
+language. After a general overview of R syntax, workshop 
+[modules]({{ site.baseurl }}/modules/) cover how to:   
 
 * wrangle data using both base R and tidyverse functions,
 * reshape data frames,
@@ -28,13 +30,16 @@ statistical code (e.g., Stata scripting) or working in another
 programming language. A basic understanding of statistical modeling
 (e.g., OLS regression) is also required.
 
+Participants in the 3rd day follow-up either need to have taken the
+first two days of the workshop or have permission of the instructor.
+
 ## Computer Requirement 
 
 A laptop will be required for this workshop. Please plan to bring your
 personal one, and follow instructions below to install software before
 the start of the workshop. If you need to borrow a laptop, please
 contact [CurryVEST@virginia.edu](mailto:CurryVEST@virginia.edu) before
-Wednesday, January 10th.
+Friday, May 11.
 
 ## Software 
 
@@ -46,22 +51,24 @@ be limited time for troubleshooting. Other free software, such as Git,
 TeX, and Markdown, may also be referenced in the workshop, but will
 not be strictly required. 
 
+If you already have R, R Studio, and related packages, please update
+everything before the workshop. 
+
 See the [getting started]({{ site.baseurl
 }}/start) for links to required software and instructions for
 installing packages in R.
 
-
 # Date
 
-The course will take place on Monday, January 15, and Tuesday,
-January 16. For a complete schedule and links to modules, see the
-[schedule]({{ site.baseurl }}/schedule).
+The 3rd day course will take place on Thursday, May 17. For a complete
+schedule and links to modules, see the [schedule]({{ site.baseurl
+}}/schedule).
 
 # Location
 
-Bavaro Hall, Holloway Hall (room 116)  
-University of Virginia  
-417 Emmet St. South
+{{ site.info.building }}, {{ site.info.room }}  
+{{ site.info.location }}  
+{{ site.info.street }}
 
 <div id='mapwrap'>
 	<div id='map'></div>
