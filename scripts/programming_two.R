@@ -12,7 +12,235 @@ rm(list = ls())
 
 ## libraries
 library(tidyverse)
+library(plotly)
 
+## ---------------------------------------------------------
+## Inspect data
+## ---------------------------------------------------------
+
+## read in data
+df <- readRDS('../data/programming_two.rds')
+
+## show
+df
+
+## plot first two dimensions
+g <- ggplot(df, mapping = aes(x = x, y = y)) + geom_point()
+g
+
+## convert data to matrix to make our lives easier (x and y, only, for now)
+dat <- df %>% select(x, y) %>% as.matrix()
+
+## get initial means to start
+index <- sample(1:nrow(dat), 3)           # give k random indexes
+means <- dat[index,]
+
+## show
+means
+
+## init assignment vector
+assign_vec <- numeric(nrow(dat))
+
+## assign each point to one of the clusters
+for (i in 1:nrow(dat)) {
+    ## init a temporary distance object to hold k distance values
+    distance <- numeric(3)
+    ## compare to each mean
+    for (j in 1:3) {
+        distance[j] <- sum((dat[i,] - means[j,])^2)
+    }
+    ## assign the index of smallest value, which is effectively cluster ID
+    assign_vec[i] <- which.min(distance)
+}
+
+## repeat above in loop until assignments don't change
+identical <- FALSE
+while (!identical) {
+
+    ## update means
+    for (i in 1:3) {
+        means[i,] <- colMeans(dat[assign_vec == i,])
+    }
+
+    ## store old assignments, b/c we need to compare
+    old_assign_vec <- assign_vec
+
+    ## assign each point to one of the clusters
+    for (i in 1:nrow(dat)) {
+        ## init a temporary distance object to hold k distance values
+        distance <- numeric(3)
+        ## compare to each mean
+        for (j in 1:3) {
+            distance[j] <- sum((dat[i,] - means[j,])^2)
+        }
+        ## assign the index of smallest value, which is effectively cluster ID
+        assign_vec[i] <- which.min(distance)
+    }
+  
+    ## check if assignments change
+    identical <- identical(old_assign_vec, assign_vec)
+}
+
+## check assignment
+plot_df <- bind_cols(df, as.data.frame(assign_vec))
+g <- ggplot(plot_df, mapping = aes(x = x, y = y, color = factor(assign_vec))) +
+    geom_point()
+g
+
+## Euclidean distance^2
+euclid_dist_sq <- function(x,y) return(sum((x - y)^2))
+
+## standardize function that also returns mu and sd
+standardize <- function(data) {
+    ## column means
+    mu <- colMeans(data)
+    ## column standard deviations
+    sd <- sqrt(diag(var(data)))
+    ## scale data (z-score); faster to use pre-computed mu/sd
+    sdata <- scale(data, center = mu, scale = sd)
+    return(list('mu' = mu, 'sd' = sd, 'scaled_data' = sdata))
+}
+
+## compute new means for points in cluster
+compute_mean <- function(data, k, assign_vec) {
+    ## init means matrix: # means X # features (data columns)
+    means <- matrix(NA, k, ncol(data))
+    ## for each mean...
+    for (i in 1:k) {
+        ## ...get column means, restricting to cluster assigned points
+        means[i,] <- colMeans(data[assign_vec == i,])
+    }
+    return(means)
+}
+
+## find nearest mean to each point and assign to cluster
+assign_to_cluster <- function(data, k, means, assign_vec) {
+    ## init within-cluster sum of squares for each cluster
+    wcss <- numeric(k)
+    ## for each data point (slow!)...
+    for (i in 1:nrow(data)) {
+        ## ...init distance vector, one for each cluster mean
+        distance <- numeric(k)
+        ## ...for each mean...
+        for (j in 1:k) {
+            ## ...compute distance to point
+            distance[j] <- euclid_dist_sq(data[i,], means[j,])
+        }
+        ## ...assign to cluster with nearest mean
+        assign_vec[i] <- which.min(distance)
+        ## ...add distance to running sum of squares for assigned cluster
+        wcss[assign_vec[i]] <- wcss[assign_vec[i]] + distance[assign_vec[i]]
+    }
+    return(list('assign_vec' = assign_vec, 'wcss' = wcss))
+}
+
+## kmean funtion
+my_kmeans <- function(data, k, iterations = 100, nstarts = 1, standardize = FALSE) {
+
+    ## convert to matrix
+    x <- as.matrix(data)
+
+    ## standardize if TRUE
+    if (standardize) {
+        sdata <- standardize(data)
+        x <- sdata[['scaled_data']]
+    }
+
+    ## for number of starts
+    for (s in 1:nstarts) {
+
+        ## init identical
+        identical <- FALSE
+
+        ## select k random points as starting means
+        means <- x[sample(1:nrow(x),k),]
+
+        ## init assignment vector
+        init_assign_vec <- rep(NA, nrow(x))
+
+        ## first assignment
+        assign_wcss <- assign_to_cluster(x, k, means, init_assign_vec)
+
+        ## iterate until iterations run out or no change in assignment
+        while (iterations > 0 && !identical) {
+
+            ## store old assignment / wcss object
+            old_assign_wcss <- assign_wcss
+
+            ## get new means
+            means <- compute_mean(x, k, assign_wcss[['assign_vec']])
+
+            ## new assignments
+            assign_wcss <- assign_to_cluster(x, k, means, assign_wcss[['assign_vec']])
+
+            ## check if identical (no change in assignment)
+            identical <- identical(old_assign_wcss[['assign_vec']],
+                                   assign_wcss[['assign_vec']])
+
+            ## reduce iteration counter
+            iterations <- iterations - 1
+        }
+
+        ## store best values...
+        if (s == 1) {
+            best_wcss <- assign_wcss[['wcss']]
+            best_centers <- means
+            best_assignvec <- assign_wcss[['assign_vec']]
+        } else {
+            ## ...update accordingly if number of starts is > 1 & wcss is lower
+            if (sum(assign_wcss[['wcss']]) < sum(best_wcss)) {
+                best_wcss <- assign_wcss[['wcss']]
+                best_centers <- means
+                best_assignvec <- assign_wcss[['assign_vec']]
+            }
+        }
+    }
+
+    ## convert back to non-standarded centers if necessary
+    if (standardize) {
+        sd <- sdata[['sd']]
+        mu <- sdata[['mu']]
+        for (j in 1:ncol(x)) {
+            best_centers[,j] <- best_centers[,j] * sd[j] + mu[j]
+        }
+    }
+
+    ## return assignment vector, cluster centers, & wcss
+    return(list('assignments' = best_assignvec,
+                'centers' = best_centers,
+                'wcss' = best_wcss))
+}
+
+## 2 dimensions
+km_2d <- my_kmeans(df[,c('x','y')], 3, nstarts = 20)
+
+## check centers and wcss
+km_2d$centers
+km_2d$wcss
+
+## 3 dimensions
+km_3d <- my_kmeans(df, 3, nstarts = 20)
+
+## check centers and wcss
+km_3d$centers
+km_3d$wcss
+
+## using 2D: looks good 2D...
+p <- plot_ly(df, x = ~x, y = ~y, color = factor(km_2d$assignments)) %>%
+    add_markers()
+p
+## ...but off in 3D
+p <- plot_ly(df, x = ~x, y = ~y, z = ~z, color = factor(km_2d$assignments)) %>%
+    add_markers()
+p
+## using 3D: looks off in 2D...
+p <- plot_ly(df, x = ~x, y = ~y, color = factor(km_3d$assignments)) %>%
+    add_markers()
+p
+## ...but clearly better fit in 3D
+p <- plot_ly(df, x = ~x, y = ~y, z = ~z, color = factor(km_3d$assignments)) %>%
+    add_markers()
+p
 
 ## =============================================================================
 ## END SCRIPT
