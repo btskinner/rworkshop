@@ -1,6 +1,6 @@
 ---
 layout: module
-title: High Performance R with Rcpp
+title: High performance R with Rcpp
 date: 2018-01-01 00:00:14
 category: module
 links:
@@ -13,6 +13,33 @@ output:
     preserve_yaml: true
 ---
 
+R is really powerful, but for some tasks can be very slow. As data get
+larger and scripts require more complex algorithms and demanding tasks,
+even small bits of sluggishness become huge in the aggregate. Compiled
+languages such as C and C++ can be much faster than R, but require
+greater programming skill. While learning a compiled language is useful
+for many researchers, the upfront time needed to learn is often too
+steep for any given project.
+
+Fortunately, the [Rcpp](https://CRAN.R-project.org/package=Rcpp) package
+bridges the gap between the two worlds. While there is a bit of a
+learning curve for Rcpp, which is based on C++, much R code can be, with
+few modifications, adjusted to become Rcpp code and run much faster for
+complex tasks.
+
+This module will give one example of such a speed up. In my own
+research, I’ve computed the [Great Circle (“as the crow flies”)
+distance](https://en.wikipedia.org/wiki/Great-circle_distance) between
+colleges and various geographic centroids many times using either the
+[Haversine](https://en.wikipedia.org/wiki/Haversine_formula) or
+[Vincenty](https://en.wikipedia.org/wiki/Vincenty%27s_formulae) formula.
+But with over 7,500 colleges and universities in the United States,
+measuring the distance from each county centroid (around 3,000) became
+slow enough. Doing the same for all census tracks (around 70,000) and
+census block groups (over 200,000) was almost impossible. With small
+modifications to base R formula functions, however, I was able to
+convert them to compiled Rcpp function which run much, much faster.
+
 ``` r
 ## libraries
 library(tidyverse)
@@ -20,12 +47,22 @@ library(Rcpp)
 library(microbenchmark)
 ```
 
+# Load data
+
+This module uses two data frames. The first has the names and locations
+of all colleges with a physical campus in 2015. The second has the
+locations of every census block group in the United States from the 2010
+Census.
+
 ``` r
 ## load data
 load('../data/hp_rcpp.Rdata')
 ```
 
 ## College locations
+
+Here’s a quick peek at the college location data (around 7,600
+institutions).
 
 ``` r
 ## college locations
@@ -49,6 +86,9 @@ col_df
 
 ## Census block group locations
 
+And here’s the census block group location data (around 217,000 block
+groups).
+
 ``` r
 ## census block group locations
 cbg_df
@@ -70,6 +110,13 @@ cbg_df
     # ... with 217,730 more rows
 
 # Compute great circle distance with Haversine
+
+The [Haversine
+formula](https://en.wikipedia.org/wiki/Haversine_formula#The_haversine_formula)
+is a fairly straightforward trigonometric problem. Since the coordinates
+in the data are in latitude and longitude and the formula requires
+radians, a quick helper function `deg_to_rad()` is used to make the
+conversion.
 
 ``` r
 ## convert degrees to radians
@@ -101,6 +148,10 @@ dist_haversine <- function(xlon, xlat, ylon, ylat) {
 }
 ```
 
+With the formula, we can compute the distance in meters between the
+first census block group and the first college in the data set pretty
+quickly.
+
 ``` r
 ## store first census block group point (x) and first college point (y)
 xlon <- cbg_df[[1, 'lon']]
@@ -115,7 +166,21 @@ d
 
     [1] 258212.3
 
+> #### Quick exercise
+> 
+> Find the coordinates of two places you know the distance between
+> pretty well (say, your hometown and where you live now or your first
+> college or the nearest big city). Compute the distance and compare to
+> Google's driving distance. It should be shorter (crows fly very
+> straight), but similar. You may want to convert the meters to
+> kilometers or miles. As always Google is your friend for all these
+> steps.
+
 ## Many to many distance matrix
+
+Now that we have a core function, let’s write a larger function that can
+take many input points, many output points, and compute the distances
+between them.
 
 ``` r
 ## compute many to many distances and return matrix
@@ -134,6 +199,7 @@ dist_mtom <- function(xlon,         # vector of starting longitudes
     ## double loop through each set of points to get all combinations
     for(i in 1:n) {
         for(j in 1:k) {
+            ## compute distance using core function
             mat[i,j] <- dist_haversine(xlon[i], xlat[i], ylon[j], ylat[j])
         }
     }
@@ -144,6 +210,8 @@ dist_mtom <- function(xlon,         # vector of starting longitudes
     return(mat)
 }
 ```
+
+Let’s test it with a subset of ten starting points.
 
 ``` r
 ## test matrix (limit to only 10 starting points)
@@ -170,6 +238,12 @@ distmat[1:5,1:5]
 > name of the nearest end point?
 
 ## Nearest end point
+
+Rather than return a full matrix of distances that we then need to
+evaluate to find the shortest distance, let’s write a new function,
+`dist_min()`, that will take two vectors of points again, but only
+return the closest point in the second group, with distance, for each
+point in the first group.
 
 ``` r
 ## compute and return minimum distance along with name
@@ -210,6 +284,8 @@ dist_min <- function(xlon,         # vector of starting longitudes
 }
 ```
 
+Let’s test it out.
+
 ``` r
 ## test matrix (limit to only 10 starting points)
 mindf <- dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
@@ -235,17 +311,36 @@ mindf
 
 > #### Quick exercise
 > 
-> How long will it take to find the closest college to each census
-> track? Use `system.time()` and extrapolate to make a best guess.
+> How long will it take to find the closest college to each census block
+> group? Use `system.time()` and extrapolate to make a best guess.
 
 # Rcpp
 
-``` r
-## source Rcpp code
-sourceCpp('../scripts/dist_func.cpp', rebuild = TRUE)
-```
+These worked well, but we only did 10 starting points. We need to find
+it for over 200,000 starting points. What we need is to convert the base
+R functions into Rcpp functions.
+
+Below, the full script, `dist_func.cpp`, is discussed in pieces.
 
 ## Front matter
+
+The head of an Rcpp script is like an R script in that this is place to
+`#include` other header files. This is akin to having `library(...)` in
+an R script. At the very least, an Rcpp script needs to include it’s own
+header files, `Rcpp.h`.
+
+Next, we define preprocessor replacements. In the process of compiling
+the script, that is, turning the Rcpp code that’s human readable into
+machine-readable byte code, the preprocessor first runs through the
+script. One job is to replace any `#define` directive with the value it
+has been given. In our code, that means that anywhere in the script that
+`e_r` is found, `6378137.0` literally replaces it.
+
+Finally, we load the `Rcpp` namespace with `using namespace Rcpp;`. This
+means that we don’t have to keep repeating `Rcpp::<...>` before every
+function we want. Sometimes, it’s better to do it the long way,
+especially if you are using functions from multiple libraries that may
+overlap, but we’re okay doing it this way this time.
 
 ``` cpp
 // header files to include
@@ -261,18 +356,49 @@ using namespace Rcpp;
 
 ## Utility functions
 
+First, we have the two utility functions to convert degrees to radians
+and to compute the Haversine distance between two points. A few things
+to note right away:
+
+  - Rcpp comments use `//` or `/* ... */`  
+  - Lines must end in a semi-colon, `;`  
+  - Variables are [strongly
+    typed](https://en.wikipedia.org/wiki/Strong_and_weak_typing)
+
+When a language is strongly typed, the user must tell the compiler the
+variable type, like `double`, `int`, etc. R will guess what you want and
+change on fly. This is a nice interactive feature, but is part of what
+makes R slow sometimes. By strongly typing a variable, the computer
+knows right away what you want and doesn’t waste time or memory making
+adjustments.
+
+A few other things to notice:
+
+  - `doubles` should end in a `.` or `.0`, otherwise they are assumed to
+    be integers; dividing by integers can have weird outcomes so unless
+    you are REALLY sure you want an integer, a floating point number
+    like a `double` is probably what you want (see `degree * m_pi
+    / 180.0`)  
+  - The variable type before the function name tells the compiler what
+    form the function output will take  
+  - Function arguments must also be typed
+
+Finally, for the function to be available to you as a user, you must put
+`// [[Rcpp::export]]` just before it.
+
 ``` cpp
 // convert degrees to radians
 // [[Rcpp::export]]
 double deg_to_rad_rcpp(double degree) {
- return(degree * m_pi / 180.0);
+  return(degree * m_pi / 180.0);
+}
 
 // compute Haversine distance between two points
 // [[Rcpp::export]]
 double dist_haversine_rcpp(double xlon,
-                            double xlat,
-                            double ylon,
-                            double ylat) {
+               double xlat,
+               double ylon,
+               double ylat) {
 
   // return 0 if same point
   if (xlon == ylon && xlat == xlon) return 0.0;
@@ -286,22 +412,35 @@ double dist_haversine_rcpp(double xlon,
   // haversine distance formula
   double d1 = sin((ylat - xlat) / 2.0);
   double d2 = sin((ylon - xlon) / 2.0);
-  return 2.0 * e_r * asin(sqrt(d1*d1 + cos(xlat) * cos(ylat) * d2*d2));
-  return dist;   
+  return 2.0 * e_r * asin(sqrt(d1*d1 + cos(xlat) * cos(ylat) * d2*d2));  
 }
 ```
 
 ## Many to many distance matrix
 
+Moving to the main functions, notice that base R function has been
+changed only slightly. For the most part, the difference is that
+variables, argument, and function return must be typed.
+
+A few other differences to note:
+
+  - the length of a vector is measured with `.size()`  
+  - loops in C++ take the form (<init>; <test>; <increment>), which
+    works as "start `i` as 0, check if `i` is less than the number of
+    starting points, `n`, add 1 to `i`, then run the loop; if the check
+    fails, skip the loop.
+
+<!-- end list -->
+
 ``` cpp
 // compute many to many distances and return matrix
 // [[Rcpp::export]]
 NumericMatrix dist_mtom_rcpp(NumericVector xlon,
-                               NumericVector xlat,
-                               NumericVector ylon,
-                               NumericVector ylat,
-                               CharacterVector x_names,
-                               CharacterVector y_names) {
+                 NumericVector xlat,
+                 NumericVector ylon,
+                 NumericVector ylat,
+                 CharacterVector x_names,
+                 CharacterVector y_names) {
 
   // init output matrix (x X y)
   int n = xlon.size();
@@ -323,23 +462,28 @@ NumericMatrix dist_mtom_rcpp(NumericVector xlon,
 
 ## Nearest end point
 
+Again the Rcpp version of this script is almost identical to the base R
+version, just with variable typing added. Since we’re returning a data
+frame (Rcpp version: `DataFrame`), we have to create it with
+`DataFrame::create()` as we return it.
+
 ``` cpp
 // compute and return minimum distance along with name
 // [[Rcpp::export]]
 DataFrame dist_min_rcpp(NumericVector xlon,
-                          NumericVector xlat,
-                          NumericVector ylon,
-                          NumericVector ylat,
-                          CharacterVector x_names,
-                          CharacterVector y_names) {
-
+            NumericVector xlat,
+            NumericVector ylon,
+            NumericVector ylat,
+            CharacterVector x_names,
+            CharacterVector y_names) {
+  
   // init output matrix (x X 3)
   int n = xlon.size();
   int k = ylon.size();
   CharacterVector minvec_name(n);
   NumericVector minvec_meter(n);
   NumericVector tmp(k);
-
+  
   // loop through each set of starting points
   for(int i = 0; i < n; i++) {
     for(int j = 0; j < k; j++) {
@@ -349,16 +493,39 @@ DataFrame dist_min_rcpp(NumericVector xlon,
     minvec_name[i] = y_names[which_min(tmp)];
     minvec_meter[i] = min(tmp);
   }
-
+  
   // return created data frame
   return DataFrame::create(Named("fips11") = x_names,
-                            Named("unitid") = minvec_name,
-                            Named("meters") = minvec_meter,
-                            _["stringsAsFactors"] = false);
+               Named("unitid") = minvec_name,
+               Named("meters") = minvec_meter,
+               _["stringsAsFactors"] = false);
 }
 ```
 
+## Source the Rcpp file
+
+To compile the Rcpp scripts and have the functions available to us in
+our R script or session, we need to read in the script with
+`sourceCpp()`. This works much like regular `source()` works, except for
+Rcpp files. We’ll add the argument `rebuild = TRUE` so that if need to
+go back and adjust the source code during a session, it will be rebuilt
+when we call `sourceCpp()` again.
+
+Compiling code can take a while. In essence, we’re trading some time now
+for faster speed down the road. This is why compiled code isn’t great
+for interactive coding sessions or for small tasks. But our code isn’t
+complex and compiles rather quickly.
+
+``` r
+## source Rcpp code
+sourceCpp('../scripts/dist_func.cpp', rebuild = TRUE)
+```
+
 # Quick comparisons
+
+Now that we have both versions of our distance measuring functions, we
+should compare the time it takes both to run. But first, let’s make sure
+that they give the same results.
 
 ## Single distance
 
@@ -378,12 +545,21 @@ identical(d, d_Rcpp)
 
     [1] TRUE
 
+For one point, our `dist_haversine()` and `dist_haversine_rcpp()` give
+the same result.
+
 ## Many to many
 
+Next, we’ll compare our many to many matrix, making sure we get the same
+values.
+
 ``` r
-distmat_Rcpp <- dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                               col_df$lon, col_df$lat,
-                               cbg_df$fips11[1:10], col_df$unitid)
+distmat_Rcpp <- dist_mtom_rcpp(cbg_df$lon[1:10],
+                               cbg_df$lat[1:10],
+                               col_df$lon,
+                               col_df$lat,
+                               cbg_df$fips11[1:10],
+                               col_df$unitid)
 
 ## show
 distmat_Rcpp[1:5,1:5]
@@ -405,12 +581,20 @@ all.equal(distmat, distmat_Rcpp)
 
     [1] TRUE
 
+Again, we get the same values (within some very very small floating
+point rounding error).
+
 ## Minimum distances
 
+Finally, we’ll compare the minimum distance function.
+
 ``` r
-mindf_Rcpp <- dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                            col_df$lon, col_df$lat,
-                            cbg_df$fips11[1:10], col_df$unitid)
+mindf_Rcpp <- dist_min_rcpp(cbg_df$lon[1:10],
+                            cbg_df$lat[1:10],
+                            col_df$lon,
+                            col_df$lat,
+                            cbg_df$fips11[1:10],
+                            col_df$unitid)
 
 ## show
 mindf_Rcpp
@@ -437,70 +621,99 @@ all.equal(mindf, mindf_Rcpp)
 
     [1] TRUE
 
+And once more, the same results. We’re now ready to compare speeds\!
+
 # Benchmarks
 
+To compare really small differences in time, we’ll use the
+[microbenchmark](https://CRAN.R-project.org/package=microbenchmark)
+package. Aside from being accurate at small time scales, it makes
+comparisons based on multiple runs and can plot the differences using
+the `autoplot()` function.
+
+First, we’ll compare the core `dist_haversine*()` functions.
+
 ``` r
+## use microbenchmark to compare 
 tm_single <- microbenchmark(base_R = dist_haversine(xlon, xlat, ylon, ylat),
                             Rcpp = dist_haversine_rcpp(xlon, xlat, ylon, ylat),
-                            times = 1000)
+                            times = 1000L)
 ## results
 tm_single
 ```
 
     Unit: microseconds
-       expr   min    lq     mean median     uq     max neval
-     base_R 1.856 1.929 2.059579  1.958 2.0140  16.853  1000
-       Rcpp 1.325 1.370 2.237910  1.403 1.4525 797.096  1000
+       expr   min     lq     mean median     uq      max neval
+     base_R 3.509 3.8960 5.312829 4.2135 6.7170   29.250  1000
+       Rcpp 2.329 2.7525 7.352855 3.7060 6.1025 2801.071  1000
 
 ``` r
 ## plot
 autoplot(tm_single)
 ```
 
-<img src="figures/unnamed-chunk-29-1.png" width="100%" />
+    Coordinate system already present. Adding new coordinate system, which will replace the existing one.
+
+<img src="figures/hp_single-1.png" width="100%" />
+
+Comparing `dist_haversine()` with `dist_haversine_rcpp()`, the compiled
+version isn’t that much faster. Considering we’re on the scale of
+microseconds, it *really* isn’t that much faster.
 
 ``` r
 ## time for base R to do many to many with 100 starting points
-system.time(dist_mtom(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                      col_df$lon, col_df$lat,
-                      cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_mtom(cbg_df$lon[1:100],
+                      cbg_df$lat[1:100],
+                      col_df$lon,
+                      col_df$lat,
+                      cbg_df$fips11[1:100],
+                      col_df$unitid))
 ```
 
 ``` 
    user  system elapsed 
-  2.070   0.012   2.083 
+  4.600   0.056   4.777 
 ```
 
 ``` r
 ## ...and now Rcpp version
-system.time(dist_mtom_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                           col_df$lon, col_df$lat,
-                           cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_mtom_rcpp(cbg_df$lon[1:100],
+                           cbg_df$lat[1:100],
+                           col_df$lon,
+                           col_df$lat,
+                           cbg_df$fips11[1:100],
+                           col_df$unitid))
 ```
 
 ``` 
    user  system elapsed 
-  0.036   0.000   0.036 
+  0.076   0.002   0.084 
 ```
 
 ``` r
 ## compare just 10 many to many
-tm_mtom <- microbenchmark(base_R = dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                             col_df$lon, col_df$lat,
-                                             cbg_df$fips11[1:10], col_df$unitid),
-                          Rcpp = dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                                col_df$lon, col_df$lat,
-                                                cbg_df$fips11[1:10], col_df$unitid),
-                          times = 100)
+tm_mtom <- microbenchmark(base_R = dist_mtom(cbg_df$lon[1:10],
+                                             cbg_df$lat[1:10],
+                                             col_df$lon,
+                                             col_df$lat,
+                                             cbg_df$fips11[1:10],
+                                             col_df$unitid),
+                          Rcpp = dist_mtom_rcpp(cbg_df$lon[1:10],
+                                                cbg_df$lat[1:10],
+                                                col_df$lon,
+                                                col_df$lat,
+                                                cbg_df$fips11[1:10],
+                                                col_df$unitid),
+                          times = 100L)
 
 ## results
 tm_mtom
 ```
 
     Unit: milliseconds
-       expr        min         lq       mean     median         uq        max
-     base_R 197.057237 203.348951 208.545831 206.482848 210.210083 264.782868
-       Rcpp   3.179775   3.234547   3.304756   3.272729   3.374662   3.634047
+       expr        min         lq       mean     median        uq      max
+     base_R 407.335531 420.107217 436.744963 426.894668 437.73289 627.4415
+       Rcpp   6.047639   6.250503   7.978705   6.531377   7.43794 110.6525
      neval
        100
        100
@@ -510,49 +723,67 @@ tm_mtom
 autoplot(tm_mtom)
 ```
 
-<img src="figures/unnamed-chunk-31-1.png" width="100%" />
+    Coordinate system already present. Adding new coordinate system, which will replace the existing one.
+
+<img src="figures/hp_mtom-1.png" width="100%" />
+
+Where we start to see speed improvements in the main function. The
+compiled version of the many to many function is nearly two orders of
+magnitude faster\!
 
 ``` r
 ## time for base R to do many to many with 100 starting points
-system.time(dist_min(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                     col_df$lon, col_df$lat,
-                     cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_min(cbg_df$lon[1:100],
+                     cbg_df$lat[1:100],
+                     col_df$lon,
+                     col_df$lat,
+                     cbg_df$fips11[1:100],
+                     col_df$unitid))
 ```
 
 ``` 
    user  system elapsed 
-  2.100   0.009   2.117 
+  4.272   0.021   4.310 
 ```
 
 ``` r
 ## ...and now Rcpp version
-system.time(dist_min_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                          col_df$lon, col_df$lat,
-                          cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_min_rcpp(cbg_df$lon[1:100],
+                          cbg_df$lat[1:100],
+                          col_df$lon,
+                          col_df$lat,
+                          cbg_df$fips11[1:100],
+                          col_df$unitid))
 ```
 
 ``` 
    user  system elapsed 
-  0.034   0.000   0.033 
+  0.075   0.000   0.075 
 ```
 
 ``` r
 ## compare just 10 min
-tm_min <- microbenchmark(base_R = dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                           col_df$lon, col_df$lat,
-                                           cbg_df$fips11[1:10], col_df$unitid),
-                         Rcpp = dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                              col_df$lon, col_df$lat,
-                                              cbg_df$fips11[1:10], col_df$unitid),
+tm_min <- microbenchmark(base_R = dist_min(cbg_df$lon[1:10],
+                                           cbg_df$lat[1:10],
+                                           col_df$lon,
+                                           col_df$lat,
+                                           cbg_df$fips11[1:10],
+                                           col_df$unitid),
+                         Rcpp = dist_min_rcpp(cbg_df$lon[1:10],
+                                              cbg_df$lat[1:10],
+                                              col_df$lon,
+                                              col_df$lat,
+                                              cbg_df$fips11[1:10],
+                                              col_df$unitid),
                          times = 100)
 ## results
 tm_min
 ```
 
     Unit: milliseconds
-       expr        min         lq       mean     median         uq        max
-     base_R 192.406121 205.150824 209.557421 208.917229 211.350122 253.219094
-       Rcpp   3.403444   3.448892   3.523223   3.487917   3.552427   4.191474
+       expr        min         lq       mean     median        uq       max
+     base_R 407.961009 422.053949 432.302879 428.538098 436.96943 520.41973
+       Rcpp   6.904668   7.051097   7.960559   7.209413   8.62174  19.01487
      neval
        100
        100
@@ -562,20 +793,38 @@ tm_min
 autoplot(tm_min)
 ```
 
-<img src="figures/unnamed-chunk-33-1.png" width="100%" />
+    Coordinate system already present. Adding new coordinate system, which will replace the existing one.
+
+<img src="figures/hp_min-1.png" width="100%" />
+
+Similarly, the compiled minimum distance function is much faster than
+the base R function.
+
+In this case as well as the former, we should note that we aren’t
+comparing fully optimized versions of either function. That said, while
+it’s possible that the base R functions could be sped up, neither is
+likely to come close to matching the speed of the compiled Rcpp
+versions.
 
 # Full run for Rcpp version
 
+Throughout, we’ve been running the functions on a reduced starting data
+set. But how long does it take to find the nearest college to each
+census block? Let’s find out\!
+
 ``` r
 ## find minimum
-system.time(full_min <- dist_min_rcpp(cbg_df$lon, cbg_df$lat,
-                                      col_df$lon, col_df$lat,
-                                      cbg_df$fips11, col_df$unitid))
+system.time(full_min <- dist_min_rcpp(cbg_df$lon,
+                                      cbg_df$lat,
+                                      col_df$lon,
+                                      col_df$lat,
+                                      cbg_df$fips11,
+                                      col_df$unitid))
 ```
 
 ``` 
    user  system elapsed 
- 71.906   0.117  72.165 
+155.024   0.421 155.773 
 ```
 
 ``` r
@@ -598,13 +847,17 @@ full_min %>% tbl_df()
     10 010010204004 101471 14757.
     # ... with 217,730 more rows
 
+Just a little over two minutes to compute 217,000 by 7,700 distances,
+finding and storing the minimally distance college along with its
+distance\!
+
 > #### Not-so quick exercise
 > 
 > Below is a function that computes the great circle distance using
 > [Vincenty’s
 > formula](https://en.wikipedia.org/wiki/Vincenty%27s_formulae). It’s
 > more accurate than the haversine version, but can be much more
-> compuationally intensive. Try to convert the base R function into an
+> computationally intensive. Try to convert the base R function into an
 > Rcpp function. You’ll need to start a new script and then use
 > `sourceCpp()` to read it in and test. Once you’ve got, substitute the
 > respective Vincenty formula functions into the `dist_min_*()`
@@ -614,7 +867,7 @@ full_min %>% tbl_df()
 > 1\. You’ll need to declare your variables and types (lot’s of
 > `double`); don’t forget that double numbers need a decimal, otherwise
 > C++ thinks they are integers.  
-> 2\. Don’t forget your semi-colon line enders\!  
+> 2\. Don’t forget your semi-colon line endings\!  
 > 3\. `abs()` in C++ is `fabs()`  
 > 4\. Remember: `a^2 = a * a`
 

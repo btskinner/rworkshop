@@ -70,6 +70,10 @@ ylat <- col_df[[1, 'lat']]
 d <- dist_haversine(xlon, xlat, ylon, ylat)
 d
 
+## -----------------------------------------------
+## GC distance between many points
+## -----------------------------------------------
+
 ## compute many to many distances and return matrix
 dist_mtom <- function(xlon,         # vector of starting longitudes
                       xlat,         # vector of starting latitudes
@@ -86,6 +90,7 @@ dist_mtom <- function(xlon,         # vector of starting longitudes
     ## double loop through each set of points to get all combinations
     for(i in 1:n) {
         for(j in 1:k) {
+            ## compute distance using core function
             mat[i,j] <- dist_haversine(xlon[i], xlat[i], ylon[j], ylat[j])
         }
     }
@@ -96,10 +101,6 @@ dist_mtom <- function(xlon,         # vector of starting longitudes
     return(mat)
 }
 
-## -----------------------------------------------
-## GC distance between many points
-## -----------------------------------------------
-
 ## test matrix (limit to only 10 starting points)
 distmat <- dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
                      col_df$lon, col_df$lat,
@@ -107,6 +108,10 @@ distmat <- dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
 
 ## show
 distmat[1:5,1:5]
+
+## -----------------------------------------------
+## minimum GC distance between many points
+## -----------------------------------------------
 
 ## compute and return minimum distance along with name
 dist_min <- function(xlon,         # vector of starting longitudes
@@ -145,10 +150,6 @@ dist_min <- function(xlon,         # vector of starting longitudes
                       stringsAsFactors = FALSE))
 }
 
-## -----------------------------------------------
-## minimum GC distance between many points
-## -----------------------------------------------
-
 ## test matrix (limit to only 10 starting points)
 mindf <- dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
                   col_df$lon, col_df$lat,
@@ -182,9 +183,12 @@ identical(d, d_Rcpp)
 ## many to many
 ## ---------------------------
 
-distmat_Rcpp <- dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                               col_df$lon, col_df$lat,
-                               cbg_df$fips11[1:10], col_df$unitid)
+distmat_Rcpp <- dist_mtom_rcpp(cbg_df$lon[1:10],
+                               cbg_df$lat[1:10],
+                               col_df$lon,
+                               col_df$lat,
+                               cbg_df$fips11[1:10],
+                               col_df$unitid)
 
 ## show
 distmat_Rcpp[1:5,1:5]
@@ -192,9 +196,16 @@ distmat_Rcpp[1:5,1:5]
 ## compare
 all.equal(distmat, distmat_Rcpp)
 
-mindf_Rcpp <- dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                            col_df$lon, col_df$lat,
-                            cbg_df$fips11[1:10], col_df$unitid)
+## ---------------------------
+## minimum distance
+## ---------------------------
+
+mindf_Rcpp <- dist_min_rcpp(cbg_df$lon[1:10],
+                            cbg_df$lat[1:10],
+                            col_df$lon,
+                            col_df$lat,
+                            cbg_df$fips11[1:10],
+                            col_df$unitid)
 
 ## show
 mindf_Rcpp
@@ -209,9 +220,10 @@ all.equal(mindf, mindf_Rcpp)
 ## single distance
 ## ---------------------------
 
+## use microbenchmark to compare 
 tm_single <- microbenchmark(base_R = dist_haversine(xlon, xlat, ylon, ylat),
                             Rcpp = dist_haversine_rcpp(xlon, xlat, ylon, ylat),
-                            times = 1000)
+                            times = 1000L)
 ## results
 tm_single
 
@@ -223,23 +235,35 @@ autoplot(tm_single)
 ## ---------------------------
 
 ## time for base R to do many to many with 100 starting points
-system.time(dist_mtom(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                      col_df$lon, col_df$lat,
-                      cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_mtom(cbg_df$lon[1:100],
+                      cbg_df$lat[1:100],
+                      col_df$lon,
+                      col_df$lat,
+                      cbg_df$fips11[1:100],
+                      col_df$unitid))
 
 ## ...and now Rcpp version
-system.time(dist_mtom_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                           col_df$lon, col_df$lat,
-                           cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_mtom_rcpp(cbg_df$lon[1:100],
+                           cbg_df$lat[1:100],
+                           col_df$lon,
+                           col_df$lat,
+                           cbg_df$fips11[1:100],
+                           col_df$unitid))
 
 ## compare just 10 many to many
-tm_mtom <- microbenchmark(base_R = dist_mtom(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                             col_df$lon, col_df$lat,
-                                             cbg_df$fips11[1:10], col_df$unitid),
-                          Rcpp = dist_mtom_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                                col_df$lon, col_df$lat,
-                                                cbg_df$fips11[1:10], col_df$unitid),
-                          times = 100)
+tm_mtom <- microbenchmark(base_R = dist_mtom(cbg_df$lon[1:10],
+                                             cbg_df$lat[1:10],
+                                             col_df$lon,
+                                             col_df$lat,
+                                             cbg_df$fips11[1:10],
+                                             col_df$unitid),
+                          Rcpp = dist_mtom_rcpp(cbg_df$lon[1:10],
+                                                cbg_df$lat[1:10],
+                                                col_df$lon,
+                                                col_df$lat,
+                                                cbg_df$fips11[1:10],
+                                                col_df$unitid),
+                          times = 100L)
 
 ## results
 tm_mtom
@@ -252,22 +276,34 @@ autoplot(tm_mtom)
 ## ---------------------------
 
 ## time for base R to do many to many with 100 starting points
-system.time(dist_min(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                     col_df$lon, col_df$lat,
-                     cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_min(cbg_df$lon[1:100],
+                     cbg_df$lat[1:100],
+                     col_df$lon,
+                     col_df$lat,
+                     cbg_df$fips11[1:100],
+                     col_df$unitid))
 
 ## ...and now Rcpp version
-system.time(dist_min_rcpp(cbg_df$lon[1:100], cbg_df$lat[1:100],
-                          col_df$lon, col_df$lat,
-                          cbg_df$fips11[1:100], col_df$unitid))
+system.time(dist_min_rcpp(cbg_df$lon[1:100],
+                          cbg_df$lat[1:100],
+                          col_df$lon,
+                          col_df$lat,
+                          cbg_df$fips11[1:100],
+                          col_df$unitid))
 
 ## compare just 10 min
-tm_min <- microbenchmark(base_R = dist_min(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                           col_df$lon, col_df$lat,
-                                           cbg_df$fips11[1:10], col_df$unitid),
-                         Rcpp = dist_min_rcpp(cbg_df$lon[1:10], cbg_df$lat[1:10],
-                                              col_df$lon, col_df$lat,
-                                              cbg_df$fips11[1:10], col_df$unitid),
+tm_min <- microbenchmark(base_R = dist_min(cbg_df$lon[1:10],
+                                           cbg_df$lat[1:10],
+                                           col_df$lon,
+                                           col_df$lat,
+                                           cbg_df$fips11[1:10],
+                                           col_df$unitid),
+                         Rcpp = dist_min_rcpp(cbg_df$lon[1:10],
+                                              cbg_df$lat[1:10],
+                                              col_df$lon,
+                                              col_df$lat,
+                                              cbg_df$fips11[1:10],
+                                              col_df$unitid),
                          times = 100)
 ## results
 tm_min
@@ -280,9 +316,12 @@ autoplot(tm_min)
 ## ---------------------------
 
 ## find minimum
-system.time(full_min <- dist_min_rcpp(cbg_df$lon, cbg_df$lat,
-                                      col_df$lon, col_df$lat,
-                                      cbg_df$fips11, col_df$unitid))
+system.time(full_min <- dist_min_rcpp(cbg_df$lon,
+                                      cbg_df$lat,
+                                      col_df$lon,
+                                      col_df$lat,
+                                      cbg_df$fips11,
+                                      col_df$unitid))
 
 ## show
 full_min %>% tbl_df()

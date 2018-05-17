@@ -371,16 +371,16 @@ df
     # A tibble: 100 x 4
           id   age sibage parage
        <int> <dbl>  <dbl>  <dbl>
-     1     1  -97.     9.    46.
-     2     2   20.     8.    46.
-     3     3   14.    11.    47.
-     4     4   19.     6.    48.
-     5     5   14.    11.    51.
-     6     6   14.     5.    55.
-     7     7   14.     5.    45.
-     8     8   20.     8.    46.
-     9     9   20.     8.    48.
-    10    10   15.    10.    54.
+     1     1  -97.     7.    50.
+     2     2   12.     5.    46.
+     3     3   11.     7.    50.
+     4     4   13.     6.    45.
+     5     5   15.     7.    46.
+     6     6  -97.    11.    47.
+     7     7   17.    10.    49.
+     8     8   13.    10.    47.
+     9     9  -97.    10.    50.
+    10    10   14.     8.    54.
     # ... with 90 more rows
 
 We could fix these manually like we have been, but it would be nice have
@@ -415,7 +415,7 @@ table(df$age, useNA = 'ifany')
 ``` 
 
 -97  11  12  13  14  15  16  17  18  19  20 
-  7   6   6  14   9  13   7  13   6  10   9 
+  9  10   9  10   9  10   5  11   7   9  11 
 ```
 
 ``` r
@@ -429,7 +429,7 @@ table(df$age, useNA = 'ifany')
 ``` 
 
   11   12   13   14   15   16   17   18   19   20 <NA> 
-   6    6   14    9   13    7   13    6   10    9    7 
+  10    9   10    9   10    5   11    7    9   11    9 
 ```
 
 It worked\! All the values that were -97 before, are now in the `NA`

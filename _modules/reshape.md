@@ -25,14 +25,17 @@ library(tidyverse)
 
     ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
-    ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
-    ✔ tibble  1.4.2     ✔ dplyr   0.7.4
-    ✔ tidyr   0.8.0     ✔ stringr 1.3.0
-    ✔ readr   1.1.1     ✔ forcats 0.3.0
+``` 
+✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
+✔ tibble  1.4.2          ✔ dplyr   0.7.4     
+✔ tidyr   0.8.0          ✔ stringr 1.3.0     
+✔ readr   1.1.1          ✔ forcats 0.3.0     
+```
 
     ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
+    ✖ dplyr::vars()   masks ggplot2::vars()
 
 # Create toy data
 
@@ -54,10 +57,10 @@ This data structure should be wide and look like this:
 
 | schid | year | math  | read  | science |
 | :---: | :--: | :---: | :---: | :-----: |
-|   A   | 2013 | `502` | `259` |  `788`  |
-|   B   | 2013 | `496` | `308` |  `804`  |
-|   C   | 2013 | `498` | `296` |  `781`  |
-|   D   | 2013 | `482` | `322` |  `790`  |
+|   A   | 2013 | `500` | `295` |  `806`  |
+|   B   | 2013 | `502` | `311` |  `801`  |
+|   C   | 2013 | `515` | `277` |  `802`  |
+|   D   | 2013 | `496` | `297` |  `778`  |
 
 ``` r
 ## confirm that it is wide
@@ -67,10 +70,10 @@ df
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A     2013.  502.  259.    788.
-    2 B     2013.  496.  308.    804.
-    3 C     2013.  498.  296.    781.
-    4 D     2013.  482.  322.    790.
+    1 A     2013.  500.  295.    806.
+    2 B     2013.  502.  311.    801.
+    3 C     2013.  515.  277.    802.
+    4 D     2013.  496.  297.    778.
 
 ## Wide –\> long
 
@@ -83,18 +86,18 @@ this:
 
 | schid | year |  test   | score |
 | :---: | :--: | :-----: | :---: |
-|   A   | 2013 |  math   | `502` |
-|   A   | 2013 |  read   | `259` |
-|   A   | 2013 | science | `788` |
-|   B   | 2013 |  math   | `496` |
-|   B   | 2013 |  read   | `308` |
-|   B   | 2013 | science | `804` |
-|   C   | 2013 |  math   | `498` |
-|   C   | 2013 |  read   | `296` |
-|   C   | 2013 | science | `781` |
-|   D   | 2013 |  math   | `482` |
-|   D   | 2013 |  read   | `322` |
-|   D   | 2013 | science | `790` |
+|   A   | 2013 |  math   | `500` |
+|   A   | 2013 |  read   | `295` |
+|   A   | 2013 | science | `806` |
+|   B   | 2013 |  math   | `502` |
+|   B   | 2013 |  read   | `311` |
+|   B   | 2013 | science | `801` |
+|   C   | 2013 |  math   | `515` |
+|   C   | 2013 |  read   | `277` |
+|   C   | 2013 | science | `802` |
+|   D   | 2013 |  math   | `496` |
+|   D   | 2013 |  read   | `297` |
+|   D   | 2013 | science | `778` |
 
 To go from wide to long format, use the `gather(key, value)` function,
 where `key` is a new column that will hold all the variable names that
@@ -123,18 +126,18 @@ df_long
     # A tibble: 12 x 4
        schid  year test    score
        <chr> <dbl> <chr>   <dbl>
-     1 A     2013. math     502.
-     2 A     2013. read     259.
-     3 A     2013. science  788.
-     4 B     2013. math     496.
-     5 B     2013. read     308.
-     6 B     2013. science  804.
-     7 C     2013. math     498.
-     8 C     2013. read     296.
-     9 C     2013. science  781.
-    10 D     2013. math     482.
-    11 D     2013. read     322.
-    12 D     2013. science  790.
+     1 A     2013. math     500.
+     2 A     2013. read     295.
+     3 A     2013. science  806.
+     4 B     2013. math     502.
+     5 B     2013. read     311.
+     6 B     2013. science  801.
+     7 C     2013. math     515.
+     8 C     2013. read     277.
+     9 C     2013. science  802.
+    10 D     2013. math     496.
+    11 D     2013. read     297.
+    12 D     2013. science  778.
 
 > #### Quick exercise
 > 
@@ -161,10 +164,10 @@ df_wide
     # A tibble: 4 x 5
       schid  year  math  read science
       <chr> <dbl> <dbl> <dbl>   <dbl>
-    1 A     2013.  502.  259.    788.
-    2 B     2013.  496.  308.    804.
-    3 C     2013.  498.  296.    781.
-    4 D     2013.  482.  322.    790.
+    1 A     2013.  500.  295.    806.
+    2 B     2013.  502.  311.    801.
+    3 C     2013.  515.  277.    802.
+    4 D     2013.  496.  297.    778.
 
 In theory, our new `df_wide` data frame should be the same as the one we
 started with. Let’s check:

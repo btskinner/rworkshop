@@ -35,3 +35,20 @@ all relevant software and packages.
 |2:45p - 4:15p|*TBD* based on interest|  
 |4:15p - 4:30p|Wrap up|  
 
+## Day 3: Thursday, May 17
+
+|Time|Section|  
+|:---|:------|  
+|8:30a - 9:00a|Registration|  
+|9:00a - 9:15a|Welcome back|  
+|9:15a - 10:30a|Programming II|  
+|**10:30a - 10:40a**|**BREAK**|  
+|10:40a - 12:00p|Programming II, cont.|  
+|**12:00p - 1:00p**|**LUNCH**|  
+|1:00p - 2:30p|Student choice (together or solo w/help)|  
+|**2:30p - 2:45p**|**BREAK**|  
+|2:45p - 4:00p|Student choice (together or solo w/help)|  
+|4:00p - 4:30p|Q & A / Wrap up|  
+
+
+
