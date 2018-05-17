@@ -11,6 +11,9 @@
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 
   </head>
@@ -19,7 +22,7 @@
       <header>
         <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
 	      <i class="fab fa-github fa-xs"></i></a></h1>
-	<h2 class="thin">January 2018</h2>
+	<h2 class="thin">May 2018</h2>
 	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
 	
         <p>
@@ -42,32 +45,34 @@
 
 
 <p>
+  
   <a href="/rworkshop/scripts/syntax.R"
      class="iconlink" download title="Get script">
     <i class="fas fa-code fa-2x"></i>
   </a>
   &nbsp;&nbsp;
   
+  
+  
+  
 </p>
 
 
 <p>It’s hard to know where to start when teaching a new programming
 language. This page is meant to give some background about R that
-hopefully</p>
-<ol>
-  <li>explains a little about how it is put together, and</li>
-  <li>puts it in context with other programming languages you might know.</li>
-</ol>
+hopefully<br />
+1. explains a little about how it is put together, and<br />
+2. puts it in context with other programming languages you might know.</p>
 
 <p>That said, revisiting this page after after working through the other
 modules might be useful.</p>
 
 <h1 id="r-language--environment">R: language + environment</h1>
 
-<p>R is a port of the <a href="https://en.wikipedia.org/wiki/S_(programming_language)">S
-language</a>, which
-was developed at Bell Labs. As a <a href="https://www.gnu.org">GNU project</a>, R
-is open source and free (<a href="https://en.wikipedia.org/wiki/Gratis_versus_libre">as in
+<p>R is a port of the <a href="https://en.wikipedia.org/wiki/S_\(programming_language\)">S
+language</a>,
+which was developed at Bell Labs. As a <a href="https://www.gnu.org">GNU
+project</a>, R is open source and free (<a href="https://en.wikipedia.org/wiki/Gratis_versus_libre">as in
 freedom</a>) to use and
 distribute. It can be installed and used on most major operating
 systems.</p>
@@ -82,10 +87,10 @@ great tool for working interactively with quantitative data.</p>
 
 <p>R is probably best known for its graphing capabilities, but it has
 <a href="http://blog.revolutionanalytics.com/2018/01/tiobe-2017.html">continued to grow in popularity among data
-scientists</a>,<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>
+scientists</a>,[1]
 who are increasingly <a href="http://blog.revolutionanalytics.com/2017/01/cran-10000.html">extending R’s functionality through
 user-contributed
-packages</a>.<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup>
+packages</a>.[2]
 We will use a number of packages in this workshop.</p>
 
 <h2 id="integrated-development-environment-ide-for-r">Integrated development environment (IDE) for R</h2>
@@ -152,12 +157,10 @@ from <code class="highlighter-rouge">x</code> and reassign the result to <code c
 
 <h2 id="types">Types</h2>
 
-<p>There are three primary data types in R that you will regularly use:</p>
-<ul>
-  <li><code class="highlighter-rouge">logical</code></li>
-  <li><code class="highlighter-rouge">numeric</code> (<code class="highlighter-rouge">integer</code> &amp; <code class="highlighter-rouge">double</code>)</li>
-  <li><code class="highlighter-rouge">character</code></li>
-</ul>
+<p>There are three primary data types in R that you will regularly use:<br />
+- <code class="highlighter-rouge">logical</code><br />
+- <code class="highlighter-rouge">numeric</code> (<code class="highlighter-rouge">integer</code> &amp; <code class="highlighter-rouge">double</code>)<br />
+- <code class="highlighter-rouge">character</code></p>
 
 <h3 id="logical">Logical</h3>
 
@@ -279,7 +282,7 @@ convert the string version on the fly so that the equation works?
 
 <ul>
   <li><code class="highlighter-rouge">vector</code></li>
-  <li><code class="highlighter-rouge">matrix</code><sup id="fnref:3"><a href="#fn:3" class="footnote">3</a></sup></li>
+  <li><code class="highlighter-rouge">matrix</code>[3]</li>
   <li><code class="highlighter-rouge">list</code></li>
   <li><code class="highlighter-rouge">dataframe</code></li>
 </ul>
@@ -439,8 +442,8 @@ numbers between the comma and the closing bracket will affect the
 columns.</p>
 
 <p>If you don’t put anything in either of those spaces (a blank space
-doesn’t count), R will assume you want all rows or columns, depending on
-which side of the comma is blank.</p>
+doesn’t count), R will assume you want all rows or columns, depending
+on which side of the comma is blank.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show the values in the first row</span><span class="w">
 </span><span class="n">x</span><span class="p">[</span><span class="m">1</span><span class="p">,</span><span class="w"> </span><span class="p">]</span><span class="w">
@@ -668,8 +671,8 @@ newest development version, you can use the <code class="highlighter-rouge">devt
 
 <h2 id="loading-package-libraries">Loading package libraries</h2>
 
-<p>Package libraries<sup id="fnref:4"><a href="#fn:4" class="footnote">4</a></sup> can loaded in a number of ways, but the easiest it
-to write:</p>
+<p>Package libraries[4] can loaded in a number of ways, but the easiest
+it to write:</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">library</span><span class="p">(</span><span class="s1">'&lt;library name&gt;'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
@@ -689,8 +692,8 @@ tidyverse libraries throughout the rest of the workshop.</p>
 <h1 id="help">Help</h1>
 
 <p>Even I don’t have every R function and nuance memorized. With all the
-user-written packages, it would be difficult to keep up if I tried! When
-stuck, there are a few ways to get help.</p>
+user-written packages, it would be difficult to keep up if I tried!
+When stuck, there are a few ways to get help.</p>
 
 <h2 id="help-files">Help files</h2>
 
@@ -726,7 +729,7 @@ first for those who come to R from other common statistical packages or
 scripting languages, like
 <a href="https://www.ibm.com/products/spss-statistics">SPSS</a>,
 <a href="https://www.python.org">Python</a>, and
-<a href="https://www.stata.com">Stata</a>.<sup id="fnref:5"><a href="#fn:5" class="footnote">5</a></sup></p>
+<a href="https://www.stata.com">Stata</a>.[5]</p>
 
 <p>I came to R after learning Stata first, which I think is common for many
 researchers trained in econometric methods. For me and others who’ve
@@ -737,7 +740,7 @@ language</a> in which
 commands <strong>do</strong> things in an environment (your data), R is more
 <a href="https://en.wikipedia.org/wiki/Object-oriented_programming">object-oriented</a>
 in that data and functions are <strong>stored</strong> in variables or objects and
-await instructions that pertain to them.<sup id="fnref:6"><a href="#fn:6" class="footnote">6</a></sup></p>
+await instructions that pertain to them.[6]</p>
 
 <p>As pointed out by my friend and colleague <a href="https://www.shu.edu/profiles/RichardBlissett.cfm">Richard
 Blissett</a>, users can
@@ -745,15 +748,13 @@ see this difference in the command/function names in each language.
 Stata commands tend to be verbs: <code class="highlighter-rouge">summarize</code>, <code class="highlighter-rouge">tabulate</code>, and <code class="highlighter-rouge">regress</code>;
 on the other hand, R functions are often nouns: <code class="highlighter-rouge">summary</code>, <code class="highlighter-rouge">table</code>, and
 <code class="highlighter-rouge">lm</code> (for linear model). And so, common problems in the R to Stata
-switch such as</p>
-<ul>
-  <li><em>I ran a model and didn’t get any output…</em></li>
-  <li><em>How do I create local/global macros in R?</em></li>
-  <li><em>Which of these data objects is the actual data?</em></li>
-  <li><em>Why isn’t R <strong>doing</strong> anything?</em></li>
-</ul>
+switch such as<br />
+- <em>I ran a model and didn’t get any output…</em><br />
+- <em>How do I create local/global macros in R?</em><br />
+- <em>Which of these data objects is the actual data?</em><br />
+- <em>Why isn’t R <strong>doing</strong> anything?</em></p>
 
-<p>may be due to misunderstanding this difference.<sup id="fnref:7"><a href="#fn:7" class="footnote">7</a></sup></p>
+<p>may be due to misunderstanding this difference.[7]</p>
 
 <p>Like learning a new spoken language, constantly translating between your
 native tongue and the new language will only get you so far. To that
@@ -794,43 +795,40 @@ better or worse than RStudio.</p>
 
 <h1 id="notes">Notes</h1>
 
-<div class="footnotes">
-  <ol>
-    <li id="fn:1">
-      <p>The “data scientist” as a person/title, like “big data,” has
+<ol>
+  <li>
+    <p>The “data scientist” as a person/title, like “big data,” has
 probably become a little played out, but for lack of a better
-catch-all term, I think everyone knows what I mean.&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:2">
-      <p>For a little more history on R, particularly its success as an
-open source project, see <a href="https://journal.r-project.org/archive/2009-2/RJournal_2009-2_Fox.pdf">Fox
-(2009)</a>&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:3">
-      <p>R also supports arrays, which can take on more than two
-dimensions.&nbsp;<a href="#fnref:3" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:4">
-      <p>For clarity, I’ll call them packages when talking about what is
+catch-all term, I think everyone knows what I mean.</p>
+  </li>
+  <li>
+    <p>For a little more history on R, particularly its success as an open
+source project, see <a href="https://journal.r-project.org/archive/2009-2/RJournal_2009-2_Fox.pdf">Fox
+(2009)</a></p>
+  </li>
+  <li>
+    <p>R also supports arrays, which can take on more than two dimensions.</p>
+  </li>
+  <li>
+    <p>For clarity, I’ll call them packages when talking about what is
 downloaded and libraries when discussing what is loaded into memory.
-Since the names are the same, it’s really a semantic difference.&nbsp;<a href="#fnref:4" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:5">
-      <p>If you come to R knowing C/C++, Fortran, or Java, see
+Since the names are the same, it’s really a semantic difference.</p>
+  </li>
+  <li>
+    <p>If you come to R knowing C/C++, Fortran, or Java, see
 <a href="http://www.rcpp.org">Rcpp</a>, <a href="http://www.rfortran.org">rFortran</a>,
 <a href="https://www.rforge.net/rJava/index.html">rJava</a> for some cool
-interactivity.&nbsp;<a href="#fnref:5" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:6">
-      <p>Stata has some object-oriented features and R some procedural
+interactivity.</p>
+  </li>
+  <li>
+    <p>Stata has some object-oriented features and R some procedural
 programming behaviors, so the assigned labels aren’t perfect. They
-are mostly right, though.&nbsp;<a href="#fnref:6" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:7">
-      <p>Full disclosure: all questions I asked when learning R.&nbsp;<a href="#fnref:7" class="reversefootnote">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
+are mostly right, though.</p>
+  </li>
+  <li>
+    <p>Full disclosure: all questions I asked when learning R.</p>
+  </li>
+</ol>
 
 
 

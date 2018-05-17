@@ -186,7 +186,6 @@ library(plotly)
 ## create an interactive plot with the last figure
 p <- ggplotly(p)
 p
-
 ## redo last figure with addition of text in aes()
 p <- ggplot(data = df_10, mapping = aes(x = bynels2m, y = bynels2r)) +
     geom_point(mapping = aes(color = factor(plan_col_grad),

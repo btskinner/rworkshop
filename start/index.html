@@ -11,6 +11,9 @@
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 
   </head>
@@ -19,7 +22,7 @@
       <header>
         <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
 	      <i class="fab fa-github fa-xs"></i></a></h1>
-	<h2 class="thin">January 2018</h2>
+	<h2 class="thin">May 2018</h2>
 	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
 	
         <p>
@@ -46,13 +49,13 @@ X/MacOS). If no options are available, the download will work on all
 systems.</p>
 
 <h2 id="required">Required</h2>
-<h3 id="r-version-343">R (version 3.4.3)</h3>
+<h3 id="r-get-latest-version">R (get latest version)</h3>
 <ul>
   <li><a href="https://cran.r-project.org/bin/windows/base/">Windows</a></li>
   <li><a href="https://cran.r-project.org/bin/macosx/">OS X</a></li>
 </ul>
 
-<h3 id="rstudio-version-11383">RStudio (version 1.1.383)</h3>
+<h3 id="rstudio-get-latest-version">RStudio (get latest version)</h3>
 <ul>
   <li><a href="https://www.rstudio.com/products/rstudio/download/#download">Download links</a></li>
 </ul>
@@ -79,13 +82,29 @@ systems.</p>
   <li><a href="https://CRAN.R-project.org/package=labelled">labelled</a></li>
   <li><a href="https://CRAN.R-project.org/package=plotly">plotly</a></li>
   <li><a href="https://CRAN.R-project.org/package=survey">survey</a></li>
+  <li><a href="https://CRAN.R-project.org/package=Rcpp">Rcpp</a></li>
+  <li><a href="https://CRAN.R-project.org/package=microbenchmark">microbenchmark</a></li>
+  <li><a href="https://CRAN.R-project.org/package=rvest">rvest</a></li>
+  <li><a href="https://CRAN.R-project.org/package=lubridate">lubridate</a></li>
+  <li><a href="https://CRAN.R-project.org/package=leaflet">leaflet</a></li>
+  <li><a href="https://CRAN.R-project.org/package=sf">sf</a></li>
+  <li><a href="https://CRAN.R-project.org/package=RColorBrewer">RColorBrewer</a></li>
+  <li><a href="https://CRAN.R-project.org/package=devtools">devtools</a></li>
 </ul>
 
 <p>Once you’ve installed R and RStudio, open RStudio (or the base R app)
 and run the following code:</p>
 
-<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pkgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'tidyverse'</span><span class="p">,</span><span class="s1">'labelled'</span><span class="p">,</span><span class="s1">'plotly'</span><span class="p">,</span><span class="s1">'survey'</span><span class="p">)</span><span class="w">
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pkgs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s1">'tidyverse'</span><span class="p">,</span><span class="s1">'labelled'</span><span class="p">,</span><span class="s1">'plotly'</span><span class="p">,</span><span class="s1">'survey'</span><span class="p">,</span><span class="s1">'Rcpp'</span><span class="p">,</span><span class="w">
+          </span><span class="s1">'microbenchmark'</span><span class="p">,</span><span class="s1">'rvest'</span><span class="p">,</span><span class="s1">'lubridate'</span><span class="p">,</span><span class="s1">'leaflet'</span><span class="p">,</span><span class="w">
+		  </span><span class="s1">'sf'</span><span class="p">,</span><span class="s1">'RColorBrewer'</span><span class="p">,</span><span class="s1">'devtools'</span><span class="p">)</span><span class="w">
 </span><span class="n">install.packages</span><span class="p">(</span><span class="n">pkgs</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
+
+<p>You will also need the development version of ggplot2 from
+GitHub. Once you’ve installed devtools, run the following code:</p>
+
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">devtools</span><span class="o">::</span><span class="n">install_github</span><span class="p">(</span><span class="s1">'tidyverse/ggplot2'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
 <h5 id="note">NOTE</h5>

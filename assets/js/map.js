@@ -16,10 +16,10 @@ var geojson = {
             "type": "Feature",
             "geometry": {
                 "type": "Point",
-                "coordinates": [-78.5089, 38.0346]
+                "coordinates": [-78.5095, 38.0347]
             },
             "properties": {
-                "title": "Bavaro Hall",
+                "title": "Ruffner Hall",
 		"icon": "marker"
             }
         }]

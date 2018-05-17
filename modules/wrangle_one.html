@@ -11,6 +11,9 @@
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 
   </head>
@@ -19,7 +22,7 @@
       <header>
         <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
 	      <i class="fab fa-github fa-xs"></i></a></h1>
-	<h2 class="thin">January 2018</h2>
+	<h2 class="thin">May 2018</h2>
 	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
 	
         <p>
@@ -42,11 +45,15 @@
 
 
 <p>
+  
   <a href="/rworkshop/scripts/wrangle_one.R"
      class="iconlink" download title="Get script">
     <i class="fas fa-code fa-2x"></i>
   </a>
   &nbsp;&nbsp;
+  
+  
+  
   
   <a href="/rworkshop/data/els_plans.csv"
      class="iconlink" download title="Get data">
@@ -69,8 +76,8 @@ it’s still good to know how to use core commands for those edge cases
 where tidyverse functions don’t quite work the way you want.</p>
 
 <p>Data for this module come from the public release files of the <a href="https://nces.ed.gov/surveys/els2002/">NCES
-Education Longitudinal Study of
-2002</a>. For descriptions of the
+Education Longitudinal Study
+of 2002</a>. For descriptions of the
 variables, see the <a href="/rworkshop/data/#els_planscsv">codebook</a>.</p>
 
 <h1 id="data-wrangling-with-base-r">Data wrangling with base R</h1>
@@ -125,7 +132,8 @@ information about how you should set things up)</li>
 directory isn’t correct. If you aren’t in the right directory, this
 means that R can’t find your data because even though it has directions
 on where to find it—in the path given to the <code class="highlighter-rouge">read.table()</code>
-function—it’s starting in the wrong spot. The directions are worthless!</p>
+function—it’s starting in the wrong spot. The directions are
+worthless!</p>
 
 <p>If you know where your <code class="highlighter-rouge">scripts</code> directory/folder is, you can use the
 <code class="highlighter-rouge">setwd()</code> function to change your working directory to the right one.</p>
@@ -295,8 +303,8 @@ new variable gets a 1; if <code class="highlighter-rouge">FALSE</code>, it gets 
 <p><strong>Important Note</strong> The code above assumes that <code class="highlighter-rouge">bysex</code> has only two
 outcomes, <code class="highlighter-rouge">male</code> and <code class="highlighter-rouge">female</code>. But since <code class="highlighter-rouge">bysex</code> has missing values,
 which are coded with other string names, the code above could be
-misinterpreted in later analyses. Though when <code class="highlighter-rouge">female ==     1</code> it will
-always be true that <code class="highlighter-rouge">bysex == 'female'</code>, when <code class="highlighter-rouge">female     == 0</code>, <code class="highlighter-rouge">bysex</code>
+misinterpreted in later analyses. Though when <code class="highlighter-rouge">female == 1</code> it will
+always be true that <code class="highlighter-rouge">bysex == 'female'</code>, when <code class="highlighter-rouge">female == 0</code>, <code class="highlighter-rouge">bysex</code>
 could be <code class="highlighter-rouge">male</code> or one of the other other string values that indicates
 missing values. We will leave it as is for now, but will return to
 missing values later.</p>
@@ -404,8 +412,8 @@ to use. The function you use can be a base R function or one you create
 yourself. Let’s get the average math score within each school.</p>
 
 <p><strong>Quick Note</strong> Because <code class="highlighter-rouge">mean()</code> cannot compute a mean when missing
-values are present (try it and see what you get), we can add the
-<code class="highlighter-rouge">na.rm = TRUE</code> argument, which tells the function to drop <code class="highlighter-rouge">NA</code> values.
+values are present (try it and see what you get), we can add the <code class="highlighter-rouge">na.rm
+= TRUE</code> argument, which tells the function to drop <code class="highlighter-rouge">NA</code> values.
 Normally, the argument needs to be inside the <code class="highlighter-rouge">mean()</code> function’s
 parentheses. The <code class="highlighter-rouge">aggregate()</code> function and others like are special in
 that they will let you just tack on any arguments to the <code class="highlighter-rouge">FUN</code> function

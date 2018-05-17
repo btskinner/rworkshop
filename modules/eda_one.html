@@ -11,6 +11,9 @@
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 
   </head>
@@ -19,7 +22,7 @@
       <header>
         <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
 	      <i class="fab fa-github fa-xs"></i></a></h1>
-	<h2 class="thin">January 2018</h2>
+	<h2 class="thin">May 2018</h2>
 	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
 	
         <p>
@@ -42,11 +45,15 @@
 
 
 <p>
+  
   <a href="/rworkshop/scripts/eda_one.R"
      class="iconlink" download title="Get script">
     <i class="fas fa-code fa-2x"></i>
   </a>
   &nbsp;&nbsp;
+  
+  
+  
   
   <a href="/rworkshop/data/els_plans.dta"
      class="iconlink" download title="Get data">
@@ -361,7 +368,8 @@ with the argument <code class="highlighter-rouge">'ifany'</code>.</p>
 </span><span class="n">table</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">,</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   1    2    3    4    5    6    7    8 &lt;NA&gt; 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+   1    2    3    4    5    6    7    8 &lt;NA&gt; 
  942 3044 1663 1597 1758 3466 1785 1049  856 
 </code></pre></div></div>
 
@@ -373,7 +381,8 @@ book. However, because are data are labelled, we can use the
 </span><span class="n">table</span><span class="p">(</span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">useNA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ifany'</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>              did not finish high school 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+              did not finish high school 
                                      942 
        graduated from high school or ged 
                                     3044 
@@ -486,7 +495,8 @@ of calling just <code class="highlighter-rouge">table(x)</code>, that is, <code 
 </span><span class="n">table</span><span class="p">(</span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">as_factor</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bysex</span><span class="p">))</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                                           male female
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                                          
+                                           male female
   did not finish high school                440    502
   graduated from high school or ged        1496   1548
   attended 2-year school, no degree         823    840
@@ -544,7 +554,7 @@ generate counts within groups.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 19 x 3
-# Groups: bysex [3]
+# Groups:   bysex [3]
    bysex  bypared                                      n
    &lt;fct&gt;  &lt;fct&gt;                                    &lt;int&gt;
  1 male   did not finish high school                 440
@@ -581,7 +591,7 @@ the <code class="highlighter-rouge">spread()</code> function from tidyr.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 9 x 4
   bypared                                   male female `&lt;NA&gt;`
-* &lt;fct&gt;                                    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
+  &lt;fct&gt;                                    &lt;int&gt;  &lt;int&gt;  &lt;int&gt;
 1 did not finish high school                 440    502     NA
 2 graduated from high school or ged         1496   1548     NA
 3 attended 2-year school, no degree          823    840     NA
@@ -605,9 +615,9 @@ those?</p>
 
 <p>Aside from cross tabulations, finding averages of continuous variables
 within groups, sometimes called conditional means, is a common task.
-We’ve already done this in the last couple of modules. With base R, use
-the <code class="highlighter-rouge">aggregate()</code> function to compute summary statistics of continuous
-values by group.</p>
+We’ve already done this in the last couple of modules. With base R,
+use the <code class="highlighter-rouge">aggregate()</code> function to compute summary statistics of
+continuous values by group.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## get average math score by parental education </span><span class="w">
 </span><span class="n">aggregate</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bynels2m</span><span class="p">,</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">list</span><span class="p">(</span><span class="n">df</span><span class="o">$</span><span class="n">bypared</span><span class="p">),</span><span class="w"> </span><span class="n">mean</span><span class="p">,</span><span class="w"> </span><span class="n">na.rm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
@@ -695,7 +705,8 @@ the missing values and will return <code class="highlighter-rouge">NA</code>.</p
 
 <p>Once you’ve got the format, finding the conditional mean within a cross
 tabulation (group 1 X group 2) is straightforward: just add the variable
-to the <code class="highlighter-rouge">group_by()</code> function.</p>
+to the <code class="highlighter-rouge">group_by()</code>
+function.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## using dplyr to get average math score by income and parental education level</span><span class="w">
 </span><span class="n">df</span><span class="w"> </span><span class="o">%&gt;%</span><span class="w">
@@ -706,27 +717,27 @@ to the <code class="highlighter-rouge">group_by()</code> function.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 18 x 3
-# Groups: bypared [?]
+# Groups:   bypared [?]
    bypared                                  lowinc bynels2m
    &lt;fct&gt;                                     &lt;dbl&gt;    &lt;dbl&gt;
- 1 did not finish high school                 0        36.7
- 2 did not finish high school                 1.00     35.9
- 3 graduated from high school or ged          0        42.1
- 4 graduated from high school or ged          1.00     37.6
- 5 attended 2-year school, no degree          0        44.0
- 6 attended 2-year school, no degree          1.00     38.0
- 7 graduated from 2-year school               0        45.8
- 8 graduated from 2-year school               1.00     39.1
- 9 attended college, no 4-year degree         0        46.0
-10 attended college, no 4-year degree         1.00     38.9
-11 graduated from college                     0        49.3
-12 graduated from college                     1.00     41.5
-13 completed master^s degree or equivalent    0        52.8
-14 completed master^s degree or equivalent    1.00     41.4
-15 completed phd, md, other advanced degree   0        54.2
-16 completed phd, md, other advanced degree   1.00     38.5
-17 &lt;NA&gt;                                       0        46.2
-18 &lt;NA&gt;                                       1.00     39.3
+ 1 did not finish high school                   0.     36.7
+ 2 did not finish high school                   1.     35.9
+ 3 graduated from high school or ged            0.     42.1
+ 4 graduated from high school or ged            1.     37.6
+ 5 attended 2-year school, no degree            0.     44.0
+ 6 attended 2-year school, no degree            1.     38.0
+ 7 graduated from 2-year school                 0.     45.8
+ 8 graduated from 2-year school                 1.     39.1
+ 9 attended college, no 4-year degree           0.     46.0
+10 attended college, no 4-year degree           1.     38.9
+11 graduated from college                       0.     49.3
+12 graduated from college                       1.     41.5
+13 completed master^s degree or equivalent      0.     52.8
+14 completed master^s degree or equivalent      1.     41.4
+15 completed phd, md, other advanced degree     0.     54.2
+16 completed phd, md, other advanced degree     1.     38.5
+17 &lt;NA&gt;                                         0.     46.2
+18 &lt;NA&gt;                                         1.     39.3
 </code></pre></div></div>
 
 <blockquote>

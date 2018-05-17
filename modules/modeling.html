@@ -11,6 +11,9 @@
 <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
 
 
   </head>
@@ -19,7 +22,7 @@
       <header>
         <h1>Workshop on R<a href="https://github.com/btskinner/rworkshop" class="iconlink">
 	      <i class="fab fa-github fa-xs"></i></a></h1>
-	<h2 class="thin">January 2018</h2>
+	<h2 class="thin">May 2018</h2>
 	<p>Hosted by Virginia Education Science Training (VEST) Program at UVA</p>
 	
         <p>
@@ -42,11 +45,15 @@
 
 
 <p>
+  
   <a href="/rworkshop/scripts/modeling.R"
      class="iconlink" download title="Get script">
     <i class="fas fa-code fa-2x"></i>
   </a>
   &nbsp;&nbsp;
+  
+  
+  
   
   <a href="/rworkshop/data/els_plans_2.dta"
      class="iconlink" download title="Get data">
@@ -82,17 +89,19 @@ libraries and data!</p>
 <p>One common statistical test is a t-test for a difference in means across
 groups (there are, of course, <a href="https://www.rdocumentation.org/packages/stats/versions/3.4.3/topics/t.test">others and R can compute
 them</a>).
-This version of the test can be computed using the R formula syntax:
-<code class="highlighter-rouge">y ~ x</code>. In our example, we’ll compute base-year math scores against
-mother’s college education level. Notice that since we have the
-<code class="highlighter-rouge">data = df</code> argument after the comma, we don’t need to include <code class="highlighter-rouge">df$</code>
-before the two variables.</p>
+This version of the test can be computed using the R formula syntax: <code class="highlighter-rouge">y
+~ x</code>. In our example, we’ll compute base-year math scores against
+mother’s college education level. Notice that since we have the <code class="highlighter-rouge">data
+= df</code> argument after the comma, we don’t need to include <code class="highlighter-rouge">df$</code> before
+the two
+variables.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## t-test of difference in math scores across mother education (BA/BA or not)</span><span class="w">
 </span><span class="n">t.test</span><span class="p">(</span><span class="n">bynels2m</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">moth_ba</span><span class="p">,</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">df</span><span class="p">,</span><span class="w"> </span><span class="n">var.equal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    Two Sample t-test
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+    Two Sample t-test
 
 data:  bynels2m by moth_ba
 t = -35.751, df = 15234, p-value &lt; 2.2e-16
@@ -128,7 +137,8 @@ did before.</p>
 </span><span class="n">fit</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ moth_ba, data = df)
 
 Coefficients:
@@ -144,7 +154,8 @@ range of information you want from regression output, use the
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ moth_ba, data = df)
 
 Residuals:
@@ -180,7 +191,8 @@ side of the equation separated by plus (<code class="highlighter-rouge">+</code>
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
     lowinc, data = df)
 
@@ -218,8 +230,7 @@ F-statistic: 728.1 on 5 and 15230 DF,  p-value: &lt; 2.2e-16
     </ul>
   </li>
   <li>significance stars (<code class="highlighter-rouge">.</code> and <code class="highlighter-rouge">*</code>) along with legend</li>
-  <li>the R-squared values (<code class="highlighter-rouge">Multiple R-squared</code> and
-<code class="highlighter-rouge">Adjusted   R-squared</code>)</li>
+  <li>the R-squared values (<code class="highlighter-rouge">Multiple R-squared</code> and <code class="highlighter-rouge">Adjusted R-squared</code>)</li>
   <li>the model F-statistic (<code class="highlighter-rouge">F-statistic</code>)</li>
   <li>number of observations dropped if any</li>
 </ul>
@@ -313,7 +324,8 @@ in this model.</p>
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
     lowinc + factor(byrace), data = df)
 
@@ -359,7 +371,8 @@ output a little easier.</p>
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
     lowinc + as_factor(byrace), data = df)
 
@@ -447,7 +460,8 @@ colon (<code class="highlighter-rouge">:</code>).</p>
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ byses1 * lowinc + factor(bypared) * lowinc, 
     data = df)
 
@@ -498,7 +512,8 @@ reading score to the right-hand side.</p>
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 lm(formula = bynels2m ~ bynels2r + I(bynels2r^2) + I(bynels2r^3), 
     data = df)
 
@@ -531,7 +546,7 @@ look at the model matrix to see what R did under the hood.</p>
 <h1 id="generalized-linear-model">Generalized linear model</h1>
 
 <p>To fit a model with binary outcomes, switch to the <code class="highlighter-rouge">glm()</code> function. It
-is set up just like <code class="highlighter-rouge">lm()</code>, but it has an extra argument, <code class="highlighter-rouge">family</code>.<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>
+is set up just like <code class="highlighter-rouge">lm()</code>, but it has an extra argument, <code class="highlighter-rouge">family</code>.[1]
 Set the argument to <code class="highlighter-rouge">binomial()</code> when your dependent variable is binary.
 By default, the <code class="highlighter-rouge">link</code> function is a
 <a href="https://en.wikipedia.org/wiki/Logit">logit</a> link.</p>
@@ -543,7 +558,8 @@ By default, the <code class="highlighter-rouge">link</code> function is a
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 glm(formula = plan_col_grad ~ bynels2m + as_factor(bypared), 
     family = binomial(), data = df)
 
@@ -585,7 +601,8 @@ model, just change the link to <code class="highlighter-rouge">probit</code>.</p
 </span><span class="n">summary</span><span class="p">(</span><span class="n">fit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Call:
 glm(formula = plan_col_grad ~ bynels2m + as_factor(bypared), 
     family = binomial(link = "probit"), data = df)
 
@@ -634,11 +651,14 @@ haven’t already) the
 </span><span class="n">library</span><span class="p">(</span><span class="n">survey</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error in library(survey): there is no package called 'survey'
+</code></pre></div></div>
+
 <p>To use survey weights, you need to set the survey design using the
 <code class="highlighter-rouge">svydesign()</code> function. You could do this in the <code class="highlighter-rouge">svyglm()</code> function
-we’ll use to actually estimate the equation, but it’s easier and clearer
-to do it first, store it in an object, and then use that object in the
-<code class="highlighter-rouge">syvglm()</code>.</p>
+we’ll use to actually estimate the equation, but it’s easier and
+clearer to do it first, store it in an object, and then use that object
+in the <code class="highlighter-rouge">syvglm()</code>.</p>
 
 <p>ELS has a complex sampling design that we won’t get into, but the
 appropriate columns from our data frame, <code class="highlighter-rouge">df</code>, are set to the proper
@@ -663,6 +683,9 @@ this function.</p>
                     </span><span class="n">nest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error in svydesign(ids = ~psu, strata = ~strat_id, weight = ~bystuwt, : could not find function "svydesign"
+</code></pre></div></div>
+
 <p>Now that we’ve set the survey design, we’ll use the object <code class="highlighter-rouge">svy_df</code> in
 the <code class="highlighter-rouge">design</code> argument below (where your data would go in a normal <code class="highlighter-rouge">lm()</code>
 function).</p>
@@ -670,31 +693,15 @@ function).</p>
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## fit the svyglm regression and show output</span><span class="w">
 </span><span class="n">svyfit</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">svyglm</span><span class="p">(</span><span class="n">bynels2m</span><span class="w"> </span><span class="o">~</span><span class="w"> </span><span class="n">byses1</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">female</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">moth_ba</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fath_ba</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">lowinc</span><span class="p">,</span><span class="w">
                  </span><span class="n">design</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">svy_df</span><span class="p">)</span><span class="w">
-</span><span class="n">summary</span><span class="p">(</span><span class="n">svyfit</span><span class="p">)</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Call:
-svyglm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
-    lowinc, design = svy_df)
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error in svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc, : could not find function "svyglm"
+</code></pre></div></div>
 
-Survey design:
-svydesign(ids = ~psu, strata = ~strat_id, weight = ~bystuwt, 
-    data = df, nest = TRUE)
+<div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">summary</span><span class="p">(</span><span class="n">svyfit</span><span class="p">)</span><span class="w">
+</span></code></pre></div></div>
 
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  45.2221     0.2710 166.867  &lt; 2e-16 ***
-byses1        6.9470     0.2913  23.849  &lt; 2e-16 ***
-female       -1.0715     0.2441  -4.389 1.47e-05 ***
-moth_ba       0.6633     0.3668   1.809   0.0713 .  
-fath_ba       0.5670     0.3798   1.493   0.1363    
-lowinc       -2.4860     0.3644  -6.822 3.49e-11 ***
----
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-(Dispersion parameter for gaussian family taken to be 159.713)
-
-Number of Fisher Scoring iterations: 2
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Error in summary(svyfit): object 'svyfit' not found
 </code></pre></div></div>
 
 <p>The resulting estimates are survey weighted. The survey library has a
@@ -778,7 +785,7 @@ practiced, we can also make predictions on the margin a la Stata’s
 
 <p>For example, after fitting our multiple regression, we might ask
 ourselves, what is the marginal “effect” of having a low family income
-on math scores, holding all other terms in our model constant?<sup id="fnref:2"><a href="#fn:2" class="footnote">2</a></sup></p>
+on math scores, holding all other terms in our model constant?[2]</p>
 
 <p>To answer this question, we first need to make a “new” data frame with a
 column each for the variables used in the model and rows that equal the
@@ -802,7 +809,8 @@ could try to use the original data frame and account for dropped
 observations, but I think it’s easier to use the design matrix that’s
 retrieved from <code class="highlighter-rouge">model.matrix()</code>.</p>
 
-<p>The code below goes step-by-step to make the “new” data frame.</p>
+<p>The code below goes step-by-step to make the “new” data
+frame.</p>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## create new data that has two rows, with averages and one marginal change</span><span class="w">
 
@@ -892,23 +900,21 @@ range of margins.</p>
 
 <h1 id="notes">Notes</h1>
 
-<div class="footnotes">
-  <ol>
-    <li id="fn:1">
-      <p>The <code class="highlighter-rouge">lm()</code> function is just a shorthand convenience function for
-<code class="highlighter-rouge">glm()</code> in which <code class="highlighter-rouge">family</code> is set to <code class="highlighter-rouge">gaussian(link = 'identity')</code>.&nbsp;<a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
-    </li>
-    <li id="fn:2">
-      <p>Our example regression is not based on either an experimental or
+<ol>
+  <li>
+    <p>The <code class="highlighter-rouge">lm()</code> function is just a shorthand convenience function for
+<code class="highlighter-rouge">glm()</code> in which <code class="highlighter-rouge">family</code> is set to <code class="highlighter-rouge">gaussian(link = 'identity')</code>.</p>
+  </li>
+  <li>
+    <p>Our example regression is not based on either an experimental or
 quasi-experimental design. Unless the underlying research design is
 experimental or quasi-experimental, it is highly unlikely that the
 marginal effect obtained from this procedure will be causal. Since
 the word <em>effect</em> is usually reserved to describe causal results, I
 use scare quotes to indicate that our marginal “effects” shouldn’t
-be interpreted causally.&nbsp;<a href="#fnref:2" class="reversefootnote">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
+be interpreted causally.</p>
+  </li>
+</ol>
 
 
 
