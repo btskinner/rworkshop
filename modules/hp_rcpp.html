@@ -694,9 +694,9 @@ the <code class="highlighter-rouge">autoplot()</code> function.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: microseconds
-   expr   min     lq     mean median     uq      max neval
- base_R 3.509 3.8960 5.312829 4.2135 6.7170   29.250  1000
-   Rcpp 2.329 2.7525 7.352855 3.7060 6.1025 2801.071  1000
+   expr   min    lq     mean median    uq      max neval
+ base_R 2.758 2.831 2.890696 2.8740 2.923    7.945  1000
+   Rcpp 1.889 2.039 3.214528 2.1525 2.240 1057.595  1000
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## plot</span><span class="w">
@@ -722,7 +722,7 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  4.600   0.056   4.777 
+  2.490   0.013   2.502 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...and now Rcpp version</span><span class="w">
@@ -735,7 +735,7 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  0.076   0.002   0.084 
+  0.046   0.000   0.046 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## compare just 10 many to many</span><span class="w">
@@ -758,9 +758,9 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: milliseconds
-   expr        min         lq       mean     median        uq      max
- base_R 407.335531 420.107217 436.744963 426.894668 437.73289 627.4415
-   Rcpp   6.047639   6.250503   7.978705   6.531377   7.43794 110.6525
+   expr        min         lq       mean     median         uq        max
+ base_R 204.925534 227.994523 236.990840 235.155755 242.701057 313.277169
+   Rcpp   3.113008   3.463589   3.760456   3.707919   4.025682   5.036121
  neval
    100
    100
@@ -789,7 +789,7 @@ magnitude faster!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  4.272   0.021   4.310 
+  2.313   0.009   2.328 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...and now Rcpp version</span><span class="w">
@@ -802,7 +802,7 @@ magnitude faster!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  0.075   0.000   0.075 
+  0.038   0.000   0.038 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## compare just 10 min</span><span class="w">
@@ -824,9 +824,9 @@ magnitude faster!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: milliseconds
-   expr        min         lq       mean     median        uq       max
- base_R 407.961009 422.053949 432.302879 428.538098 436.96943 520.41973
-   Rcpp   6.904668   7.051097   7.960559   7.209413   8.62174  19.01487
+   expr        min         lq       mean     median         uq        max
+ base_R 207.515795 223.366068 237.976220 238.044342 249.397915 307.457070
+   Rcpp   3.491042   3.844861   4.083188   4.061746   4.328463   4.965086
  neval
    100
    100
@@ -866,7 +866,7 @@ census block? Let’s find out!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-155.024   0.421 155.773 
+ 75.265   0.117  75.520 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show</span><span class="w">

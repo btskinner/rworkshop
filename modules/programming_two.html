@@ -232,10 +232,10 @@ means.</p>
 </span><span class="n">means</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>            x        y
-[1,] 66.54115 65.02385
-[2,] 29.10783 21.07108
-[3,] 54.74884 45.25653
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>             x        y
+[1,]  9.529079 3.568810
+[2,] 32.638675 7.767427
+[3,]  6.443586 3.697274
 </code></pre></div></div>
 
 <p>Next, we need to keep track of how we assign each point. To that end, we
@@ -267,7 +267,7 @@ mean, <code class="highlighter-rouge">assign_vec[10] == 3</code>, and so on.</p>
 </span><span class="n">assign_vec</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 2 2 3 2 2 2 2 2 2 2 2 3 3 3 2 2 2 2 2 3
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 2 3 2 3 3 3 2 3 3 3 2 2 2 2 3 2 3 2 1 2
 </code></pre></div></div>
 
 <blockquote>
@@ -600,7 +600,7 @@ where we started, with two dimensions.</p>
 </span><span class="n">km_2d</span><span class="o">$</span><span class="n">assignments</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 1 3 2 3 3 3 1 3 3 3 3 2 2 2 3 1 3 1 1 2
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 1 2 3 2 2 2 1 2 2 2 2 3 3 3 2 1 2 1 1 3
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">km_2d</span><span class="o">$</span><span class="n">centers</span><span class="w">
@@ -608,14 +608,14 @@ where we started, with two dimensions.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>           [,1]      [,2]
 [1,] 25.0407539  9.780767
-[2,] 54.6683528 54.725368
-[3,]  0.7741392 25.471911
+[2,]  0.7741392 25.471911
+[3,] 54.6683528 54.725368
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">km_2d</span><span class="o">$</span><span class="n">wcss</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 88179.39 99748.81 89184.79
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 88179.39 89184.79 99748.81
 </code></pre></div></div>
 
 <p>Notice how clear and unambiguous our code is now. We are running a
@@ -636,7 +636,7 @@ all for 3 dimensions this time.</p>
 </span><span class="n">km_3d</span><span class="o">$</span><span class="n">assignments</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">]</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 3 2 1 2 2 2 3 2 2 2 2 1 1 1 2 3 2 3 3 1
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> [1] 2 3 1 3 3 3 2 3 3 3 3 1 1 1 3 2 3 2 2 1
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">km_3d</span><span class="o">$</span><span class="n">centers</span><span class="w">
@@ -644,14 +644,14 @@ all for 3 dimensions this time.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>           [,1]     [,2]      [,3]
 [1,] 54.8865406 54.97876 105.13575
-[2,]  0.8928973 25.51276  25.58783
-[3,] 25.2858908 10.26503 -24.21246
+[2,] 25.2858908 10.26503 -24.21246
+[3,]  0.8928973 25.51276  25.58783
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">km_3d</span><span class="o">$</span><span class="n">wcss</span><span class="w">
 </span></code></pre></div></div>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 159247.5 153343.3 167007.1
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[1] 159247.5 167007.1 153343.3
 </code></pre></div></div>
 
 <h1 id="check-out-plots">Check out plots</h1>
