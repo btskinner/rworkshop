@@ -643,9 +643,9 @@ tm_single
 ```
 
     Unit: microseconds
-       expr   min     lq     mean median     uq      max neval
-     base_R 3.509 3.8960 5.312829 4.2135 6.7170   29.250  1000
-       Rcpp 2.329 2.7525 7.352855 3.7060 6.1025 2801.071  1000
+       expr   min    lq     mean median     uq      max neval
+     base_R 2.737 2.816 2.919886 2.8620 2.9165   14.175  1000
+       Rcpp 1.883 2.102 3.427917 2.1835 2.3020 1180.277  1000
 
 ``` r
 ## plot
@@ -672,7 +672,7 @@ system.time(dist_mtom(cbg_df$lon[1:100],
 
 ``` 
    user  system elapsed 
-  4.600   0.056   4.777 
+  2.589   0.014   2.607 
 ```
 
 ``` r
@@ -687,7 +687,7 @@ system.time(dist_mtom_rcpp(cbg_df$lon[1:100],
 
 ``` 
    user  system elapsed 
-  0.076   0.002   0.084 
+  0.044   0.000   0.045 
 ```
 
 ``` r
@@ -711,9 +711,9 @@ tm_mtom
 ```
 
     Unit: milliseconds
-       expr        min         lq       mean     median        uq      max
-     base_R 407.335531 420.107217 436.744963 426.894668 437.73289 627.4415
-       Rcpp   6.047639   6.250503   7.978705   6.531377   7.43794 110.6525
+       expr        min         lq       mean     median         uq        max
+     base_R 226.158410 234.531802 248.573028 242.617080 259.455143 328.416978
+       Rcpp   3.330094   3.673579   3.864554   3.827777   4.067575   4.460008
      neval
        100
        100
@@ -743,7 +743,7 @@ system.time(dist_min(cbg_df$lon[1:100],
 
 ``` 
    user  system elapsed 
-  4.272   0.021   4.310 
+  2.576   0.011   2.594 
 ```
 
 ``` r
@@ -758,7 +758,7 @@ system.time(dist_min_rcpp(cbg_df$lon[1:100],
 
 ``` 
    user  system elapsed 
-  0.075   0.000   0.075 
+  0.048   0.000   0.048 
 ```
 
 ``` r
@@ -781,9 +781,9 @@ tm_min
 ```
 
     Unit: milliseconds
-       expr        min         lq       mean     median        uq       max
-     base_R 407.961009 422.053949 432.302879 428.538098 436.96943 520.41973
-       Rcpp   6.904668   7.051097   7.960559   7.209413   8.62174  19.01487
+       expr        min         lq       mean     median         uq       max
+     base_R 224.422073 243.872402 252.571381 249.177720 257.790546 353.71412
+       Rcpp   3.519354   4.034779   4.474003   4.342409   4.638884  11.28626
      neval
        100
        100
@@ -824,7 +824,7 @@ system.time(full_min <- dist_min_rcpp(cbg_df$lon,
 
 ``` 
    user  system elapsed 
-155.024   0.421 155.773 
+ 79.454   0.340  80.021 
 ```
 
 ``` r

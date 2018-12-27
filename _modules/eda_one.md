@@ -158,9 +158,9 @@ df %>% select(bysex) %>% val_labels()
 
     $bysex
     {survey component legitimate skip/na} 
-                                       NA 
+                                       -8 
                           {nonrespondent} 
-                                       NA 
+                                       -4 
                                      male 
                                         1 
                                    female 
@@ -183,13 +183,13 @@ tibble and the values are labelled.
 head(df$bysex)
 ```
 
-    <Labelled double>
+    <Labelled double>: sex-composite
     [1] 2 2 2 2 2 1
     
     Labels:
      value                                 label
-     NA(s) {survey component legitimate skip/na}
-     NA(w)                       {nonrespondent}
+        -8 {survey component legitimate skip/na}
+        -4                       {nonrespondent}
          1                                  male
          2                                female
 
@@ -323,6 +323,12 @@ table(as_factor(df$bypared), useNA = 'ifany')
 
 ``` 
 
+                               {missing} 
+                                       0 
+   {survey component legitimate skip/na} 
+                                       0 
+                         {nonrespondent} 
+                                       0 
               did not finish high school 
                                      942 
        graduated from high school or ged 
@@ -339,12 +345,6 @@ table(as_factor(df$bypared), useNA = 'ifany')
                                     1785 
 completed phd, md, other advanced degree 
                                     1049 
-                               {missing} 
-                                       0 
-   {survey component legitimate skip/na} 
-                                       0 
-                         {nonrespondent} 
-                                       0 
                                     <NA> 
                                      856 
 ```
@@ -361,11 +361,11 @@ val_labels(df$bypared)
 
 ``` 
                                {missing} 
-                                      NA 
+                                      -9 
    {survey component legitimate skip/na} 
-                                      NA 
+                                      -8 
                          {nonrespondent} 
-                                      NA 
+                                      -4 
               did not finish high school 
                                        1 
        graduated from high school or ged 
@@ -437,20 +437,10 @@ table(as_factor(df$bypared), as_factor(df$bysex))
 
 ``` 
                                           
-                                           male female
-  did not finish high school                440    502
-  graduated from high school or ged        1496   1548
-  attended 2-year school, no degree         823    840
-  graduated from 2-year school              849    748
-  attended college, no 4-year degree        859    899
-  graduated from college                   1737   1729
-  completed master^s degree or equivalent   911    874
-  completed phd, md, other advanced degree  503    546
-  {missing}                                   0      0
-  {survey component legitimate skip/na}       0      0
-  {nonrespondent}                             0      0
-                                          
                                            {survey component legitimate skip/na}
+  {missing}                                                                    0
+  {survey component legitimate skip/na}                                        0
+  {nonrespondent}                                                              0
   did not finish high school                                                   0
   graduated from high school or ged                                            0
   attended 2-year school, no degree                                            0
@@ -459,22 +449,19 @@ table(as_factor(df$bypared), as_factor(df$bysex))
   graduated from college                                                       0
   completed master^s degree or equivalent                                      0
   completed phd, md, other advanced degree                                     0
-  {missing}                                                                    0
-  {survey component legitimate skip/na}                                        0
-  {nonrespondent}                                                              0
                                           
-                                           {nonrespondent}
-  did not finish high school                             0
-  graduated from high school or ged                      0
-  attended 2-year school, no degree                      0
-  graduated from 2-year school                           0
-  attended college, no 4-year degree                     0
-  graduated from college                                 0
-  completed master^s degree or equivalent                0
-  completed phd, md, other advanced degree               0
-  {missing}                                              0
-  {survey component legitimate skip/na}                  0
-  {nonrespondent}                                        0
+                                           {nonrespondent} male female
+  {missing}                                              0    0      0
+  {survey component legitimate skip/na}                  0    0      0
+  {nonrespondent}                                        0    0      0
+  did not finish high school                             0  440    502
+  graduated from high school or ged                      0 1496   1548
+  attended 2-year school, no degree                      0  823    840
+  graduated from 2-year school                           0  849    748
+  attended college, no 4-year degree                     0  859    899
+  graduated from college                                 0 1737   1729
+  completed master^s degree or equivalent                0  911    874
+  completed phd, md, other advanced degree               0  503    546
 ```
 
 > #### Quick exercise
@@ -660,24 +647,24 @@ df %>%
     # Groups:   bypared [?]
        bypared                                  lowinc bynels2m
        <fct>                                     <dbl>    <dbl>
-     1 did not finish high school                   0.     36.7
-     2 did not finish high school                   1.     35.9
-     3 graduated from high school or ged            0.     42.1
-     4 graduated from high school or ged            1.     37.6
-     5 attended 2-year school, no degree            0.     44.0
-     6 attended 2-year school, no degree            1.     38.0
-     7 graduated from 2-year school                 0.     45.8
-     8 graduated from 2-year school                 1.     39.1
-     9 attended college, no 4-year degree           0.     46.0
-    10 attended college, no 4-year degree           1.     38.9
-    11 graduated from college                       0.     49.3
-    12 graduated from college                       1.     41.5
-    13 completed master^s degree or equivalent      0.     52.8
-    14 completed master^s degree or equivalent      1.     41.4
-    15 completed phd, md, other advanced degree     0.     54.2
-    16 completed phd, md, other advanced degree     1.     38.5
-    17 <NA>                                         0.     46.2
-    18 <NA>                                         1.     39.3
+     1 did not finish high school                    0     36.7
+     2 did not finish high school                    1     35.9
+     3 graduated from high school or ged             0     42.1
+     4 graduated from high school or ged             1     37.6
+     5 attended 2-year school, no degree             0     44.0
+     6 attended 2-year school, no degree             1     38.0
+     7 graduated from 2-year school                  0     45.8
+     8 graduated from 2-year school                  1     39.1
+     9 attended college, no 4-year degree            0     46.0
+    10 attended college, no 4-year degree            1     38.9
+    11 graduated from college                        0     49.3
+    12 graduated from college                        1     41.5
+    13 completed master^s degree or equivalent       0     52.8
+    14 completed master^s degree or equivalent       1     41.4
+    15 completed phd, md, other advanced degree      0     54.2
+    16 completed phd, md, other advanced degree      1     38.5
+    17 <NA>                                          0     46.2
+    18 <NA>                                          1     39.3
 
 > #### Quick exercise
 > 

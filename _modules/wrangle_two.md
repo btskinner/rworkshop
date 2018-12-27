@@ -105,17 +105,14 @@ library(tidyverse)
 
     ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──
 
-``` 
-✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
-✔ tibble  1.4.2          ✔ dplyr   0.7.4     
-✔ tidyr   0.8.0          ✔ stringr 1.3.0     
-✔ readr   1.1.1          ✔ forcats 0.3.0     
-```
+    ✔ ggplot2 3.1.0     ✔ purrr   0.2.5
+    ✔ tibble  1.4.2     ✔ dplyr   0.7.8
+    ✔ tidyr   0.8.2     ✔ stringr 1.3.1
+    ✔ readr   1.3.1     ✔ forcats 0.3.0
 
     ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
     ✖ dplyr::filter() masks stats::filter()
     ✖ dplyr::lag()    masks stats::lag()
-    ✖ dplyr::vars()   masks ggplot2::vars()
 
 Let’s reread the original data. Like `read.table()`, `read_delim()` is
 the generic function that needs you to give it the separating/delimiting
@@ -128,19 +125,17 @@ df <- read_delim('../data/els_plans.csv', delim = ',')
 
     Parsed with column specification:
     cols(
-      .default = col_character(),
-      stu_id = col_integer(),
-      sch_id = col_integer(),
-      strat_id = col_integer(),
-      f1sch_id = col_integer(),
-      bystuwt = col_double(),
-      bydob_p = col_integer(),
-      byses1 = col_double(),
-      byses2 = col_double(),
-      bynels2m = col_double(),
-      bynels2r = col_double(),
-      f1qwt = col_double(),
-      f1pnlwt = col_double()
+      .default = col_double(),
+      psu = col_character(),
+      bysex = col_character(),
+      byrace = col_character(),
+      bypared = col_character(),
+      bymothed = col_character(),
+      byfathed = col_character(),
+      byincome = col_character(),
+      bystexp = col_character(),
+      f1psepln = col_character(),
+      f2ps1sec = col_character()
     )
 
     See spec(...) for full column specifications.
@@ -212,7 +207,7 @@ df %>% select(stu_id, sch_id)
 
     # A tibble: 16,160 x 2
        stu_id sch_id
-        <int>  <int>
+        <dbl>  <dbl>
      1 101101   1011
      2 101102   1011
      3 101104   1011
@@ -290,7 +285,7 @@ df %>% select(stu_id, bydob_p) %>% head(10)
 
     # A tibble: 10 x 2
        stu_id bydob_p
-        <int>   <int>
+        <dbl>   <dbl>
      1 101101  198512
      2 101102  198605
      3 101104  198601
@@ -312,7 +307,7 @@ df %>% select(stu_id, bydob_p) %>% head(10)
 
     # A tibble: 10 x 2
        stu_id bydob_p
-        <int>   <int>
+        <dbl>   <dbl>
      1 133211  198300
      2 195210  198300
      3 195213  198300
@@ -362,7 +357,7 @@ sch_m
 
     # A tibble: 751 x 2
        sch_id sch_bynels2m
-        <int>        <dbl>
+        <dbl>        <dbl>
      1   1011         45.3
      2   1012         43.3
      3   1021         28.9

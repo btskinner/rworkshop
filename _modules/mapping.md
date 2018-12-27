@@ -97,7 +97,7 @@ sch <- st_read(sch_link) %>%
     rename(objectid_sch = objectid)
 ```
 
-    Reading layer `OGRGeoJSON' from data source `https://gisweb.charlottesville.org/arcgis/rest/services/OpenData_1/MapServer/16/query?where=1%3D1&outFields=*&outSR=4326&f=json' using driver `GeoJSON'
+    Reading layer `ESRIJSON' from data source `https://gisweb.charlottesville.org/arcgis/rest/services/OpenData_1/MapServer/16/query?where=1%3D1&outFields=*&outSR=4326&f=json' using driver `ESRIJSON'
     Simple feature collection with 6 features and 2 fields
     geometry type:  MULTIPOLYGON
     dimension:      XY
@@ -161,7 +161,7 @@ cba <- st_read(cba_link) %>%
     mutate(other = pop - amerind - asian - black - hispanic - white)
 ```
 
-    Reading layer `OGRGeoJSON' from data source `https://gisweb.charlottesville.org/arcgis/rest/services/OpenData_1/MapServer/13/query?where=1%3D1&outFields=OBJECTID,Block,Population,Hispanic_Origin,NH_Wht,NH_Blk,NH_Ind,NH_Asn&outSR=4326&f=json' using driver `GeoJSON'
+    Reading layer `ESRIJSON' from data source `https://gisweb.charlottesville.org/arcgis/rest/services/OpenData_1/MapServer/13/query?where=1%3D1&outFields=OBJECTID,Block,Population,Hispanic_Origin,NH_Wht,NH_Blk,NH_Ind,NH_Asn&outSR=4326&f=json' using driver `ESRIJSON'
     Simple feature collection with 803 features and 8 fields
     geometry type:  POLYGON
     dimension:      XY

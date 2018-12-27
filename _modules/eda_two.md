@@ -303,11 +303,11 @@ val_labels(df$bypared)
 
 ``` 
                                {missing} 
-                                      NA 
+                                      -9 
    {survey component legitimate skip/na} 
-                                      NA 
+                                      -8 
                          {nonrespondent} 
-                                      NA 
+                                      -4 
               did not finish high school 
                                        1 
        graduated from high school or ged 
@@ -355,12 +355,12 @@ head(plot_df)
     # A tibble: 6 x 2
       bynels2m pared_coll
          <dbl>      <dbl>
-    1     47.8         0.
-    2     55.3         0.
-    3     66.2         0.
-    4     35.3         0.
-    5     30.0         0.
-    6     24.3         0.
+    1     47.8          0
+    2     55.3          0
+    3     66.2          0
+    4     35.3          0
+    5     30.0          0
+    6     24.3          0
 
 To plot against the two groups we’ve made, we need to add it to the
 aesthetic feature, `aes()`. The math score, `bynels2m`, is still mapped
@@ -462,11 +462,11 @@ val_labels(df$bystexp)
 
 ``` 
    {survey component legitimate skip/na} 
-                                      NA 
+                                      -8 
                          {nonrespondent} 
-                                      NA 
+                                      -4 
                             {don^t know} 
-                                      NA 
+                                      -1 
         less than high school graduation 
                                        1 
       high school graduation or ged only 

@@ -618,8 +618,6 @@ haven’t already) the
 library(survey)
 ```
 
-    Error in library(survey): there is no package called 'survey'
-
 To use survey weights, you need to set the survey design using the
 `svydesign()` function. You could do this in the `svyglm()` function
 we’ll use to actually estimate the equation, but it’s easier and
@@ -648,8 +646,6 @@ svy_df <- svydesign(ids = ~psu,
                     nest = TRUE)
 ```
 
-    Error in svydesign(ids = ~psu, strata = ~strat_id, weight = ~bystuwt, : could not find function "svydesign"
-
 Now that we’ve set the survey design, we’ll use the object `svy_df` in
 the `design` argument below (where your data would go in a normal `lm()`
 function).
@@ -658,15 +654,34 @@ function).
 ## fit the svyglm regression and show output
 svyfit <- svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc,
                  design = svy_df)
-```
-
-    Error in svyglm(bynels2m ~ byses1 + female + moth_ba + fath_ba + lowinc, : could not find function "svyglm"
-
-``` r
 summary(svyfit)
 ```
 
-    Error in summary(svyfit): object 'svyfit' not found
+``` 
+
+Call:
+svyglm(formula = bynels2m ~ byses1 + female + moth_ba + fath_ba + 
+    lowinc, design = svy_df)
+
+Survey design:
+svydesign(ids = ~psu, strata = ~strat_id, weight = ~bystuwt, 
+    data = df, nest = TRUE)
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  45.2221     0.2710 166.867  < 2e-16 ***
+byses1        6.9470     0.2913  23.849  < 2e-16 ***
+female       -1.0715     0.2441  -4.389 1.47e-05 ***
+moth_ba       0.6633     0.3668   1.809   0.0713 .  
+fath_ba       0.5670     0.3798   1.493   0.1363    
+lowinc       -2.4860     0.3644  -6.822 3.49e-11 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for gaussian family taken to be 159.713)
+
+Number of Fisher Scoring iterations: 2
+```
 
 The resulting estimates are survey weighted. The survey library has a
 ton of features and is worth diving into if you regularly work with
