@@ -424,16 +424,16 @@ same.</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 100 x 4
       id   age sibage parage
    &lt;int&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
- 1     1    17      5     46
- 2     2    11      5     50
- 3     3    11      9     50
- 4     4    18     12     54
- 5     5    14     10     50
- 6     6    18     12     48
- 7     7    11      5     53
- 8     8    11      5     52
- 9     9    19     12     55
-10    10    13     12     54
+ 1     1    16      6     49
+ 2     2   -97     11     50
+ 3     3    14      5     53
+ 4     4    15     11     51
+ 5     5    18      8    -99
+ 6     6    17    -98     45
+ 7     7    15      6     51
+ 8     8    14     12     52
+ 9     9    14    -98     48
+10    10    15      9     53
 # ... with 90 more rows
 </code></pre></div></div>
 
@@ -466,7 +466,7 @@ can change it each time we call the function. Let’s try it out.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
 -97  11  12  13  14  15  16  17  18  19  20 
-  7  10  12   6   8   7   9  12  10  10   9 
+  8   9   7   5  14  11   6  12  11  11   6 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## missing values in age are coded as -97</span><span class="w">
@@ -478,7 +478,7 @@ can change it each time we call the function. Let’s try it out.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
   11   12   13   14   15   16   17   18   19   20 &lt;NA&gt; 
-  10   12    6    8    7    9   12   10   10    9    7 
+   9    7    5   14   11    6   12   11   11    6    8 
 </code></pre></div></div>
 
 <p>It worked! All the values that were -97 before, are now in the <code class="highlighter-rouge">NA</code>

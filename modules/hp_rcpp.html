@@ -694,9 +694,9 @@ the <code class="highlighter-rouge">autoplot()</code> function.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: microseconds
-   expr   min    lq     mean median    uq      max neval
- base_R 2.758 2.831 2.890696 2.8740 2.923    7.945  1000
-   Rcpp 1.889 2.039 3.214528 2.1525 2.240 1057.595  1000
+   expr   min    lq     mean median     uq      max neval
+ base_R 2.746 2.845 2.935603  2.903 2.9700    8.242  1000
+   Rcpp 1.932 2.044 3.222372  2.134 2.2445 1066.782  1000
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## plot</span><span class="w">
@@ -722,7 +722,7 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  2.490   0.013   2.502 
+  2.525   0.012   2.539 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...and now Rcpp version</span><span class="w">
@@ -735,7 +735,7 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  0.046   0.000   0.046 
+  0.045   0.000   0.046 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## compare just 10 many to many</span><span class="w">
@@ -759,8 +759,8 @@ microseconds, it <em>really</em> isn’t that much faster.</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: milliseconds
    expr        min         lq       mean     median         uq        max
- base_R 204.925534 227.994523 236.990840 235.155755 242.701057 313.277169
-   Rcpp   3.113008   3.463589   3.760456   3.707919   4.025682   5.036121
+ base_R 221.641507 227.737364 236.004614 233.302698 238.464247 308.327211
+   Rcpp   3.101263   3.511224   3.764691   3.746062   4.003859   4.796772
  neval
    100
    100
@@ -789,7 +789,7 @@ magnitude faster!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  2.313   0.009   2.328 
+  2.478   0.005   2.486 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## ...and now Rcpp version</span><span class="w">
@@ -802,7 +802,7 @@ magnitude faster!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
-  0.038   0.000   0.038 
+  0.047   0.001   0.048 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## compare just 10 min</span><span class="w">
@@ -825,8 +825,8 @@ magnitude faster!</p>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Unit: milliseconds
    expr        min         lq       mean     median         uq        max
- base_R 207.515795 223.366068 237.976220 238.044342 249.397915 307.457070
-   Rcpp   3.491042   3.844861   4.083188   4.061746   4.328463   4.965086
+ base_R 215.037837 239.062711 247.171698 246.488845 252.828805 317.801239
+   Rcpp   3.382741   4.003108   4.223458   4.187064   4.423666   5.330061
  neval
    100
    100
@@ -866,7 +866,7 @@ census block? Let’s find out!</p>
 </span></code></pre></div></div>
 
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   user  system elapsed 
- 75.265   0.117  75.520 
+ 75.987   0.144  76.301 
 </code></pre></div></div>
 
 <div class="language-r highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">## show</span><span class="w">

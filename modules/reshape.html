@@ -112,30 +112,30 @@ and science, for four schools (A, B, C, and D), in 2013.</p>
     <tr>
       <td style="text-align: center">A</td>
       <td style="text-align: center">2013</td>
-      <td style="text-align: center"><code class="highlighter-rouge">502</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">266</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">796</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">496</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">306</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">814</code></td>
     </tr>
     <tr>
       <td style="text-align: center">B</td>
       <td style="text-align: center">2013</td>
-      <td style="text-align: center"><code class="highlighter-rouge">495</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">300</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">798</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">504</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">280</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">786</code></td>
     </tr>
     <tr>
       <td style="text-align: center">C</td>
       <td style="text-align: center">2013</td>
-      <td style="text-align: center"><code class="highlighter-rouge">496</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">320</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">809</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">507</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">322</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">788</code></td>
     </tr>
     <tr>
       <td style="text-align: center">D</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center"><code class="highlighter-rouge">486</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">300</code></td>
-      <td style="text-align: center"><code class="highlighter-rouge">814</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">307</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">807</code></td>
     </tr>
   </tbody>
 </table>
@@ -147,10 +147,10 @@ and science, for four schools (A, B, C, and D), in 2013.</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 4 x 5
   schid  year  math  read science
   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-1 A      2013   502   266     796
-2 B      2013   495   300     798
-3 C      2013   496   320     809
-4 D      2013   486   300     814
+1 A      2013   496   306     814
+2 B      2013   504   280     786
+3 C      2013   507   322     788
+4 D      2013   486   307     807
 </code></pre></div></div>
 
 <h2 id="wide--long">Wide –&gt; long</h2>
@@ -176,55 +176,55 @@ this:</p>
       <td style="text-align: center">A</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center">math</td>
-      <td style="text-align: center"><code class="highlighter-rouge">502</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">read</td>
-      <td style="text-align: center"><code class="highlighter-rouge">266</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">A</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">science</td>
-      <td style="text-align: center"><code class="highlighter-rouge">796</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">math</td>
-      <td style="text-align: center"><code class="highlighter-rouge">495</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">read</td>
-      <td style="text-align: center"><code class="highlighter-rouge">300</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">B</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">science</td>
-      <td style="text-align: center"><code class="highlighter-rouge">798</code></td>
-    </tr>
-    <tr>
-      <td style="text-align: center">C</td>
-      <td style="text-align: center">2013</td>
-      <td style="text-align: center">math</td>
       <td style="text-align: center"><code class="highlighter-rouge">496</code></td>
     </tr>
     <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">306</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">A</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">814</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">504</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">read</td>
+      <td style="text-align: center"><code class="highlighter-rouge">280</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">B</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">science</td>
+      <td style="text-align: center"><code class="highlighter-rouge">786</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: center">C</td>
+      <td style="text-align: center">2013</td>
+      <td style="text-align: center">math</td>
+      <td style="text-align: center"><code class="highlighter-rouge">507</code></td>
+    </tr>
+    <tr>
       <td style="text-align: center">C</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center">read</td>
-      <td style="text-align: center"><code class="highlighter-rouge">320</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">322</code></td>
     </tr>
     <tr>
       <td style="text-align: center">C</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center">science</td>
-      <td style="text-align: center"><code class="highlighter-rouge">809</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">788</code></td>
     </tr>
     <tr>
       <td style="text-align: center">D</td>
@@ -236,13 +236,13 @@ this:</p>
       <td style="text-align: center">D</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center">read</td>
-      <td style="text-align: center"><code class="highlighter-rouge">300</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">307</code></td>
     </tr>
     <tr>
       <td style="text-align: center">D</td>
       <td style="text-align: center">2013</td>
       <td style="text-align: center">science</td>
-      <td style="text-align: center"><code class="highlighter-rouge">814</code></td>
+      <td style="text-align: center"><code class="highlighter-rouge">807</code></td>
     </tr>
   </tbody>
 </table>
@@ -273,18 +273,18 @@ variable name.</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 12 x 4
    schid  year test    score
    &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;
- 1 A      2013 math      502
- 2 A      2013 read      266
- 3 A      2013 science   796
- 4 B      2013 math      495
- 5 B      2013 read      300
- 6 B      2013 science   798
- 7 C      2013 math      496
- 8 C      2013 read      320
- 9 C      2013 science   809
+ 1 A      2013 math      496
+ 2 A      2013 read      306
+ 3 A      2013 science   814
+ 4 B      2013 math      504
+ 5 B      2013 read      280
+ 6 B      2013 science   786
+ 7 C      2013 math      507
+ 8 C      2013 read      322
+ 9 C      2013 science   788
 10 D      2013 math      486
-11 D      2013 read      300
-12 D      2013 science   814
+11 D      2013 read      307
+12 D      2013 science   807
 </code></pre></div></div>
 
 <blockquote>
@@ -313,10 +313,10 @@ columns that want to ignore.</p>
 <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># A tibble: 4 x 5
   schid  year  math  read science
   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
-1 A      2013   502   266     796
-2 B      2013   495   300     798
-3 C      2013   496   320     809
-4 D      2013   486   300     814
+1 A      2013   496   306     814
+2 B      2013   504   280     786
+3 C      2013   507   322     788
+4 D      2013   486   307     807
 </code></pre></div></div>
 
 <p>In theory, our new <code class="highlighter-rouge">df_wide</code> data frame should be the same as the one we
